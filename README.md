@@ -1,9 +1,7 @@
 ## Prime REST ![semver 2.0.0 compliant](http://img.shields.io/badge/semver-2.0.0-brightgreen.svg?style=flat-square)
 Inversoft's REST Client. A simple Java REST Client to make life simpler when calling REST APIs from Java.
 
-**Note:** This project uses the Savant build tool, for more information checkout the [savantbuild.org](http://savantbuild.org/).
-
-If you want to just quickly get this compiled using Savant.
+**Note:** This project uses the Savant build tool. To compile using using Savant, follow these instructions:
 
 ```bash
 $ mkdir ~/savant
@@ -14,7 +12,7 @@ $ ln -s ./savant-0.4.4 current
 $ export PATH=$PATH:~/savant/current/bin/
 ```
 
-Perform an integration build of the project by running:
+Then, perform an integration build of the project by running:
 ```bash
 $ sb int
 ```
