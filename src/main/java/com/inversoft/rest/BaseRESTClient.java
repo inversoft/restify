@@ -15,10 +15,6 @@
  */
 package com.inversoft.rest;
 
-import com.inversoft.net.ssl.SSLTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.net.ssl.HttpsURLConnection;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,6 +26,11 @@ import java.net.URLEncoder;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.Map.Entry;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.inversoft.net.ssl.SSLTools;
 
 /**
  * RESTful WebService call builder. This provides the ability to call RESTful WebServices using a builder pattern to

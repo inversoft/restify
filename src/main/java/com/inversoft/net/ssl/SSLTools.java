@@ -46,11 +46,6 @@ public class SSLTools {
 
   public static final String P8_KEY_START = "BEGIN PRIVATE KEY-----";
 
-  // Disable SNI so that it doesn't mess up our use of JSSE with some certificates
-  static {
-    System.setProperty("jsse.enableSNIExtension", "false");
-  }
-
   /**
    * This creates an in-memory keystore containing the certificate and private key and initializes the SSLContext with
    * the key material it contains.
@@ -154,5 +149,10 @@ public class SSLTools {
 
     String base64 = pem.substring(startIndex + beginDelimiter.length(), endIndex);
     return DatatypeConverter.parseBase64Binary(base64);
+  }
+
+  // Disable SNI so that it doesn't mess up our use of JSSE with some certificates
+  static {
+    System.setProperty("jsse.enableSNIExtension", "false");
   }
 }

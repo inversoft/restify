@@ -25,9 +25,9 @@ public class ClientResponse<T, U> {
 
   public Exception exception;
 
-  public T successResponse;
-
   public int status;
+
+  public T successResponse;
 
   public boolean wasSuccessful() {
     return status >= 200 && status <= 299 && exception == null;
