@@ -15,7 +15,7 @@
  */
 package com.inversoft.rest;
 
-import org.primeframework.net.ssl.SSLTools;
+import com.inversoft.net.ssl.SSLTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
