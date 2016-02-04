@@ -13,9 +13,9 @@
  * either express or implied. See the License for the specific
  * language governing permissions and limitations under the License.
  */
-package org.primeframework.rest.text;
+package com.inversoft.rest.text;
 
-import org.primeframework.rest.ClientResponse;
+import com.inversoft.rest.ClientResponse;
 import org.testng.annotations.Test;
 
 import java.time.ZonedDateTime;
@@ -40,11 +40,11 @@ public class RESTClientTest {
   @Test
   public void get_useVoidClassInsteadOfVoidTYPE() {
     // success response
-    expectException(() -> new org.primeframework.rest.json.RESTClient<>(Void.class, Void.TYPE).url("https://www.inversoft.com/latest-clean-speak-version").get().go(),
+    expectException(() -> new com.inversoft.rest.json.RESTClient<>(Void.class, Void.TYPE).url("https://www.inversoft.com/latest-clean-speak-version").get().go(),
         IllegalArgumentException.class);
 
     // error response
-    expectException(() -> new org.primeframework.rest.json.RESTClient<>(Void.TYPE, Void.class).url("https://www.inversoft.com/does-not-exist").get().go(),
+    expectException(() -> new com.inversoft.rest.json.RESTClient<>(Void.TYPE, Void.class).url("https://www.inversoft.com/does-not-exist").get().go(),
         IllegalArgumentException.class);
   }
 

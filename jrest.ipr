@@ -159,7 +159,7 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/prime-rest.iml" filepath="$PROJECT_DIR$/prime-rest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jrest.iml" filepath="$PROJECT_DIR$/jrest.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" assert-keyword="true" jdk-15="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">

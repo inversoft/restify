@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2015, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,19 @@
  * either express or implied. See the License for the specific
  * language governing permissions and limitations under the License.
  */
-package org.primeframework.rest.json;
+package com.inversoft.rest.json;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.primeframework.json.JacksonModule;
-import org.primeframework.rest.BaseRESTClient;
+import com.inversoft.rest.BaseRESTClient;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Map;
 
 /**
  * RESTful WebService call builder. This provides the ability to call RESTful WebServices using a builder pattern to
@@ -31,7 +33,7 @@ import java.io.IOException;
  *
  * @author Brian Pontarelli
  */
-public class RESTClient<RS, ERS> extends BaseRESTClient<RESTClient<RS, ERS>, RS, ERS> {
+public class FormDataRESTClient<RS, ERS> extends BaseRESTClient<FormDataRESTClient<RS, ERS>, RS, ERS> {
   public final static ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(Include.NON_NULL)
       .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
       .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
@@ -42,23 +44,23 @@ public class RESTClient<RS, ERS> extends BaseRESTClient<RESTClient<RS, ERS>, RS,
 
   public Class<ERS> errorType;
 
-  public Object request;
+  public Map<String, String> request;
 
   public Class<RS> successType;
 
-  public RESTClient(Class<RS> successType, Class<ERS> errorType) {
+  public FormDataRESTClient(Class<RS> successType, Class<ERS> errorType) {
     this.successType = successType;
     this.errorType = errorType;
   }
 
-  public RESTClient<RS, ERS> request(Object request) {
+  public FormDataRESTClient<RS, ERS> request(Map<String, String> request) {
     this.request = request;
     return this;
   }
 
   @Override
   protected String contentType() {
-    return "application/json";
+    return "application/x-www-form-urlencoded";
   }
 
   /**
@@ -92,10 +94,23 @@ public class RESTClient<RS, ERS> extends BaseRESTClient<RESTClient<RS, ERS>, RS,
   @Override
   protected byte[] makeBody() {
     if (request != null) {
+      StringBuilder build = new StringBuilder();
+      request.forEach((key, value) -> {
+        if (build.length() > 0) {
+          build.append("&");
+        }
+
+        try {
+          build.append(URLEncoder.encode(key, "UTF-8")).append("=").append(URLEncoder.encode(value, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+          throw new IllegalStateException(e);
+        }
+      });
+
       try {
-        return objectMapper.writeValueAsBytes(request);
-      } catch (JsonProcessingException e) {
-        throw new JSONException(e);
+        return build.toString().getBytes("UTF-8");
+      } catch (UnsupportedEncodingException e) {
+        throw new IllegalStateException(e);
       }
     }
 

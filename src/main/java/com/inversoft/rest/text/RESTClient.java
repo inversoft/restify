@@ -13,9 +13,9 @@
  * either express or implied. See the License for the specific
  * language governing permissions and limitations under the License.
  */
-package org.primeframework.rest.text;
+package com.inversoft.rest.text;
 
-import org.primeframework.rest.BaseRESTClient;
+import com.inversoft.rest.BaseRESTClient;
 
 /**
  * RESTful WebService call builder. This provides the ability to call RESTful WebServices using a builder pattern to
