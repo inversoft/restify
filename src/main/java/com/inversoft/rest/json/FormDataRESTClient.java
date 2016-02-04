@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.inversoft.rest.BaseRESTClient;
-import com.inversosft.json.JacksonModule;
+import com.inversoft.json.JacksonModule;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
