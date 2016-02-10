@@ -21,6 +21,7 @@ import org.testng.annotations.Test;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.testng.Assert.*;
@@ -35,6 +36,21 @@ public class RESTClientTest {
     ClientResponse<String, String> clientResponse = new RESTClient().url("https://www.inversoft.com/latest-clean-speak-version").get().go();
     assertTrue(clientResponse.wasSuccessful());
     assertEquals(clientResponse.successResponse, "3.1.8");
+  }
+
+  @Test
+  public void get_missing() {
+    ClientResponse<Map, Map> clientResponse = new com.inversoft.rest.json.RESTClient<>(Map.class, Map.class)
+        .url("http://passport-admin.inversoft.com:9011/api/user/" + "00000000-0000-0000-0000-0000000909f6")
+        .authorization("2772f072-677a-463b-b709-5075903387ce")
+        .get()
+        .go();
+
+    System.out.println(clientResponse.exception);
+    System.out.println(clientResponse.errorResponse);
+    System.out.println(clientResponse.status);
+    System.out.println(clientResponse.successResponse);
+    System.out.println("Success");
   }
 
   @Test
