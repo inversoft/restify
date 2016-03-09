@@ -18,16 +18,15 @@ public class FormDataBodyHandler implements RESTClient.BodyHandler {
 
   private byte[] body;
 
-  @Override
-  public void accept(OutputStream os) throws IOException {
-    if (body != null) {
-      os.write(body);
-    }
+  public FormDataBodyHandler(Map<String, String> request) {
+    this.request = request;
   }
 
-  public FormDataBodyHandler request(Map<String, String> request) {
-    this.request = request;
-    return this;
+  @Override
+  public void accept(OutputStream os) throws IOException {
+    if (body != null && os != null) {
+      os.write(body);
+    }
   }
 
   @Override

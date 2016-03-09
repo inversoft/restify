@@ -88,7 +88,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.status, 200);
-    assertEquals(response.successResponse, "");
+    assertNull(response.successResponse);
   }
 
   @Test
@@ -143,7 +143,7 @@ public class RESTClientTest {
 
     ClientResponse<String, String> response = new RESTClient<String, String>()
         .url("http://localhost:7000/test")
-        .bodyHandler(new FormDataBodyHandler().request(parameters))
+        .bodyHandler(new FormDataBodyHandler(parameters))
         .errorResponseHandler(new TextResponseHandler())
         .successResponseHandler(new TextResponseHandler())
         .post()
@@ -165,7 +165,7 @@ public class RESTClientTest {
 
     ClientResponse<String, String> response = new RESTClient<String, String>()
         .url("http://localhost:7000/test")
-        .bodyHandler(new FormDataBodyHandler().request(parameters))
+        .bodyHandler(new FormDataBodyHandler(parameters))
         .errorResponseHandler(new TextResponseHandler())
         .successResponseHandler(new TextResponseHandler())
         .put()
@@ -187,7 +187,7 @@ public class RESTClientTest {
 
     ClientResponse<String, String> response = new RESTClient<String, String>()
         .url("http://localhost:7000/test")
-        .bodyHandler(new FormDataBodyHandler().request(parameters))
+        .bodyHandler(new FormDataBodyHandler(parameters))
         .errorResponseHandler(new TextResponseHandler())
         .successResponseHandler(new TextResponseHandler())
         .put()

@@ -35,7 +35,7 @@ public class JSONBodyHandler implements RESTClient.BodyHandler {
 
   @Override
   public void accept(OutputStream os) throws IOException {
-    if (body != null) {
+    if (body != null && os != null) {
       os.write(body);
     }
   }

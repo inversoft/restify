@@ -40,7 +40,7 @@ public class RESTClient<RS, ERS> {
 
   public int connectTimeout = 2000;
 
-  public ResponseHandler<ERS> errorResponseFunction;
+  public ResponseHandler<ERS> errorResponseHandler;
 
   public String key;
 
@@ -48,10 +48,7 @@ public class RESTClient<RS, ERS> {
 
   public int readTimeout = 2000;
 
-  public ResponseHandler<RS> successResponseFunction;
-
-  protected RESTClient() {
-  }
+  public ResponseHandler<RS> successResponseHandler;
 
   public RESTClient<RS, ERS> authorization(String key) {
     this.headers.put("Authorization", key);
@@ -89,7 +86,7 @@ public class RESTClient<RS, ERS> {
   }
 
   public RESTClient<RS, ERS> errorResponseHandler(ResponseHandler<ERS> errorResponseFunction) {
-    this.errorResponseFunction = errorResponseFunction;
+    this.errorResponseHandler = errorResponseFunction;
     return this;
   }
 
@@ -180,24 +177,24 @@ public class RESTClient<RS, ERS> {
     response.status = status;
 
     if (status < 200 || status > 299) {
-      if (errorResponseFunction == null) {
+      if (errorResponseHandler == null) {
         return response;
       }
 
       try (InputStream is = huc.getErrorStream()) {
-        response.errorResponse = errorResponseFunction.apply(is);
+        response.errorResponse = errorResponseHandler.apply(is);
       } catch (Exception e) {
         logger.debug("Error calling REST WebService at [" + url + "]", e);
         response.exception = e;
         return response;
       }
     } else {
-      if (successResponseFunction == null) {
+      if (successResponseHandler == null) {
         return response;
       }
 
       try (InputStream is = huc.getInputStream()) {
-        response.successResponse = successResponseFunction.apply(is);
+        response.successResponse = successResponseHandler.apply(is);
       } catch (Exception e) {
         logger.debug("Error calling REST WebService at [" + url + "]", e);
         response.exception = e;
@@ -239,7 +236,7 @@ public class RESTClient<RS, ERS> {
   }
 
   public RESTClient<RS, ERS> successResponseHandler(ResponseHandler<RS> successResponseFunction) {
-    this.successResponseFunction = successResponseFunction;
+    this.successResponseHandler = successResponseFunction;
     return this;
   }
 

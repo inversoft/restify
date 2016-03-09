@@ -32,6 +32,10 @@ public class JSONResponseHandler<T> implements RESTClient.ResponseHandler<T> {
 
   @Override
   public T apply(InputStream is) throws IOException {
+    if (is == null || is.available() == 0) {
+      return null;
+    }
+
     try {
       return objectMapper.readValue(is, type);
     } catch (IOException e) {

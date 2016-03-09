@@ -13,6 +13,10 @@ import java.io.InputStream;
 public class TextResponseHandler implements RESTClient.ResponseHandler<String> {
   @Override
   public String apply(InputStream is) throws IOException {
+    if (is == null || is.available() == 0) {
+      return null;
+    }
+
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     byte[] buf = new byte[1024];
     int read;
