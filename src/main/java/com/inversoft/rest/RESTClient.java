@@ -1,22 +1,9 @@
 /*
- * Copyright (c) 2015, Inversoft Inc., All Rights Reserved
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific
- * language governing permissions and limitations under the License.
+ * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
  */
 package com.inversoft.rest;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -38,9 +25,8 @@ import com.inversoft.net.ssl.SSLTools;
  *
  * @author Brian Pontarelli
  */
-@SuppressWarnings("unchecked")
-public abstract class BaseRESTClient<T extends BaseRESTClient<T, RS, ERS>, RS, ERS> {
-  private static final Logger logger = LoggerFactory.getLogger(BaseRESTClient.class);
+public class RESTClient<RS, ERS> {
+  private static final Logger logger = LoggerFactory.getLogger(RESTClient.class);
 
   public final Map<String, String> headers = new HashMap<>();
 
@@ -48,9 +34,13 @@ public abstract class BaseRESTClient<T extends BaseRESTClient<T, RS, ERS>, RS, E
 
   public final StringBuilder url = new StringBuilder();
 
+  public BodyHandler bodyHandler;
+
   public String certificate;
 
   public int connectTimeout = 2000;
+
+  public ResponseHandler<ERS> errorResponseFunction;
 
   public String key;
 
@@ -58,42 +48,54 @@ public abstract class BaseRESTClient<T extends BaseRESTClient<T, RS, ERS>, RS, E
 
   public int readTimeout = 2000;
 
-  protected BaseRESTClient() {
+  public ResponseHandler<RS> successResponseFunction;
+
+  protected RESTClient() {
   }
 
-  public T authorization(String key) {
+  public RESTClient<RS, ERS> authorization(String key) {
     this.headers.put("Authorization", key);
-    return (T) this;
+    return this;
   }
 
-  public T basicAuthorization(String username, String password) {
+  public RESTClient<RS, ERS> basicAuthorization(String username, String password) {
     if (username != null && password != null) {
       String credentials = username + ":" + password;
       Base64.Encoder encoder = Base64.getEncoder();
       String encoded = encoder.encodeToString(credentials.getBytes());
       this.headers.put("Authorization", "Basic " + encoded);
     }
-    return (T) this;
+    return this;
   }
 
-  public T certificate(String certificate) {
+  public RESTClient<RS, ERS> bodyHandler(BodyHandler bodyHandler) {
+    this.bodyHandler = bodyHandler;
+    return this;
+  }
+
+  public RESTClient<RS, ERS> certificate(String certificate) {
     this.certificate = certificate;
-    return (T) this;
+    return this;
   }
 
-  public T connectTimeout(int connectTimeout) {
+  public RESTClient<RS, ERS> connectTimeout(int connectTimeout) {
     this.connectTimeout = connectTimeout;
-    return (T) this;
+    return this;
   }
 
-  public T delete() {
+  public RESTClient<RS, ERS> delete() {
     this.method = HTTPMethod.DELETE;
-    return (T) this;
+    return this;
   }
 
-  public T get() {
+  public RESTClient<RS, ERS> errorResponseHandler(ResponseHandler<ERS> errorResponseFunction) {
+    this.errorResponseFunction = errorResponseFunction;
+    return this;
+  }
+
+  public RESTClient<RS, ERS> get() {
     this.method = HTTPMethod.GET;
-    return (T) this;
+    return this;
   }
 
   public ClientResponse<RS, ERS> go() {
@@ -139,8 +141,7 @@ public abstract class BaseRESTClient<T extends BaseRESTClient<T, RS, ERS>, RS, E
         }
       }
 
-      byte[] body = makeBody();
-      huc.setDoOutput(body != null);
+      huc.setDoOutput(bodyHandler != null);
       huc.setConnectTimeout(connectTimeout);
       huc.setReadTimeout(readTimeout);
       huc.setRequestMethod(method.toString());
@@ -149,16 +150,15 @@ public abstract class BaseRESTClient<T extends BaseRESTClient<T, RS, ERS>, RS, E
         headers.forEach(huc::addRequestProperty);
       }
 
-      if (body != null) {
-        huc.addRequestProperty("Content-Type", contentType());
-        huc.addRequestProperty("Content-Length", "" + body.length);
+      if (bodyHandler != null) {
+        bodyHandler.setHeaders(huc);
       }
 
       huc.connect();
 
-      if (body != null) {
+      if (bodyHandler != null) {
         try (OutputStream os = huc.getOutputStream()) {
-          os.write(body);
+          bodyHandler.accept(os);
           os.flush();
         }
       }
@@ -180,30 +180,24 @@ public abstract class BaseRESTClient<T extends BaseRESTClient<T, RS, ERS>, RS, E
     response.status = status;
 
     if (status < 200 || status > 299) {
-      if (!handleErrorResponse()) {
+      if (errorResponseFunction == null) {
         return response;
       }
 
-      try {
-        byte[] responseBody = readResponseBody(huc.getErrorStream());
-        if (responseBody != null && responseBody.length > 0) {
-          response.errorResponse = parseErrorResponse(responseBody);
-        }
+      try (InputStream is = huc.getErrorStream()) {
+        response.errorResponse = errorResponseFunction.apply(is);
       } catch (Exception e) {
         logger.debug("Error calling REST WebService at [" + url + "]", e);
         response.exception = e;
         return response;
       }
     } else {
-      if (!handleSuccessResponse()) {
+      if (successResponseFunction == null) {
         return response;
       }
 
-      try {
-        byte[] responseBody = readResponseBody(huc.getInputStream());
-        if (responseBody != null && responseBody.length > 0) {
-          response.successResponse = parseSuccessResponse(responseBody);
-        }
+      try (InputStream is = huc.getInputStream()) {
+        response.successResponse = successResponseFunction.apply(is);
       } catch (Exception e) {
         logger.debug("Error calling REST WebService at [" + url + "]", e);
         response.exception = e;
@@ -214,39 +208,44 @@ public abstract class BaseRESTClient<T extends BaseRESTClient<T, RS, ERS>, RS, E
     return response;
   }
 
-  public T header(String name, String value) {
+  public RESTClient<RS, ERS> header(String name, String value) {
     this.headers.put(name, value);
-    return (T) this;
+    return this;
   }
 
-  public T headers(Map<String, String> headers) {
+  public RESTClient<RS, ERS> headers(Map<String, String> headers) {
     this.headers.putAll(headers);
-    return (T) this;
+    return this;
   }
 
-  public T key(String key) {
+  public RESTClient<RS, ERS> key(String key) {
     this.key = key;
-    return (T) this;
+    return this;
   }
 
-  public T post() {
+  public RESTClient<RS, ERS> post() {
     this.method = HTTPMethod.POST;
-    return (T) this;
+    return this;
   }
 
-  public T put() {
+  public RESTClient<RS, ERS> put() {
     this.method = HTTPMethod.PUT;
-    return (T) this;
+    return this;
   }
 
-  public T readTimeout(int readTimeout) {
+  public RESTClient<RS, ERS> readTimeout(int readTimeout) {
     this.readTimeout = readTimeout;
-    return (T) this;
+    return this;
   }
 
-  public T uri(String uri) {
+  public RESTClient<RS, ERS> successResponseHandler(ResponseHandler<RS> successResponseFunction) {
+    this.successResponseFunction = successResponseFunction;
+    return this;
+  }
+
+  public RESTClient<RS, ERS> uri(String uri) {
     if (url.length() == 0) {
-      return (T) this;
+      return this;
     }
 
     if (url.charAt(url.length() - 1) == '/' && uri.startsWith("/")) {
@@ -257,13 +256,13 @@ public abstract class BaseRESTClient<T extends BaseRESTClient<T, RS, ERS>, RS, E
       url.append(uri);
     }
 
-    return (T) this;
+    return this;
   }
 
-  public T url(String url) {
+  public RESTClient<RS, ERS> url(String url) {
     this.url.delete(0, this.url.length());
     this.url.append(url);
-    return (T) this;
+    return this;
   }
 
   /**
@@ -277,9 +276,9 @@ public abstract class BaseRESTClient<T extends BaseRESTClient<T, RS, ERS>, RS, E
    *              be used to set in the request using <code>ZonedDateTime.toInstant().toEpochMilli()</code>
    * @return This.
    */
-  public T urlParameter(String name, Object value) {
+  public RESTClient<RS, ERS> urlParameter(String name, Object value) {
     if (value == null) {
-      return (T) this;
+      return this;
     }
 
     List<Object> values = this.parameters.get(name);
@@ -295,7 +294,7 @@ public abstract class BaseRESTClient<T extends BaseRESTClient<T, RS, ERS>, RS, E
     } else {
       values.add(value);
     }
-    return (T) this;
+    return this;
   }
 
   /**
@@ -309,40 +308,14 @@ public abstract class BaseRESTClient<T extends BaseRESTClient<T, RS, ERS>, RS, E
    * @param value The url path segment. A null value will be ignored.
    * @return This.
    */
-  public T urlSegment(Object value) {
+  public RESTClient<RS, ERS> urlSegment(Object value) {
     if (value != null) {
       if (url.charAt(url.length() - 1) != '/') {
         url.append('/');
       }
       url.append(value.toString());
     }
-    return (T) this;
-  }
-
-  protected abstract String contentType();
-
-  protected abstract boolean handleErrorResponse();
-
-  protected abstract boolean handleSuccessResponse();
-
-  protected abstract byte[] makeBody();
-
-  protected abstract ERS parseErrorResponse(byte[] responseBody) throws Exception;
-
-  protected abstract RS parseSuccessResponse(byte[] responseBody) throws Exception;
-
-  private byte[] readResponseBody(InputStream stream) throws IOException {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-    try (InputStream is = stream) {
-      if (is != null) {
-        byte[] buf = new byte[1024];
-        int length;
-        while ((length = is.read(buf)) != -1) {
-          baos.write(buf, 0, length);
-        }
-      }
-    }
-    return baos.toByteArray();
+    return this;
   }
 
   public enum HTTPMethod {
@@ -350,5 +323,42 @@ public abstract class BaseRESTClient<T extends BaseRESTClient<T, RS, ERS>, RS, E
     POST,
     PUT,
     DELETE
+  }
+
+  /**
+   * Body handler that manages sending the bytes of the HTTP request body to the HttpURLConnection. This also is able to
+   * manage any HTTP headers that are associated with the body such as Content-Type and Content-Length.
+   */
+  public interface BodyHandler {
+    /**
+     * Accepts the OutputStream and writes the bytes of the HTTP request body to it.
+     *
+     * @param os The OutputStream to write the body to.
+     * @throws IOException If the write failed.
+     */
+    void accept(OutputStream os) throws IOException;
+
+    /**
+     * Sets any headers for the HTTP body that will be written.
+     *
+     * @param huc The HttpURLConnection to set headers into.
+     */
+    void setHeaders(HttpURLConnection huc);
+  }
+
+  /**
+   * Handles responses from the HTTP server.
+   *
+   * @param <T> The type that is returned from the handler.
+   */
+  public interface ResponseHandler<T> {
+    /**
+     * Handles the InputStream that is the HTTP response and reads it in and converts it to a value.
+     *
+     * @param is The InputStream to read from.
+     * @return The value.
+     * @throws IOException If the read failed.
+     */
+    T apply(InputStream is) throws IOException;
   }
 }
