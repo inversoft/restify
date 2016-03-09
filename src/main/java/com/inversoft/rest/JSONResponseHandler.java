@@ -13,6 +13,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.inversoft.json.JacksonModule;
 
 /**
+ * Response handler that reads the body as JSON using Jackson.
+ *
  * @author Brian Pontarelli
  */
 public class JSONResponseHandler<T> implements RESTClient.ResponseHandler<T> {
@@ -32,7 +34,7 @@ public class JSONResponseHandler<T> implements RESTClient.ResponseHandler<T> {
 
   @Override
   public T apply(InputStream is) throws IOException {
-    if (is == null || is.available() == 0) {
+    if (is == null) {
       return null;
     }
 

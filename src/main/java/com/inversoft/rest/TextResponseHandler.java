@@ -8,12 +8,14 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ * Response handler that reads the entire body and converts it to a UTF-8 String.
+ *
  * @author Brian Pontarelli
  */
 public class TextResponseHandler implements RESTClient.ResponseHandler<String> {
   @Override
   public String apply(InputStream is) throws IOException {
-    if (is == null || is.available() == 0) {
+    if (is == null) {
       return null;
     }
 

@@ -85,8 +85,8 @@ public class RESTClient<RS, ERS> {
     return this;
   }
 
-  public RESTClient<RS, ERS> errorResponseHandler(ResponseHandler<ERS> errorResponseFunction) {
-    this.errorResponseHandler = errorResponseFunction;
+  public RESTClient<RS, ERS> errorResponseHandler(ResponseHandler<ERS> errorResponseHandler) {
+    this.errorResponseHandler = errorResponseHandler;
     return this;
   }
 
@@ -235,8 +235,8 @@ public class RESTClient<RS, ERS> {
     return this;
   }
 
-  public RESTClient<RS, ERS> successResponseHandler(ResponseHandler<RS> successResponseFunction) {
-    this.successResponseHandler = successResponseFunction;
+  public RESTClient<RS, ERS> successResponseHandler(ResponseHandler<RS> successResponseHandler) {
+    this.successResponseHandler = successResponseHandler;
     return this;
   }
 
@@ -315,6 +315,9 @@ public class RESTClient<RS, ERS> {
     return this;
   }
 
+  /**
+   * Standard HTTP methods. This doesn't have CONNECT, TRACE, HEAD or OPTIONS.
+   */
   public enum HTTPMethod {
     GET,
     POST,

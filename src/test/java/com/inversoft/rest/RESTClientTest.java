@@ -52,24 +52,7 @@ public class RESTClientTest {
   }
 
   @Test
-  public void get_json() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "GET", 200, "{\"code\": 200}");
-    startServer(handler);
-
-    ClientResponse<Map, Map> response = new RESTClient<Map, Map>()
-        .url("http://localhost:7000/test")
-        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
-        .successResponseHandler(new JSONResponseHandler<>(Map.class))
-        .get()
-        .go();
-
-    assertEquals(handler.count, 1);
-    assertEquals(response.status, 200);
-    assertEquals(response.successResponse.get("code"), 200);
-  }
-
-  @Test
-  public void headers() throws Exception {
+  public void get_headers() throws Exception {
     Map<String, String> headers = new HashMap<>();
     headers.put("Authorization", "key");
     headers.put("header1", "value1");
@@ -88,48 +71,71 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.status, 200);
+    assertEquals(response.successResponse, "");
+  }
+
+  @Test
+  public void get_json() throws Exception {
+    TestHandler handler = new TestHandler(null, null, null, "GET", 200, "{\"code\": 200}");
+    startServer(handler);
+
+    ClientResponse<Map, Map> response = new RESTClient<Map, Map>()
+        .url("http://localhost:7000/test")
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .get()
+        .go();
+
+    assertEquals(handler.count, 1);
+    assertEquals(response.status, 200);
+    assertEquals(response.successResponse.get("code"), 200);
+  }
+
+  @Test
+  public void get_ssl_get_parameters() {
+    ZonedDateTime now = ZonedDateTime.now();
+
+    // Test null segment, null parameter, ZoneDateTime parameter, and a collection parameter
+    RESTClient<Object, Object> client = new RESTClient<>()
+        .url("https://www.inversoft.com")
+        .urlSegment(null)
+        .urlSegment("latest-clean-speak-version")
+        .urlParameter("time", now)
+        .urlParameter("foo", "bar")
+        .urlParameter("baz", null)
+        .urlParameter("ids", new ArrayList<>(Arrays.asList(new UUID(1, 0), new UUID(2, 0))))
+        .get();
+
+    assertEquals(client.url.toString(), "https://www.inversoft.com/latest-clean-speak-version");
+
+    assertEquals(client.parameters.get("time").size(), 1);
+    assertEquals(client.parameters.get("time").get(0), now.toInstant().toEpochMilli());
+
+    assertEquals(client.parameters.get("foo").size(), 1);
+    assertEquals(client.parameters.get("foo").get(0), "bar");
+
+    assertNull(client.parameters.get("baz"));
+
+    client.go(); // finish building the final URL
+    assertEquals(client.url.toString(), "https://www.inversoft.com/latest-clean-speak-version?time="
+        + now.toInstant().toEpochMilli() + "&foo=bar&ids=" + new UUID(1, 0).toString() + "&ids=" + new UUID(2, 0).toString());
+  }
+
+  @Test
+  public void get_void_emptyJSOM() throws Exception {
+    TestHandler handler = new TestHandler(null, null, null, "GET", 200, "");
+    startServer(handler);
+
+    ClientResponse<Map, Map> response = new RESTClient<Map, Map>()
+        .url("http://localhost:7000/test")
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .get()
+        .go();
+
+    assertEquals(handler.count, 1);
+    assertEquals(response.status, 200);
     assertNull(response.successResponse);
-  }
-
-  @Test
-  public void inputStream_json() throws Exception {
-    TestHandler handler = new TestHandler("Testing 123", "application/octet-stream", null, "POST", 200, "{\"code\": 200}");
-    startServer(handler);
-
-    ByteArrayInputStream bais = new ByteArrayInputStream("Testing 123".getBytes());
-    ClientResponse<Map, Map> response = new RESTClient<Map, Map>()
-        .url("http://localhost:7000/test")
-        .bodyHandler(new InputStreamBodyHandler("application/octet-stream", bais))
-        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
-        .successResponseHandler(new JSONResponseHandler<>(Map.class))
-        .post()
-        .go();
-
-    assertEquals(handler.count, 1);
-    assertEquals(response.status, 200);
-    assertEquals(response.successResponse.get("code"), 200);
-  }
-
-  @Test
-  public void json_json() throws Exception {
-    TestHandler handler = new TestHandler("{\"test1\":\"value1\",\"test2\":\"value2\"}", "application/json", null, "POST", 200, "{\"code\": 200}");
-    startServer(handler);
-
-    Map<String, String> parameters = new LinkedHashMap<>();
-    parameters.put("test1", "value1");
-    parameters.put("test2", "value2");
-
-    ClientResponse<Map, Map> response = new RESTClient<Map, Map>()
-        .url("http://localhost:7000/test")
-        .bodyHandler(new JSONBodyHandler(parameters))
-        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
-        .successResponseHandler(new JSONResponseHandler<>(Map.class))
-        .post()
-        .go();
-
-    assertEquals(handler.count, 1);
-    assertEquals(response.status, 200);
-    assertEquals(response.successResponse.get("code"), 200);
   }
 
   @Test
@@ -152,6 +158,47 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse, "Testing 123");
+  }
+
+  @Test
+  public void post_inputStream_json() throws Exception {
+    TestHandler handler = new TestHandler("Testing 123", "application/octet-stream", null, "POST", 200, "{\"code\": 200}");
+    startServer(handler);
+
+    ByteArrayInputStream bais = new ByteArrayInputStream("Testing 123".getBytes());
+    ClientResponse<Map, Map> response = new RESTClient<Map, Map>()
+        .url("http://localhost:7000/test")
+        .bodyHandler(new InputStreamBodyHandler("application/octet-stream", bais))
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .post()
+        .go();
+
+    assertEquals(handler.count, 1);
+    assertEquals(response.status, 200);
+    assertEquals(response.successResponse.get("code"), 200);
+  }
+
+  @Test
+  public void post_json_json() throws Exception {
+    TestHandler handler = new TestHandler("{\"test1\":\"value1\",\"test2\":\"value2\"}", "application/json", null, "POST", 200, "{\"code\": 200}");
+    startServer(handler);
+
+    Map<String, String> parameters = new LinkedHashMap<>();
+    parameters.put("test1", "value1");
+    parameters.put("test2", "value2");
+
+    ClientResponse<Map, Map> response = new RESTClient<Map, Map>()
+        .url("http://localhost:7000/test")
+        .bodyHandler(new JSONBodyHandler(parameters))
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .post()
+        .go();
+
+    assertEquals(handler.count, 1);
+    assertEquals(response.status, 200);
+    assertEquals(response.successResponse.get("code"), 200);
   }
 
   @Test
@@ -196,36 +243,6 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse, "Testing 123");
-  }
-
-  @Test
-  public void ssl_get_parameters() {
-    ZonedDateTime now = ZonedDateTime.now();
-
-    // Test null segment, null parameter, ZoneDateTime parameter, and a collection parameter
-    RESTClient<Object, Object> client = new RESTClient<>()
-        .url("https://www.inversoft.com")
-        .urlSegment(null)
-        .urlSegment("latest-clean-speak-version")
-        .urlParameter("time", now)
-        .urlParameter("foo", "bar")
-        .urlParameter("baz", null)
-        .urlParameter("ids", new ArrayList<>(Arrays.asList(new UUID(1, 0), new UUID(2, 0))))
-        .get();
-
-    assertEquals(client.url.toString(), "https://www.inversoft.com/latest-clean-speak-version");
-
-    assertEquals(client.parameters.get("time").size(), 1);
-    assertEquals(client.parameters.get("time").get(0), now.toInstant().toEpochMilli());
-
-    assertEquals(client.parameters.get("foo").size(), 1);
-    assertEquals(client.parameters.get("foo").get(0), "bar");
-
-    assertNull(client.parameters.get("baz"));
-
-    client.go(); // finish building the final URL
-    assertEquals(client.url.toString(), "https://www.inversoft.com/latest-clean-speak-version?time="
-        + now.toInstant().toEpochMilli() + "&foo=bar&ids=" + new UUID(1, 0).toString() + "&ids=" + new UUID(2, 0).toString());
   }
 
   private void startServer(TestHandler testHandler) throws Exception {
