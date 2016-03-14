@@ -48,7 +48,20 @@ public class RESTClient<RS, ERS> {
 
   public int readTimeout = 2000;
 
+  public Class<ERS> errorType;
+
+  public Class<RS> successType;
+
   public ResponseHandler<RS> successResponseHandler;
+
+  public RESTClient(Class<RS> successType, Class<ERS> errorType) {
+    if (successType == Void.class || errorType == Void.class) {
+      throw new IllegalArgumentException("Void.class isn't valid. Use Void.TYPE instead.");
+    }
+
+    this.successType = successType;
+    this.errorType = errorType;
+  }
 
   public RESTClient<RS, ERS> authorization(String key) {
     this.headers.put("Authorization", key);
@@ -101,6 +114,14 @@ public class RESTClient<RS, ERS> {
     }
 
     Objects.requireNonNull(method, "You must specify a HTTP method");
+
+    if (successType != Void.TYPE && successResponseHandler == null) {
+      throw new IllegalStateException("You specified a success response type, you must then provide a success response handler.");
+    }
+
+    if (errorType != Void.TYPE && errorResponseHandler == null) {
+      throw new IllegalStateException("You specified an error response type, you must then provide an error response handler.");
+    }
 
     ClientResponse<RS, ERS> response = new ClientResponse<>();
     HttpURLConnection huc;

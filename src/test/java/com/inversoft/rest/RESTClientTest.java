@@ -39,7 +39,7 @@ public class RESTClientTest {
     TestHandler handler = new TestHandler(null, null, null, "DELETE", 200, "{\"code\": 200}");
     startServer(handler);
 
-    ClientResponse<Map, Map> response = new RESTClient<Map, Map>()
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
         .url("http://localhost:7000/test")
         .errorResponseHandler(new JSONResponseHandler<>(Map.class))
         .successResponseHandler(new JSONResponseHandler<>(Map.class))
@@ -52,6 +52,26 @@ public class RESTClientTest {
   }
 
   @Test
+  public void get_forgotErrorResponseHandler() throws Exception {
+    TestHandler handler = new TestHandler(null, null, null, "GET", 200, "");
+    startServer(handler);
+
+    expectException(() ->
+        new RESTClient<>(Map.class, Map.class)
+            .url("http://localhost:7000/test")
+            .successResponseHandler(new JSONResponseHandler<>(Map.class))
+            .get()
+            .go(), IllegalStateException.class);
+
+    expectException(() ->
+        new RESTClient<>(Map.class, Map.class)
+            .url("http://localhost:7000/test")
+            .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+            .get()
+            .go(), IllegalStateException.class);
+  }
+
+  @Test
   public void get_headers() throws Exception {
     Map<String, String> headers = new HashMap<>();
     headers.put("Authorization", "key");
@@ -60,7 +80,7 @@ public class RESTClientTest {
     TestHandler handler = new TestHandler(null, null, headers, "GET", 200, null);
     startServer(handler);
 
-    ClientResponse<String, String> response = new RESTClient<String, String>()
+    ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
         .url("http://localhost:7000/test")
         .authorization("key")
         .header("header1", "value1")
@@ -79,7 +99,7 @@ public class RESTClientTest {
     TestHandler handler = new TestHandler(null, null, null, "GET", 200, "{\"code\": 200}");
     startServer(handler);
 
-    ClientResponse<Map, Map> response = new RESTClient<Map, Map>()
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
         .url("http://localhost:7000/test")
         .errorResponseHandler(new JSONResponseHandler<>(Map.class))
         .successResponseHandler(new JSONResponseHandler<>(Map.class))
@@ -96,7 +116,7 @@ public class RESTClientTest {
     ZonedDateTime now = ZonedDateTime.now();
 
     // Test null segment, null parameter, ZoneDateTime parameter, and a collection parameter
-    RESTClient<Object, Object> client = new RESTClient<>()
+    RESTClient<Void, Void> client = new RESTClient<>(Void.TYPE, Void.TYPE)
         .url("https://www.inversoft.com")
         .urlSegment(null)
         .urlSegment("latest-clean-speak-version")
@@ -126,7 +146,7 @@ public class RESTClientTest {
     TestHandler handler = new TestHandler(null, null, null, "GET", 200, "");
     startServer(handler);
 
-    ClientResponse<Map, Map> response = new RESTClient<Map, Map>()
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
         .url("http://localhost:7000/test")
         .errorResponseHandler(new JSONResponseHandler<>(Map.class))
         .successResponseHandler(new JSONResponseHandler<>(Map.class))
@@ -147,7 +167,7 @@ public class RESTClientTest {
     parameters.put("test1", "value1");
     parameters.put("test2", "value2");
 
-    ClientResponse<String, String> response = new RESTClient<String, String>()
+    ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
         .url("http://localhost:7000/test")
         .bodyHandler(new FormDataBodyHandler(parameters))
         .errorResponseHandler(new TextResponseHandler())
@@ -166,7 +186,7 @@ public class RESTClientTest {
     startServer(handler);
 
     ByteArrayInputStream bais = new ByteArrayInputStream("Testing 123".getBytes());
-    ClientResponse<Map, Map> response = new RESTClient<Map, Map>()
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
         .url("http://localhost:7000/test")
         .bodyHandler(new InputStreamBodyHandler("application/octet-stream", bais))
         .errorResponseHandler(new JSONResponseHandler<>(Map.class))
@@ -188,7 +208,7 @@ public class RESTClientTest {
     parameters.put("test1", "value1");
     parameters.put("test2", "value2");
 
-    ClientResponse<Map, Map> response = new RESTClient<Map, Map>()
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
         .url("http://localhost:7000/test")
         .bodyHandler(new JSONBodyHandler(parameters))
         .errorResponseHandler(new JSONResponseHandler<>(Map.class))
@@ -210,7 +230,7 @@ public class RESTClientTest {
     parameters.put("test1", "value1");
     parameters.put("test2", "value2");
 
-    ClientResponse<String, String> response = new RESTClient<String, String>()
+    ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
         .url("http://localhost:7000/test")
         .bodyHandler(new FormDataBodyHandler(parameters))
         .errorResponseHandler(new TextResponseHandler())
@@ -232,7 +252,7 @@ public class RESTClientTest {
     parameters.put("test1", "value1");
     parameters.put("test2", "value2");
 
-    ClientResponse<String, String> response = new RESTClient<String, String>()
+    ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
         .url("http://localhost:7000/test")
         .bodyHandler(new FormDataBodyHandler(parameters))
         .errorResponseHandler(new TextResponseHandler())
@@ -243,6 +263,19 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse, "Testing 123");
+  }
+
+  private void expectException(Runnable runnable, Class<? extends Throwable> expected) {
+    try {
+      runnable.run();
+    } catch (Throwable e) {
+      if (!e.getClass().equals(expected)) {
+        fail("Expected exception [" + expected + "], but caught [" + e.getClass() + "].", e);
+      }
+      return;
+    }
+
+    fail("Expected exception [" + expected + "].");
   }
 
   private void startServer(TestHandler testHandler) throws Exception {
