@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace com.inversoft.rest
 {
-    public class JSONResponseHandler<T> implements RESTClient.ResponseHandler<T> {
-        public final static ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
+    public class JSONResponseHandler<T> : ResponseHandler<T>
+    {
+        public readonly static ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
                                                                     .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
                                                                     .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
                                                                     .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
@@ -14,23 +16,21 @@ namespace com.inversoft.rest
                                                                     .configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false)
                                                                     .registerModule(new JacksonModule());
 
-        private final Class<T> type;
-
-        public JSONResponseHandler(Class<T> type) {
-            this.type = type;
+        public JSONResponseHandler(T type) {
+        
         }
 
-        @Override
-  public T apply(InputStream is) throws IOException
+      
+        public T apply(Stream stream) throws IOException
         {
-            if (is == null)
+            if (stream == null)
             {
                 return null;
             }
 
             try
             {
-                return objectMapper.readValue(is, type);
+                return objectMapper.readValue(stream, type);
             }
             catch (IOException e)
             {

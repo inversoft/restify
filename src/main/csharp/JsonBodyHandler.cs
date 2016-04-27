@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
+using System.Net;
 
 namespace com.inversoft.rest
 {
-    public class JSONBodyHandler implements RESTClient.BodyHandler
+    public class JSONBodyHandler : BodyHandler
     {
-        public final static ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
+        public readonly static ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
                                                                     .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
                                                                     .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
                                                                     .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
@@ -23,25 +25,23 @@ namespace com.inversoft.rest
             this.request = request;
         }
 
-        @Override
-  public void accept(OutputStream os) throws IOException
+        public void accept(Stream stream) throws IOException
         {
-            if (body != null && os != null)
+            if (body != null && stream != null)
             {
-                os.write(body);
+                stream.write(body);
             }
         }
 
-        @Override
-  public void setHeaders(HttpURLConnection huc) {
+        public void setHeaders(WebRequest req) {
             if (request != null)
             {
-                huc.addRequestProperty("Content-Type", "application/json");
+                req.addRequestProperty("Content-Type", "application/json");
 
                 try
                 {
                     body = objectMapper.writeValueAsBytes(request);
-                    huc.addRequestProperty("Content-Length", "" + body.length);
+                    req.addRequestProperty("Content-Length", "" + body.Length);
                 }
                 catch (IOException e)
                 {

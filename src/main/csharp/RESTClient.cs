@@ -1,15 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Net;
-using System.Collections;
+using System.Net.Security;
+using System.Web;
+using System.IO;
+using JsonFx.Json;
+using NLog;
 
 namespace com.inversoft.rest
 {
     public class RESTClient<RS, ERS>
     {
-        private static readonly Logger logger = LoggerFactory.getLogger(RESTClient.class);
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         public readonly Dictionary<string, string> headers = new Dictionary<string, string>();
 
@@ -21,7 +26,7 @@ namespace com.inversoft.rest
 
         public string certificate;
 
-        public int connectTimeout = 2000;
+        public int? timeout = null;
 
         public ResponseHandler<ERS> errorResponseHandler;
 
@@ -29,7 +34,7 @@ namespace com.inversoft.rest
 
         public HTTPMethod method;
 
-        public int readTimeout = 2000;
+        public int? readWriteTimeout = null;
 
         public ResponseHandler<RS> successResponseHandler;
 
@@ -38,13 +43,13 @@ namespace com.inversoft.rest
 
         }
 
-        public RESTClient<RS, ERS> authorization(string key)
+        public RESTClient<RS, ERS> Authorization(string key)
         {
             this.headers.Add("Authorization", key);
             return this;
         }
 
-        public RESTClient<RS, ERS> basicAuthorization(string username, string password)
+        public RESTClient<RS, ERS> BasicAuthorization(string username, string password)
         {
             if (username != null && password != null)
             {
@@ -69,7 +74,7 @@ namespace com.inversoft.rest
 
         public RESTClient<RS, ERS> ConnectTimeout(int connectTimeout)
         {
-            this.connectTimeout = connectTimeout;
+            this.timeout = connectTimeout;
             return this;
         }
 
@@ -79,7 +84,7 @@ namespace com.inversoft.rest
             return this;
         }
 
-        public RESTClient<RS, ERS> errorResponseHandlerMethod(ResponseHandler<ERS> errorResponseHandler)
+        public RESTClient<RS, ERS> ErrorResponseHandler(ResponseHandler<ERS> errorResponseHandler)
         {
             this.errorResponseHandler = errorResponseHandler;
             return this;
@@ -90,7 +95,6 @@ namespace com.inversoft.rest
             this.method = HTTPMethod.GET;
             return this;
         }
-
         public ClientResponse<RS, ERS> go()
         {
             if (url.Length == 0)
@@ -114,79 +118,84 @@ namespace com.inversoft.rest
             }
 
             ClientResponse<RS, ERS> response = new ClientResponse<RS, ERS>();
-            WebRequest request;
+            HttpWebRequest request;
             try
             {
-                if (parameters.size() > 0)
+                if (parameters.Count > 0)
                 {
-                    if (url.indexOf("?") == -1)
+                    if (!url.ToString().Contains("?"))
                     {
-                        url.append("?");
+                        url.Append("?");
                     }
 
-                    for (Iterator<Entry<string, List<Object>>> i = parameters.entrySet().iterator(); i.hasNext();)
+                    foreach (var pair in parameters)
                     {
-                        Entry<string, List<Object>> entry = i.next();
-
-                        for (Iterator<Object> j = entry.getValue().iterator(); j.hasNext();)
+                        foreach (var value in pair.Value)
                         {
-                            Object value = j.next();
-                            url.append(URLEncoder.encode(entry.getKey(), "UTF-8")).append("=").append(URLEncoder.encode(value.toString(), "UTF-8"));
-                            if (j.hasNext())
-                            {
-                                url.append("&");
-                            }
-                        }
-
-                        if (i.hasNext())
-                        {
-                            url.append("&");
+                            url.Append(HttpUtility.UrlEncode(pair.Key, Encoding.UTF8)).Append("=").Append(HttpUtility.UrlEncode(value.ToString(), Encoding.UTF8)).Append("&");
                         }
                     }
+
+                    url.Remove(url.Length-1, 1);        
                 }
 
-                URL urlObject = new URL(url.toString());
-                huc = (HttpURLConnection)urlObject.openConnection();
-                if (urlObject.getProtocol().toLowerCase().equals("https") && certificate != null)
+                Uri urlObject = new Uri(url.ToString());
+                request = (HttpWebRequest)WebRequest.Create(urlObject);
+
+                //Need to resolve SSL issue
+                /*
+                if (urlObject.Scheme.ToLower().Equals("https") && certificate != null)
                 {
-                    HttpsURLConnection hsuc = (HttpsURLConnection)huc;
+                    WebRequest wr = request;
                     if (key != null)
                     {
-                        hsuc.setSSLSocketFactory(SSLTools.getSSLServerContext(certificate, key).getSocketFactory());
+                        wr.setSSLSocketFactory(SSLTools.getSSLServerContext(certificate, key).getSocketFactory());
                     }
                     else
                     {
-                        hsuc.setSSLSocketFactory(SSLTools.getSSLSocketFactory(certificate));
+                        wr.setSSLSocketFactory(SSLTools.getSSLSocketFactory(certificate));
                     }
                 }
+                */
 
-                huc.setDoOutput(bodyHandler != null);
-                huc.setConnectTimeout(connectTimeout);
-                huc.setReadTimeout(readTimeout);
-                huc.setRequestMethod(method.toString());
-
-                if (headers.size() > 0)
+                //request.setDoOutput(bodyHandler != null);
+                if (timeout != null)
                 {
-                    headers.forEach(huc::addRequestProperty);
+                    request.Timeout = (int)timeout;
+                }
+                
+                if (readWriteTimeout != null)
+                {
+                    request.ReadWriteTimeout = (int)readWriteTimeout;
+                }
+
+                request.Method = method.ToString();
+
+                if (headers.Count > 0)
+                {
+                    foreach (var header in headers)
+                    {
+                        request.Headers.Add(header.Key, header.Value);
+                    }
                 }
 
                 if (bodyHandler != null)
                 {
-                    bodyHandler.setHeaders(huc);
+                    bodyHandler.setHeaders(request);
                 }
-
-                huc.connect();
 
                 if (bodyHandler != null)
                 {
-                    try (OutputStream os = huc.getOutputStream()) {
-                        bodyHandler.accept(os);
-                        os.flush();
+                    using (Stream stream = request.GetRequestStream()) 
+                    {
+                        bodyHandler.accept(stream);
+                        stream.Flush();
                     }
-                    }
-    } catch (Exception e)
+                }
+            }
+            catch (Exception e)
             {
-                logger.debug("Error calling REST WebService at [" + url + "]", e);
+                logger.Debug(e, "Error calling REST WebService at [" + url + "]");
                 response.exception = e;
                 return response;
             }
@@ -194,11 +203,12 @@ namespace com.inversoft.rest
             int status;
             try
             {
-                status = huc.getResponseCode();
+                HttpWebResponse resp = (HttpWebResponse)request.GetResponse();
+                status = (int)resp.StatusCode;
             }
             catch (Exception e)
             {
-                logger.debug("Error calling REST WebService at [" + url + "]", e);
+                logger.Debug(e, "Error calling REST WebService at [" + url + "]");
                 response.exception = e;
                 return response;
             }
@@ -212,11 +222,13 @@ namespace com.inversoft.rest
                     return response;
                 }
 
-                try (InputStream is = huc.getErrorStream()) {
-                    response.errorResponse = errorResponseHandler.apply(is);
-                } catch (Exception e)
+                using (Stream str = response.getErrorStream())
                 {
-                    logger.debug("Error calling REST WebService at [" + url + "]", e);
+                    response.errorResponse = errorResponseHandler.apply(str);
+                } 
+                catch (Exception e)
+                {
+                    logger.Debug(e, "Error calling REST WebService at [" + url + "]");
                     response.exception = e;
                     return response;
                 }
@@ -228,11 +240,13 @@ namespace com.inversoft.rest
                     return response;
                 }
 
-                try (InputStream is = huc.getInputStream()) {
-                    response.successResponse = successResponseHandler.apply(is);
-                } catch (Exception e)
+                using (Stream str = response.getInputStream())
                 {
-                    logger.debug("Error calling REST WebService at [" + url + "]", e);
+                    response.successResponse = successResponseHandler.apply(str);
+                } 
+                catch (Exception e)
+                {
+                    logger.Debug(e, "Error calling REST WebService at [" + url + "]");
                     response.exception = e;
                     return response;
                 }
@@ -241,13 +255,14 @@ namespace com.inversoft.rest
             return response;
         }
 
-        public RESTClient<RS, ERS> header(string name, string value)
+
+        public RESTClient<RS, ERS> Header(string name, string value)
         {
             this.headers.Add(name, value);
             return this;
         }
 
-        public RESTClient<RS, ERS> headersGroup(Dictionary<string, string> newHeaders)
+        public RESTClient<RS, ERS> Headers(Dictionary<string, string> newHeaders)
         {
             foreach (var header in newHeaders)
             {
@@ -257,7 +272,7 @@ namespace com.inversoft.rest
             return this;
         }
 
-        public RESTClient<RS, ERS> keyMethod(string newKey)
+        public RESTClient<RS, ERS> KeyMethod(string newKey)
         {
             this.key = newKey;
             return this;
@@ -275,13 +290,13 @@ namespace com.inversoft.rest
             return this;
         }
 
-        public RESTClient<RS, ERS> readTimeoutMethod(int readTimeout)
+        public RESTClient<RS, ERS> ReadTimeout(int readTimeout)
         {
-            this.readTimeout = readTimeout;
+            this.readWriteTimeout = readTimeout;
             return this;
         }
 
-        public RESTClient<RS, ERS> successResponseHandlerMethod(ResponseHandler<RS> successResponseHandler)
+        public RESTClient<RS, ERS> SuccessResponseHandler(ResponseHandler<RS> successResponseHandler)
         {
             this.successResponseHandler = successResponseHandler;
             return this;
@@ -310,7 +325,7 @@ namespace com.inversoft.rest
             return this;
         }
 
-        public RESTClient<RS, ERS> urlMethod(string url)
+        public RESTClient<RS, ERS> Url(string url)
         {
             this.url.Clear();
             this.url.Append(url);
@@ -328,7 +343,7 @@ namespace com.inversoft.rest
          *              be used to set in the request using <code>ZonedDateTime.toInstant().toEpochMilli()</code>
          * @return This.
          */
-        public RESTClient<RS, ERS> urlParameter(string name, Object value)
+        public RESTClient<RS, ERS> UrlParameter(string name, Object value)
         {
             if (value == null)
             {
@@ -371,15 +386,15 @@ namespace com.inversoft.rest
          * @param value The url path segment. A null value will be ignored.
          * @return This.
          */
-        public RESTClient<RS, ERS> urlSegment(Object value)
+        public RESTClient<RS, ERS> UrlSegment(Object value)
         {
             if (value != null)
             {
-                if (url.charAt(url.length() - 1) != '/')
+                if (url[url.Length - 1] != '/')
                 {
-                    url.append('/');
+                    url.Append('/');
                 }
-                url.append(value.toString());
+                url.Append((String)value);
             }
             return this;
         }
@@ -394,24 +409,7 @@ namespace com.inversoft.rest
             POST,
             PUT,
             DELETE
-        }
-
-        /**
-         * Handles responses from the HTTP server.
-         *
-         * @param <T> The type that is returned from the handler.
-         */
-        public interface ResponseHandler<T>
-        {
-            /**
-             * Handles the InputStream that is the HTTP response and reads it in and converts it to a value.
-             *
-             * @param is The InputStream to read from.
-             * @return The value.
-             * @throws IOException If the read failed.
-             */
-            T apply(InputStream is) throws IOException;
-        }
+        }      
     }
 
     /**
@@ -426,20 +424,36 @@ namespace com.inversoft.rest
          * @param os The OutputStream to write the body to.
          * @throws IOException If the write failed.
          */
-        void accept(OutputStream os) throws IOException;
+        void accept(Stream sw);
 
         /**
          * Sets any headers for the HTTP body that will be written.
          *
          * @param huc The HttpURLConnection to set headers into.
          */
-        void setHeaders(HttpURLConnection huc);
+        void setHeaders(WebRequest req);
+    }
+
+    /**
+         * Handles responses from the HTTP server.
+         *
+         * @param <T> The type that is returned from the handler.
+         */
+    public interface ResponseHandler<T>
+    {
+        /**
+         * Handles the InputStream that is the HTTP response and reads it in and converts it to a value.
+         *
+         * @param is The InputStream to read from.
+         * @return The value.
+         * @throws IOException If the read failed.
+         */
+        T apply(Stream sr);
     }
 
     public sealed class RESTVoid
     {
 
-    }
-    
+    }  
 }
 
