@@ -7,7 +7,6 @@ using System.Net;
 using System.Net.Security;
 using System.Web;
 using System.IO;
-using JsonFx.Json;
 using NLog;
 
 namespace com.inversoft.rest
@@ -143,10 +142,10 @@ namespace com.inversoft.rest
                 request = (HttpWebRequest)WebRequest.Create(urlObject);
 
                 //Need to resolve SSL issue
-                /*
+
                 if (urlObject.Scheme.ToLower().Equals("https") && certificate != null)
                 {
-                    WebRequest wr = request;
+                    HttpWebRequest wr = request;
                     if (key != null)
                     {
                         wr.setSSLSocketFactory(SSLTools.getSSLServerContext(certificate, key).getSocketFactory());
@@ -156,19 +155,17 @@ namespace com.inversoft.rest
                         wr.setSSLSocketFactory(SSLTools.getSSLSocketFactory(certificate));
                     }
                 }
-                */
+
 
                 //request.setDoOutput(bodyHandler != null);
                 if (timeout != null)
                 {
                     request.Timeout = (int)timeout;
-                }
-                
+                }              
                 if (readWriteTimeout != null)
                 {
                     request.ReadWriteTimeout = (int)readWriteTimeout;
                 }
-
                 request.Method = method.ToString();
 
                 if (headers.Count > 0)
@@ -222,10 +219,14 @@ namespace com.inversoft.rest
                     return response;
                 }
 
-                using (Stream str = response.getErrorStream())
+                try
                 {
-                    response.errorResponse = errorResponseHandler.apply(str);
-                } 
+                    using (Stream str = request.GetRequestStream())
+                    {
+                        response.errorResponse = errorResponseHandler.apply(str);
+                        str.Flush();
+                    }
+                }
                 catch (Exception e)
                 {
                     logger.Debug(e, "Error calling REST WebService at [" + url + "]");
@@ -240,10 +241,15 @@ namespace com.inversoft.rest
                     return response;
                 }
 
-                using (Stream str = response.getInputStream())
+                try
                 {
-                    response.successResponse = successResponseHandler.apply(str);
-                } 
+                    using (Stream str = request.GetRequestStream())
+                    {
+                        response.successResponse = successResponseHandler.apply(str);
+                        str.Flush();
+                    }
+                }
+
                 catch (Exception e)
                 {
                     logger.Debug(e, "Error calling REST WebService at [" + url + "]");
@@ -306,7 +312,7 @@ namespace com.inversoft.rest
         {
             if (url.Length == 0)
             {
-                return this;
+                return this; //throw an exception?
             }
 
             if (url[url.Length - 1] == '/' && uri[0] == '/')
@@ -431,7 +437,7 @@ namespace com.inversoft.rest
          *
          * @param huc The HttpURLConnection to set headers into.
          */
-        void setHeaders(WebRequest req);
+        void setHeaders(HttpWebRequest req);
     }
 
     /**

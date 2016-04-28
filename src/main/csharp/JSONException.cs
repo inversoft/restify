@@ -7,12 +7,14 @@ namespace com.inversoft.rest
 {
     public class JSONException : Exception
     {
-        public JSONException() {
-            super();
+        public JSONException() : base()
+        {
+        
         }
 
-        public JSONException(Exception cause) {
-            super(cause);
+        public JSONException(Exception cause) : base(null, cause)
+        {
+           
         }
     }
 }
