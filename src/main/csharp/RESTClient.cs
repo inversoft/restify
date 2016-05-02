@@ -1,4 +1,7 @@
-﻿using System;
+﻿/*
+ * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
+ */
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +12,19 @@ using System.Web;
 using System.IO;
 using NLog;
 
-namespace com.inversoft.rest
+namespace Com.Inversoft.Rest
 {
+    /**
+ * RESTful WebService call builder. This provides the ability to call RESTful WebServices using a builder pattern to
+ * set up all the necessary request information and parse the response.
+ */
     public class RESTClient<RS, ERS>
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
-        public readonly Dictionary<string, string> headers = new Dictionary<string, string>();
+        public readonly IDictionary<string, string> headers = new Dictionary<string, string>();
 
-        public readonly Dictionary<string, List<Object>> parameters = new Dictionary<string, List<object>>();
+        public readonly IDictionary<string, List<Object>> parameters = new Dictionary<string, List<object>>();
 
         public readonly StringBuilder url = new StringBuilder();
 
@@ -71,13 +78,13 @@ namespace com.inversoft.rest
             return this;
         }
 
-        public RESTClient<RS, ERS> ConnectTimeout(int connectTimeout)
+        public RESTClient<RS, ERS> Timeout(int connectTimeout)
         {
             this.timeout = connectTimeout;
             return this;
         }
 
-        public RESTClient<RS, ERS> delete()
+        public RESTClient<RS, ERS> Delete()
         {
             this.method = HTTPMethod.DELETE;
             return this;
@@ -89,13 +96,13 @@ namespace com.inversoft.rest
             return this;
         }
 
-        public RESTClient<RS, ERS> get()
+        public RESTClient<RS, ERS> Get()
         {
             this.method = HTTPMethod.GET;
             return this;
         }
 
-        public ClientResponse<RS, ERS> go()
+        public ClientResponse<RS, ERS> Go()
         {
             if (url.Length == 0)
             {
@@ -179,14 +186,14 @@ namespace com.inversoft.rest
 
                 if (bodyHandler != null)
                 {
-                    bodyHandler.setHeaders(request);
+                    bodyHandler.SetHeaders(request);
                 }
 
                 if (bodyHandler != null)
                 {
                     using (Stream stream = request.GetRequestStream()) 
                     {
-                        bodyHandler.accept(stream);
+                        bodyHandler.Accept(stream);
                         stream.Flush();
                     }
                 }
@@ -203,17 +210,9 @@ namespace com.inversoft.rest
             {
                 HttpWebResponse resp = (HttpWebResponse)request.GetResponse();
                 status = (int)resp.StatusCode;
+                response.status = status;
             }
-            catch (Exception e)
-            {
-                logger.Debug(e, "Error calling REST WebService at [" + url + "]");
-                response.exception = e;
-                return response;
-            }
-
-            response.status = status;
-
-            if (status < 200 || status > 299)
+            catch (WebException e)
             {
                 if (errorResponseHandler == null)
                 {
@@ -222,46 +221,42 @@ namespace com.inversoft.rest
 
                 try
                 {
-                    using (Stream str = request.GetRequestStream())
+                    using (Stream str = request.GetResponse().GetResponseStream())
                     {
-                        response.errorResponse = errorResponseHandler.apply(str);
-                        str.Flush();
+                        response.errorResponse = errorResponseHandler.Apply(str);
                     }
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
                     logger.Debug(e, "Error calling REST WebService at [" + url + "]");
                     response.exception = e;
                     return response;
                 }
             }
-            else
+
+
+            if (successResponseHandler == null)
             {
-                if (successResponseHandler == null)
-                {
-                    return response;
-                }
+                return response;
+            }
 
-                try
+            try
+            {
+                using (Stream str = request.GetResponse().GetResponseStream())
                 {
-                    using (Stream str = request.GetRequestStream())
-                    {
-                        response.successResponse = successResponseHandler.apply(str);
-                        str.Flush();
-                    }
-                }
-
-                catch (Exception e)
-                {
-                    logger.Debug(e, "Error calling REST WebService at [" + url + "]");
-                    response.exception = e;
-                    return response;
+                    response.successResponse = successResponseHandler.Apply(str);
                 }
             }
 
-            return response;
-        }
+            catch (Exception e)
+            {
+                logger.Debug(e, "Error calling REST WebService at [" + url + "]");
+                response.exception = e;
+                return response;
+            }
 
+            return response;    
+        }
 
         public RESTClient<RS, ERS> Header(string name, string value)
         {
@@ -285,19 +280,19 @@ namespace com.inversoft.rest
             return this;
         }
 
-        public RESTClient<RS, ERS> post()
+        public RESTClient<RS, ERS> Post()
         {
             this.method = HTTPMethod.POST;
             return this;
         }
 
-        public RESTClient<RS, ERS> put()
+        public RESTClient<RS, ERS> Put()
         {
             this.method = HTTPMethod.PUT;
             return this;
         }
 
-        public RESTClient<RS, ERS> ReadTimeout(int readTimeout)
+        public RESTClient<RS, ERS> ReadWriteTimeout(int readTimeout)
         {
             this.readWriteTimeout = readTimeout;
             return this;
@@ -309,7 +304,7 @@ namespace com.inversoft.rest
             return this;
         }
 
-        public RESTClient<RS, ERS> uri(string uri)
+        public RESTClient<RS, ERS> Uri(string uri)
         {
             if (url.Length == 0)
             {
@@ -431,14 +426,14 @@ namespace com.inversoft.rest
          * @param os The OutputStream to write the body to.
          * @throws IOException If the write failed.
          */
-        void accept(Stream sw);
+        void Accept(Stream sw);
 
         /**
          * Sets any headers for the HTTP body that will be written.
          *
          * @param huc The HttpURLConnection to set headers into.
          */
-        void setHeaders(HttpWebRequest req);
+        void SetHeaders(HttpWebRequest req);
     }
 
     /**
@@ -455,7 +450,7 @@ namespace com.inversoft.rest
          * @return The value.
          * @throws IOException If the read failed.
          */
-        T apply(Stream sr);
+        T Apply(Stream sr);
     }
 
     public sealed class RESTVoid

@@ -1,11 +1,14 @@
-﻿using System;
+﻿/*
+ * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
 using JsonFx.Json;
 
-namespace com.inversoft.rest
+namespace Com.Inversoft.Rest
 {
     public class JSONResponseHandler<T> : ResponseHandler<T>
     {
@@ -28,7 +31,7 @@ namespace com.inversoft.rest
         }
 
       
-        public T apply(Stream stream)
+        public T Apply(Stream stream)
         {
             if (stream == null)
             {
@@ -37,7 +40,7 @@ namespace com.inversoft.rest
 
             try
             {
-                TextReader streamText = new StreamReader(stream);
+                TextReader streamText = new StreamReader(stream, Encoding.UTF8);
                 return jread.Read<T>(streamText);
             }
             catch (IOException e)

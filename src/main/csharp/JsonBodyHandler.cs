@@ -1,4 +1,7 @@
-﻿using System;
+﻿/*
+ * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +10,7 @@ using System.Net;
 using JsonFx.Json;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace com.inversoft.rest
+namespace Com.Inversoft.Rest
 {
     public class JSONBodyHandler : BodyHandler
     {
@@ -18,6 +21,8 @@ namespace com.inversoft.rest
         //                                                            .configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS, false)
         //                                                            .configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false)
         //                                                            .registerModule(new JacksonModule());
+
+        public JsonWriter jWrite = new JsonWriter();
 
         private byte[] body;
 
@@ -32,7 +37,7 @@ namespace com.inversoft.rest
             this.request = request;
         }
 
-        public void accept(Stream stream)
+        public void Accept(Stream stream)
         {
             if (body != null && stream != null)
             {
@@ -40,7 +45,7 @@ namespace com.inversoft.rest
             }
         }
 
-        public void setHeaders(HttpWebRequest req)
+        public void SetHeaders(HttpWebRequest req)
         {
             if (request != null)
             {
@@ -48,13 +53,10 @@ namespace com.inversoft.rest
 
                 try
                 {
-                    BinaryFormatter bf = new BinaryFormatter();
-                    using (MemoryStream ms = new MemoryStream())
-                    {
-                        bf.Serialize(ms, request);
-                        body = ms.ToArray();
-                    }
-                    req.Headers.Add("Content-Length", "" + body.Length);
+                    string jsonBody = jWrite.Write(request);
+                    body = Encoding.UTF8.GetBytes(jsonBody);
+
+                    req.Headers.Add("Content-Length", body.Length.ToString());
                 }
                 catch (IOException e)
                 {

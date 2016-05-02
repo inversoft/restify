@@ -1,9 +1,12 @@
-﻿using System;
+﻿/*
+ * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace com.inversoft.rest
+namespace Com.Inversoft.Rest
 {
     public class ClientResponse<T, U>
     {
@@ -15,7 +18,7 @@ namespace com.inversoft.rest
 
         public T successResponse;
 
-        public bool wasSuccessful()
+        public bool WasSuccessful()
         {
             return status >= 200 && status <= 299 && exception == null;
         }
