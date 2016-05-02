@@ -1,7 +1,0 @@
-C:\Users\Nate Bookout\Documents\Visual Studio 2015\Projects\Restify\bin\Debug\Restify.dll.config
-C:\Users\Nate Bookout\Documents\Visual Studio 2015\Projects\Restify\bin\Debug\Restify.dll
-C:\Users\Nate Bookout\Documents\Visual Studio 2015\Projects\Restify\bin\Debug\Restify.pdb
-C:\Users\Nate Bookout\Documents\Visual Studio 2015\Projects\Restify\bin\Debug\JsonFx.dll
-C:\Users\Nate Bookout\Documents\Visual Studio 2015\Projects\Restify\bin\Debug\NLog.dll
-C:\Users\Nate Bookout\Documents\Visual Studio 2015\Projects\Restify\obj\x86\Debug\Restify.dll
-C:\Users\Nate Bookout\Documents\Visual Studio 2015\Projects\Restify\obj\x86\Debug\Restify.pdb

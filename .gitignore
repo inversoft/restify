@@ -1,2 +1,4 @@
 build
 *.iws
+/obj
+/bin
