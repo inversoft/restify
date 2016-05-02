@@ -16,7 +16,6 @@
 package com.inversoft.net.ssl;
 
 import javax.net.ssl.*;
-import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.*;
@@ -27,6 +26,7 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Base64;
 
 /**
  * Useful for setting up SSL on the client side to trust a supplied certificate string.
@@ -148,7 +148,7 @@ public class SSLTools {
     }
 
     String base64 = pem.substring(startIndex + beginDelimiter.length(), endIndex);
-    return DatatypeConverter.parseBase64Binary(base64);
+    return Base64.getDecoder().decode(base64);
   }
 
   // Disable SNI so that it doesn't mess up our use of JSSE with some certificates
