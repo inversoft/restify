@@ -1,4 +1,6 @@
 build
 *.iws
-/obj
-/bin
+obj
+bin
+.vs
+Restify.csproj.user

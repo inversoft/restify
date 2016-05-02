@@ -94,6 +94,7 @@ namespace com.inversoft.rest
             this.method = HTTPMethod.GET;
             return this;
         }
+
         public ClientResponse<RS, ERS> go()
         {
             if (url.Length == 0)
