@@ -143,18 +143,18 @@ namespace com.inversoft.rest
 
                 //Need to resolve SSL issue
 
-                if (urlObject.Scheme.ToLower().Equals("https") && certificate != null)
-                {
-                    HttpWebRequest wr = request;
-                    if (key != null)
-                    {
-                        wr.setSSLSocketFactory(SSLTools.getSSLServerContext(certificate, key).getSocketFactory());
-                    }
-                    else
-                    {
-                        wr.setSSLSocketFactory(SSLTools.getSSLSocketFactory(certificate));
-                    }
-                }
+                //if (urlObject.Scheme.ToLower().Equals("https") && certificate != null)
+                //{
+                //    HttpWebRequest wr = request;
+                //    if (key != null)
+                //    {
+                //        wr.setSSLSocketFactory(SSLTools.getSSLServerContext(certificate, key).getSocketFactory());
+                //    }
+                //    else
+                //    {
+                //        wr.setSSLSocketFactory(SSLTools.getSSLSocketFactory(certificate));
+                //    }
+                //}
 
 
                 //request.setDoOutput(bodyHandler != null);

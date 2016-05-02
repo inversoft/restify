@@ -10,6 +10,11 @@ namespace com.inversoft.rest
     public class JSONResponseHandler<T> : ResponseHandler<T>
     {
         public readonly static JsonReader jread = new JsonReader();
+
+        public JSONResponseHandler()
+        {
+        }
+
         //public readonly static ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
         //                                                            .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
         //                                                            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)

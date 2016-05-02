@@ -23,6 +23,10 @@ namespace com.inversoft.rest
 
         public Object request;
 
+        public JSONBodyHandler()
+        {
+        }
+
         public JSONBodyHandler(Object request)
         {
             this.request = request;
