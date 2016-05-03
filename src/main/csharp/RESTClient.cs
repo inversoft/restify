@@ -375,7 +375,11 @@ namespace Com.Inversoft.Rest
                 {
                     values.Add(val);
                 }
-            } 
+            }
+            else if (value is bool)
+            {
+                values.Add(value.ToString().ToLower());
+            }
             else 
             {
                 values.Add(value);
@@ -403,7 +407,7 @@ namespace Com.Inversoft.Rest
                 {
                     url.Append('/');
                 }
-                url.Append((String)value);
+                url.Append(value.ToString());
             }
             return this;
         }

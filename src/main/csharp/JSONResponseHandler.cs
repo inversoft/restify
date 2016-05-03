@@ -26,7 +26,8 @@ namespace Com.Inversoft.Rest
         //                                                            .configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false)
         //                                                            .registerModule(new JacksonModule());
 
-        public JSONResponseHandler(T type) {
+        public JSONResponseHandler(T type)
+        {
         
         }
 
@@ -41,6 +42,7 @@ namespace Com.Inversoft.Rest
             try
             {
                 TextReader streamText = new StreamReader(stream, Encoding.UTF8);
+                string output = streamText.ReadToEnd();
                 return jread.Read<T>(streamText);
             }
             catch (IOException e)
