@@ -126,6 +126,7 @@ namespace Com.Inversoft.Rest
 
             ClientResponse<RS, ERS> response = new ClientResponse<RS, ERS>();
             HttpWebRequest request;
+
             try
             {
                 if (parameters.Count > 0)
@@ -164,8 +165,8 @@ namespace Com.Inversoft.Rest
                 //    }
                 //}
 
-
                 //request.setDoOutput(bodyHandler != null);
+
                 if (timeout != null)
                 {
                     request.Timeout = (int)timeout;
@@ -198,6 +199,7 @@ namespace Com.Inversoft.Rest
                     }
                 }
             }
+
             catch (Exception e)
             {
                 logger.Debug(e, "Error calling REST WebService at [" + url + "]");
@@ -205,16 +207,12 @@ namespace Com.Inversoft.Rest
                 return response;
             }
 
-            int status;
             try
             {
                 HttpWebResponse resp = (HttpWebResponse)request.GetResponse();
-                status = (int)resp.StatusCode;
-                response.status = status;
-            }
-            catch (WebException e)
-            {
-                if (errorResponseHandler == null)
+                response.status = (int)resp.StatusCode;
+
+                if (successResponseHandler == null)
                 {
                     return response;
                 }
@@ -223,10 +221,11 @@ namespace Com.Inversoft.Rest
                 {
                     using (Stream str = request.GetResponse().GetResponseStream())
                     {
-                        response.errorResponse = errorResponseHandler.Apply(str);
+                        response.successResponse = successResponseHandler.Apply(str);
                     }
                 }
-                catch (Exception ex)
+
+                catch (Exception e)
                 {
                     logger.Debug(e, "Error calling REST WebService at [" + url + "]");
                     response.exception = e;
@@ -234,27 +233,32 @@ namespace Com.Inversoft.Rest
                 }
             }
 
-
-            if (successResponseHandler == null)
-            {
-                return response;
-            }
-
-            try
-            {
-                using (Stream str = request.GetResponse().GetResponseStream())
+            catch (WebException e)
+            {                               
+                using (WebResponse webResp = e.Response)
                 {
-                    response.successResponse = successResponseHandler.Apply(str);
-                }
-            }
+                    HttpWebResponse httpResp = (HttpWebResponse)webResp;
+                    response.status = (int)httpResp.StatusCode;
 
-            catch (Exception e)
-            {
-                logger.Debug(e, "Error calling REST WebService at [" + url + "]");
-                response.exception = e;
-                return response;
-            }
+                    if (errorResponseHandler == null)
+                    {
+                        return response;
+                    }
 
+                    try
+                    {
+                        response.errorResponse = errorResponseHandler.Apply(httpResp.GetResponseStream());
+                    }
+                                    
+                    catch (Exception ex)
+                    {
+                        logger.Debug(e, "Error calling REST WebService at [" + url + "]");
+                        response.exception = ex;
+                        return response;
+                    }    
+                }         
+            }
+       
             return response;    
         }
 
@@ -352,7 +356,9 @@ namespace Com.Inversoft.Rest
                 return this;
             }
 
-            List<Object> values = this.parameters[name];
+            List<Object> values;
+            this.parameters.TryGetValue(name, out values);
+
             if (values == null)
             {
                 values = new List<Object>();
@@ -363,9 +369,9 @@ namespace Com.Inversoft.Rest
             {
                 values.Add(((DateTime)value).ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds);
             }
-            else if (value is IEnumerable) 
+            else if (value is ICollection) 
             {
-                foreach (var val in (IEnumerable) value)
+                foreach (var val in (ICollection) value)
                 {
                     values.Add(val);
                 }
@@ -374,6 +380,7 @@ namespace Com.Inversoft.Rest
             {
                 values.Add(value);
             }
+
             return this;
         }
 
