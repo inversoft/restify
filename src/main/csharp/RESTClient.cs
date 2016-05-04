@@ -4,10 +4,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Net;
-using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Web;
 using System.IO;
 using NLog;
@@ -30,13 +29,11 @@ namespace Com.Inversoft.Rest
 
         public BodyHandler bodyHandler;
 
-        public string certificate;
+        public X509Certificate certificate;
 
         public int? timeout = null;
 
         public ResponseHandler<ERS> errorResponseHandler;
-
-        public string key;
 
         public HTTPMethod method;
 
@@ -72,7 +69,7 @@ namespace Com.Inversoft.Rest
             return this;
         }
 
-        public RESTClient<RS, ERS> Certificate(string certificate)
+        public RESTClient<RS, ERS> Certificate(X509Certificate certificate)
         {
             this.certificate = certificate;
             return this;
@@ -150,20 +147,12 @@ namespace Com.Inversoft.Rest
                 Uri urlObject = new Uri(url.ToString());
                 request = (HttpWebRequest)WebRequest.Create(urlObject);
 
-                //Need to resolve SSL issue
-
-                //if (urlObject.Scheme.ToLower().Equals("https") && certificate != null)
-                //{
-                //    HttpWebRequest wr = request;
-                //    if (key != null)
-                //    {
-                //        wr.setSSLSocketFactory(SSLTools.getSSLServerContext(certificate, key).getSocketFactory());
-                //    }
-                //    else
-                //    {
-                //        wr.setSSLSocketFactory(SSLTools.getSSLSocketFactory(certificate));
-                //    }
-                //}
+                // Handle SSL certificates
+                if (urlObject.Scheme.ToLower().Equals("https") && certificate != null)
+                {
+                    ServicePointManager.CertificatePolicy = new CertPolicy();
+                    request.ClientCertificates.Add(certificate);
+                }
 
                 //request.setDoOutput(bodyHandler != null);
 
@@ -232,9 +221,16 @@ namespace Com.Inversoft.Rest
                     return response;
                 }
             }
-
             catch (WebException e)
-            {                               
+            {
+                // The response will be null if the server couldn't be contacted, the connection broke, or 
+                // the communication with the server failed
+                if (e.Response == null)
+                {
+                    response.exception = e;
+                    return response;
+                }                   
+                            
                 using (WebResponse webResp = e.Response)
                 {
                     HttpWebResponse httpResp = (HttpWebResponse)webResp;
@@ -249,7 +245,6 @@ namespace Com.Inversoft.Rest
                     {
                         response.errorResponse = errorResponseHandler.Apply(httpResp.GetResponseStream());
                     }
-                                    
                     catch (Exception ex)
                     {
                         logger.Debug(e, "Error calling REST WebService at [" + url + "]");
@@ -275,12 +270,6 @@ namespace Com.Inversoft.Rest
                 this.headers.Add(header.Key, header.Value);
             }
 
-            return this;
-        }
-
-        public RESTClient<RS, ERS> KeyMethod(string newKey)
-        {
-            this.key = newKey;
             return this;
         }
 
@@ -468,5 +457,13 @@ namespace Com.Inversoft.Rest
     {
 
     }  
+
+    public sealed class CertPolicy : ICertificatePolicy
+    {
+        public bool CheckValidationResult(ServicePoint servicePoint, X509Certificate certificate, WebRequest webRequest, int certificateProblem)
+        {
+            return true;
+        }
+    }
 }
 
