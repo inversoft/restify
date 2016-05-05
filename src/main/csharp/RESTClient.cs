@@ -191,7 +191,7 @@ namespace Com.Inversoft.Rest
 
             catch (Exception e)
             {
-                logger.Debug(e, "Error calling REST WebService at [" + url + "]");
+                logger.Debug(e.Message, "Error calling REST WebService at [" + url + "]");
                 response.exception = e;
                 return response;
             }
@@ -216,7 +216,7 @@ namespace Com.Inversoft.Rest
 
                 catch (Exception e)
                 {
-                    logger.Debug(e, "Error calling REST WebService at [" + url + "]");
+                    logger.Debug(e.Message, "Error calling REST WebService at [" + url + "]");
                     response.exception = e;
                     return response;
                 }
@@ -247,7 +247,7 @@ namespace Com.Inversoft.Rest
                     }
                     catch (Exception ex)
                     {
-                        logger.Debug(e, "Error calling REST WebService at [" + url + "]");
+                        logger.Debug(e.Message, "Error calling REST WebService at [" + url + "]");
                         response.exception = ex;
                         return response;
                     }    
@@ -322,7 +322,7 @@ namespace Com.Inversoft.Rest
 
         public RESTClient<RS, ERS> Url(string url)
         {
-            this.url.Clear();
+            this.url.Remove(0, this.url.Length - 1);
             this.url.Append(url);
             return this;
         }
