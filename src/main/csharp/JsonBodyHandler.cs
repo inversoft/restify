@@ -2,12 +2,10 @@
  * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
  */
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.IO;
 using System.Net;
-using JsonFx.Json;
+using Newtonsoft.Json;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Com.Inversoft.Rest
@@ -22,7 +20,7 @@ namespace Com.Inversoft.Rest
         //                                                            .configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false)
         //                                                            .registerModule(new JacksonModule());
 
-        public JsonWriter jWrite = new JsonWriter();
+        //public JsonWriter jWrite = new JsonWriter();
 
         private byte[] body;
 
@@ -53,7 +51,7 @@ namespace Com.Inversoft.Rest
 
                 try
                 {
-                    string jsonBody = jWrite.Write(request);
+                    string jsonBody = JsonConvert.SerializeObject(request);
                     body = Encoding.UTF8.GetBytes(jsonBody);
 
                     req.Headers.Add("Content-Length", body.Length.ToString());

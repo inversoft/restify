@@ -1,18 +1,15 @@
 ﻿/*
  * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.IO;
-using JsonFx.Json;
+using Newtonsoft.Json;
 
 namespace Com.Inversoft.Rest
 {
     public class JSONResponseHandler<T> : ResponseHandler<T>
     {
-        public readonly static JsonReader jread = new JsonReader();
+        //public readonly static JsonReader jread = new JsonReader();
 
         public JSONResponseHandler()
         {
@@ -43,7 +40,7 @@ namespace Com.Inversoft.Rest
             {
                 TextReader streamText = new StreamReader(stream, Encoding.UTF8);
                 string output = streamText.ReadToEnd();
-                return jread.Read<T>(streamText);
+                return JsonConvert.DeserializeObject<T>(output);
             }
             catch (IOException e)
             {

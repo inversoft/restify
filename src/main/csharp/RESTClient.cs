@@ -322,7 +322,11 @@ namespace Com.Inversoft.Rest
 
         public RESTClient<RS, ERS> Url(string url)
         {
-            this.url.Remove(0, this.url.Length - 1);
+            if (this.url.Length != 0)
+            {
+                this.url.Remove(0, this.url.Length - 1);
+            }
+          
             this.url.Append(url);
             return this;
         }
