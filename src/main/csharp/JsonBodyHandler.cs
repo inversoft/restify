@@ -39,7 +39,7 @@ namespace Com.Inversoft.Rest
         {
             if (body != null && stream != null)
             {
-                stream.Write(body, 0, body.Length);
+                stream.Write(body, 0, body.Length);        
             }
         }
 
@@ -47,14 +47,14 @@ namespace Com.Inversoft.Rest
         {
             if (request != null)
             {
-                req.Headers.Add("Content-Type", "application/json");
+                req.ContentType = "application/json";
 
                 try
                 {
                     string jsonBody = JsonConvert.SerializeObject(request);
                     body = Encoding.UTF8.GetBytes(jsonBody);
 
-                    req.Headers.Add("Content-Length", body.Length.ToString());
+                    req.ContentLength = body.Length;
                 }
                 catch (IOException e)
                 {
