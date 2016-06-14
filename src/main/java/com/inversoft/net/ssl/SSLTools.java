@@ -15,10 +15,21 @@
  */
 package com.inversoft.net.ssl;
 
-import javax.net.ssl.*;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.security.*;
+import java.security.KeyFactory;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -147,7 +158,9 @@ public class SSLTools {
       throw new IllegalArgumentException("Invalid PEM format");
     }
 
-    String base64 = pem.substring(startIndex + beginDelimiter.length(), endIndex);
+    // Strip all the whitespace since the PEM and DER allow them but they aren't valid in Base 64 encoding
+    String base64 = pem.substring(startIndex + beginDelimiter.length(), endIndex).replaceAll("\\s", "");
+    System.out.println(base64);
     return Base64.getDecoder().decode(base64);
   }
 

@@ -113,7 +113,7 @@ public class SSLToolsTest {
     try {
       SSLTools.getSSLSocketFactory(goodCert);
     } catch (Exception e) {
-      fail("Should not have failed");
+      fail("Should not have failed", e);
     }
   }
 
