@@ -160,7 +160,6 @@ public class SSLTools {
 
     // Strip all the whitespace since the PEM and DER allow them but they aren't valid in Base 64 encoding
     String base64 = pem.substring(startIndex + beginDelimiter.length(), endIndex).replaceAll("\\s", "");
-    System.out.println(base64);
     return Base64.getDecoder().decode(base64);
   }
 
