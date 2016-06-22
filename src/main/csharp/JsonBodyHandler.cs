@@ -6,12 +6,19 @@ using System.Text;
 using System.IO;
 using System.Net;
 using Newtonsoft.Json;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Com.Inversoft.Rest
 {
     public class JSONBodyHandler : BodyHandler
     {
+        private static readonly JsonSerializer serializer = new JsonSerializer();
+
+        static JSONBodyHandler()
+        {
+            serializer.DefaultValueHandling = DefaultValueHandling.Ignore;
+            serializer.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+        }
+
         //public readonly static ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
         //                                                            .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
         //                                                            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
@@ -50,8 +57,12 @@ namespace Com.Inversoft.Rest
                 req.ContentType = "application/json";
 
                 try
-                {
-                    string jsonBody = JsonConvert.SerializeObject(request);
+                {                                        
+                    StringWriter writer = new StringWriter();
+                    serializer.Serialize(writer, request);
+
+                    string jsonBody = writer.ToString();
+                    System.Diagnostics.Debug.WriteLine("\n\n\n" + "JSON Body: " + jsonBody + "\n\n\n");
                     body = Encoding.UTF8.GetBytes(jsonBody);
 
                     req.ContentLength = body.Length;

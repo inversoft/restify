@@ -9,7 +9,12 @@ namespace Com.Inversoft.Rest
 {
     public class JSONResponseHandler<T> : ResponseHandler<T>
     {
-        //public readonly static JsonReader jread = new JsonReader();
+        private static readonly JsonSerializer serializer = new JsonSerializer();
+
+        static JSONResponseHandler()
+        {
+            serializer.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+        }
 
         public JSONResponseHandler()
         {
@@ -24,10 +29,8 @@ namespace Com.Inversoft.Rest
         //                                                            .registerModule(new JacksonModule());
 
         public JSONResponseHandler(T type)
-        {
-        
+        {        
         }
-
       
         public T Apply(Stream stream)
         {
@@ -37,10 +40,10 @@ namespace Com.Inversoft.Rest
             }
 
             try
-            {
+            {         
                 TextReader streamText = new StreamReader(stream, Encoding.UTF8);
-                string output = streamText.ReadToEnd();
-                return JsonConvert.DeserializeObject<T>(output);
+                JsonReader reader = new JsonTextReader(streamText);
+                return serializer.Deserialize<T>(reader);
             }
             catch (IOException e)
             {
