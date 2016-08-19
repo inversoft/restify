@@ -8,11 +8,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,17 +51,17 @@ public class RESTClient<RS, ERS> {
 
   public ResponseHandler<ERS> errorResponseHandler;
 
+  public Class<ERS> errorType;
+
   public String key;
 
   public HTTPMethod method;
 
   public int readTimeout = 2000;
 
-  public Class<ERS> errorType;
+  public ResponseHandler<RS> successResponseHandler;
 
   public Class<RS> successType;
-
-  public ResponseHandler<RS> successResponseHandler;
 
   public RESTClient(Class<RS> successType, Class<ERS> errorType) {
     if (successType == Void.class || errorType == Void.class) {
@@ -106,6 +115,10 @@ public class RESTClient<RS, ERS> {
   public RESTClient<RS, ERS> get() {
     this.method = HTTPMethod.GET;
     return this;
+  }
+
+  public URI getURI() {
+    return URI.create(url.toString());
   }
 
   public ClientResponse<RS, ERS> go() {
@@ -360,6 +373,15 @@ public class RESTClient<RS, ERS> {
     void accept(OutputStream os) throws IOException;
 
     /**
+     * Returns the processed body. This may be used if there is use externally to get the body length or to generate a body signature. This
+     * may or may not be called, so any serialization must be done before returning from {@link #setHeaders(HttpURLConnection)} or this
+     * method. The request processing to build the body should only be performed once.
+     *
+     * @return a byte array representing the body to be written to the output stream.
+     */
+    byte[] getBody();
+
+    /**
      * Sets any headers for the HTTP body that will be written.
      *
      * @param huc The HttpURLConnection to set headers into.
@@ -378,6 +400,7 @@ public class RESTClient<RS, ERS> {
      *
      * @param is The InputStream to read from.
      * @return The value.
+     *
      * @throws IOException If the read failed.
      */
     T apply(InputStream is) throws IOException;

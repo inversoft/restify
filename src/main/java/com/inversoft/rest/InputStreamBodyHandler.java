@@ -43,6 +43,11 @@ public class InputStreamBodyHandler implements RESTClient.BodyHandler {
   }
 
   @Override
+  public byte[] getBody() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
   public void setHeaders(HttpURLConnection huc) {
     if (contentType != null) {
       huc.addRequestProperty("Content-Type", contentType);

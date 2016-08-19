@@ -30,10 +30,23 @@ public class FormDataBodyHandler implements RESTClient.BodyHandler {
   }
 
   @Override
+  public byte[] getBody() {
+    if (request != null) {
+      serializeRequest();
+    }
+    return body;
+  }
+
+  @Override
   public void setHeaders(HttpURLConnection huc) {
     if (request != null) {
+      serializeRequest();
       huc.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+    }
+  }
 
+  private void serializeRequest() {
+    if (body == null) {
       StringBuilder build = new StringBuilder();
       request.forEach((key, value) -> {
         if (build.length() > 0) {

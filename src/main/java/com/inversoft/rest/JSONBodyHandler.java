@@ -41,13 +41,24 @@ public class JSONBodyHandler implements RESTClient.BodyHandler {
   }
 
   @Override
+  public byte[] getBody() {
+    serializeRequest();
+    return body;
+  }
+
+  @Override
   public void setHeaders(HttpURLConnection huc) {
     if (request != null) {
+      serializeRequest();
       huc.addRequestProperty("Content-Type", "application/json");
+      huc.addRequestProperty("Content-Length", "" + body.length);
+    }
+  }
 
+  private void serializeRequest() {
+    if (request != null && body == null) {
       try {
         body = objectMapper.writeValueAsBytes(request);
-        huc.addRequestProperty("Content-Length", "" + body.length);
       } catch (IOException e) {
         throw new JSONException(e);
       }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2014-2016, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,15 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -117,6 +120,25 @@ public class SSLTools {
     context.init(null, tm, null);
 
     return context.getSocketFactory();
+  }
+
+  /**
+   * Sign the provided string with the private key and the provided signature.
+   *
+   * @param string    The string to sign.
+   * @param keyString The private to use when signing the string.
+   * @return the signed string.
+   */
+  public static String signWithRSA(String string, String keyString) throws InvalidKeyException, SignatureException, InvalidKeySpecException {
+    try {
+      PrivateKey privateKey = generatePrivateKeyFromDER(keyString.getBytes());
+      Signature rsa = Signature.getInstance("RSA");
+      rsa.initSign(privateKey);
+      rsa.update(string.getBytes());
+      return new String(Base64.getEncoder().encode(rsa.sign()));
+    } catch (NoSuchAlgorithmException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**
