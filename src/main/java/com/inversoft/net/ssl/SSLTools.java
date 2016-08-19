@@ -23,7 +23,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.security.InvalidKeyException;
+import java.math.BigInteger;
+import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -31,7 +32,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Signature;
-import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -40,7 +40,11 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.RSAPrivateCrtKeySpec;
 import java.util.Base64;
+
+import sun.security.util.DerInputStream;
+import sun.security.util.DerValue;
 
 /**
  * Useful for setting up SSL on the client side to trust a supplied certificate string.
@@ -61,6 +65,16 @@ public class SSLTools {
   public static final String P8_KEY_START = "BEGIN PRIVATE KEY-----";
 
   /**
+   * RSA Private Key file (PKCS#1) End Tag
+   */
+  public static final String PKCS_1_KEY_END = "-----END RSA PRIVATE KEY";
+
+  /**
+   * RSA Private Key file (PKCS#1)  Start Tag
+   */
+  public static final String PKCS_1_KEY_START = "BEGIN RSA PRIVATE KEY-----";
+
+  /**
    * This creates an in-memory keystore containing the certificate and private key and initializes the SSLContext with
    * the key material it contains.
    * <p>
@@ -76,7 +90,7 @@ public class SSLTools {
     byte[] keyBytes = parseDERFromPEM(keyString, P8_KEY_START, P8_KEY_END);
 
     X509Certificate cert = generateCertificateFromDER(certBytes);
-    PrivateKey key = generatePrivateKeyFromDER(keyBytes);
+    PrivateKey key = generatePrivateKeyFromPKCS8DER(keyBytes);
     KeyStore keystore = KeyStore.getInstance("JKS");
     keystore.load(null);
     keystore.setCertificateEntry("cert-alias", cert);
@@ -123,19 +137,32 @@ public class SSLTools {
   }
 
   /**
-   * Sign the provided string with the private key and the provided signature.
+   * Sign the provided string with the private key and the provided signature. The provided private key string is expected to be in one of
+   * the two formats: PKCS#1 or PKCS#8.
    *
    * @param string    The string to sign.
    * @param keyString The private to use when signing the string.
    * @return the signed string.
    */
-  public static String signWithRSA(String string, String keyString) throws InvalidKeyException, SignatureException, InvalidKeySpecException {
+  public static String signWithRSA(String string, String keyString) throws GeneralSecurityException, IOException {
     try {
-      PrivateKey privateKey = generatePrivateKeyFromDER(keyString.getBytes());
-      Signature rsa = Signature.getInstance("RSA");
+      RSAPrivateKey privateKey;
+      // If PKCS#1
+      if (keyString.contains(PKCS_1_KEY_START)) {
+        byte[] bytes = parseDERFromPEM(keyString, PKCS_1_KEY_START, PKCS_1_KEY_END);
+        privateKey = generatePrivateKeyFromPKCS10DER(bytes);
+      } else {
+        // else, assume PKCS#8
+        byte[] bytes = parseDERFromPEM(keyString, P8_KEY_START, P8_KEY_END);
+        privateKey = generatePrivateKeyFromPKCS8DER(bytes);
+      }
+
+      Signature rsa = Signature.getInstance("NONEwithRSA");
       rsa.initSign(privateKey);
       rsa.update(string.getBytes());
-      return new String(Base64.getEncoder().encode(rsa.sign()));
+      byte[] signed = rsa.sign();
+
+      return new String(Base64.getEncoder().encode(signed));
     } catch (NoSuchAlgorithmException e) {
       throw new RuntimeException(e);
     }
@@ -163,7 +190,29 @@ public class SSLTools {
     return (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(certBytes));
   }
 
-  private static RSAPrivateKey generatePrivateKeyFromDER(byte[] keyBytes) throws InvalidKeySpecException, NoSuchAlgorithmException {
+  private static RSAPrivateKey generatePrivateKeyFromPKCS10DER(byte[] keyBytes) throws GeneralSecurityException, IOException {
+    DerInputStream derReader = new DerInputStream(keyBytes);
+    DerValue[] seq = derReader.getSequence(0);
+
+    if (seq.length < 9) {
+      throw new GeneralSecurityException("Could not parse a PKCS1 private key.");
+    }
+
+    // skip version seq[0];
+    BigInteger modulus = seq[1].getBigInteger();
+    BigInteger publicExponent = seq[2].getBigInteger();
+    BigInteger privateExponent = seq[3].getBigInteger();
+    BigInteger primeP = seq[4].getBigInteger();
+    BigInteger primeQ = seq[5].getBigInteger();
+    BigInteger primeExponentP = seq[6].getBigInteger();
+    BigInteger primeExponentQ = seq[7].getBigInteger();
+    BigInteger crtCoefficient = seq[8].getBigInteger();
+    RSAPrivateCrtKeySpec keySpec = new RSAPrivateCrtKeySpec(modulus, publicExponent, privateExponent, primeP, primeQ, primeExponentP, primeExponentQ, crtCoefficient);
+
+    return (RSAPrivateKey) KeyFactory.getInstance("RSA").generatePrivate(keySpec);
+  }
+
+  private static RSAPrivateKey generatePrivateKeyFromPKCS8DER(byte[] keyBytes) throws InvalidKeySpecException, NoSuchAlgorithmException {
     PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
     KeyFactory factory = KeyFactory.getInstance("RSA");
     return (RSAPrivateKey) factory.generatePrivate(spec);
