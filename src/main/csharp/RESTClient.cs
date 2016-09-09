@@ -14,16 +14,22 @@ using NLog;
 namespace Com.Inversoft.Rest
 {
     /**
- * RESTful WebService call builder. This provides the ability to call RESTful WebServices using a builder pattern to
- * set up all the necessary request information and parse the response.
- */
-    public class RESTClient<RS, ERS>
+     * Make the logger the same instance across all RESTClient type classes
+     */
+    public class BaseRESTClient
     {
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        protected static readonly Logger logger = LogManager.GetCurrentClassLogger();
+    }
 
+    /**
+ 	 * RESTful WebService call builder. This provides the ability to call RESTful WebServices using a builder pattern to
+ 	 * set up all the necessary request information and parse the response.
+ 	 */
+    public class RESTClient<RS, ERS>: BaseRESTClient
+    {
         public readonly IDictionary<string, string> headers = new Dictionary<string, string>();
 
-        public readonly IDictionary<string, List<Object>> parameters = new Dictionary<string, List<object>>();
+        public readonly IDictionary<string, List<object>> parameters = new Dictionary<string, List<object>>();
 
         public readonly StringBuilder url = new StringBuilder();
 
@@ -31,24 +37,19 @@ namespace Com.Inversoft.Rest
 
         public X509Certificate certificate;
 
-        public int? timeout = null;
+        public int timeout = 2000;
 
         public ResponseHandler<ERS> errorResponseHandler;
 
         public HTTPMethod method;
 
-        public int? readWriteTimeout = null;
+        public int readWriteTimeout = 2000;
 
         public ResponseHandler<RS> successResponseHandler;
 
-        public RESTClient()
-        {
-
-        }
-
         public RESTClient<RS, ERS> Authorization(string key)
         {
-            this.headers.Add("Authorization", key);
+            headers.Add("Authorization", key);
             return this;
         }
 
@@ -57,8 +58,8 @@ namespace Com.Inversoft.Rest
             if (username != null && password != null)
             {
                 string credentials = username + ":" + password;
-                string encoded = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(credentials));
-                this.headers.Add("Authorization", "Basic " + encoded);
+                string encoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(credentials));
+                headers.Add("Authorization", "Basic " + encoded);
             }
             return this;
         }
@@ -77,13 +78,13 @@ namespace Com.Inversoft.Rest
 
         public RESTClient<RS, ERS> Timeout(int connectTimeout)
         {
-            this.timeout = connectTimeout;
+            timeout = connectTimeout;
             return this;
         }
 
         public RESTClient<RS, ERS> Delete()
         {
-            this.method = HTTPMethod.DELETE;
+            method = HTTPMethod.DELETE;
             return this;
         }
 
@@ -95,7 +96,7 @@ namespace Com.Inversoft.Rest
 
         public RESTClient<RS, ERS> Get()
         {
-            this.method = HTTPMethod.GET;
+            method = HTTPMethod.GET;
             return this;
         }
 
@@ -121,7 +122,7 @@ namespace Com.Inversoft.Rest
                 throw new InvalidOperationException("You specified an error response type, you must then provide an error response handler.");
             }
 
-            ClientResponse<RS, ERS> response = new ClientResponse<RS, ERS>();
+            var response = new ClientResponse<RS, ERS>();
             HttpWebRequest request;
 
             try
@@ -144,7 +145,7 @@ namespace Com.Inversoft.Rest
                     url.Remove(url.Length-1, 1);        
                 }
 
-                Uri urlObject = new Uri(url.ToString());
+                var urlObject = new Uri(url.ToString());
                 request = (HttpWebRequest)WebRequest.Create(urlObject);
 
                 // Handle SSL certificates
@@ -154,16 +155,8 @@ namespace Com.Inversoft.Rest
                     request.ClientCertificates.Add(certificate);
                 }
 
-                //request.setDoOutput(bodyHandler != null);
-
-                if (timeout != null)
-                {
-                    request.Timeout = (int)timeout;
-                }              
-                if (readWriteTimeout != null)
-                {
-                    request.ReadWriteTimeout = (int)readWriteTimeout;
-                }
+                request.Timeout = timeout;
+                request.ReadWriteTimeout = readWriteTimeout;
                 request.Method = method.ToString();
 
                 if (headers.Count > 0)
@@ -198,7 +191,7 @@ namespace Com.Inversoft.Rest
 
             try
             {
-                HttpWebResponse resp = (HttpWebResponse)request.GetResponse();
+                var resp = (HttpWebResponse)request.GetResponse();
                 response.status = (int)resp.StatusCode;
 
                 if (successResponseHandler == null)
@@ -233,7 +226,7 @@ namespace Com.Inversoft.Rest
                             
                 using (WebResponse webResp = e.Response)
                 {
-                    HttpWebResponse httpResp = (HttpWebResponse)webResp;
+                    var httpResp = (HttpWebResponse)webResp;
                     response.status = (int)httpResp.StatusCode;
 
                     if (errorResponseHandler == null)
@@ -259,7 +252,7 @@ namespace Com.Inversoft.Rest
 
         public RESTClient<RS, ERS> Header(string name, string value)
         {
-            this.headers.Add(name, value);
+			headers.Add(name, value);
             return this;
         }
 
@@ -267,7 +260,7 @@ namespace Com.Inversoft.Rest
         {
             foreach (var header in newHeaders)
             {
-                this.headers.Add(header.Key, header.Value);
+                headers.Add(header.Key, header.Value);
             }
 
             return this;
@@ -275,19 +268,19 @@ namespace Com.Inversoft.Rest
 
         public RESTClient<RS, ERS> Post()
         {
-            this.method = HTTPMethod.POST;
+            method = HTTPMethod.POST;
             return this;
         }
 
         public RESTClient<RS, ERS> Put()
         {
-            this.method = HTTPMethod.PUT;
+            method = HTTPMethod.PUT;
             return this;
         }
 
         public RESTClient<RS, ERS> ReadWriteTimeout(int readTimeout)
         {
-            this.readWriteTimeout = readTimeout;
+			readWriteTimeout = readTimeout;
             return this;
         }
 
@@ -342,20 +335,20 @@ namespace Com.Inversoft.Rest
          *              be used to set in the request using <code>ZonedDateTime.toInstant().toEpochMilli()</code>
          * @return This.
          */
-        public RESTClient<RS, ERS> UrlParameter(string name, Object value)
+        public RESTClient<RS, ERS> UrlParameter(string name, object value)
         {
             if (value == null)
             {
                 return this;
             }
 
-            List<Object> values;
-            this.parameters.TryGetValue(name, out values);
+            List<object> values;
+            parameters.TryGetValue(name, out values);
 
             if (values == null)
             {
-                values = new List<Object>();
-                this.parameters.Add(name, values);
+                values = new List<object>();
+                parameters.Add(name, values);
             }
 
             if (value is DateTime)
@@ -392,7 +385,7 @@ namespace Com.Inversoft.Rest
          * @param value The url path segment. A null value will be ignored.
          * @return This.
          */
-        public RESTClient<RS, ERS> UrlSegment(Object value)
+        public RESTClient<RS, ERS> UrlSegment(object value)
         {
             if (value != null)
             {
@@ -440,7 +433,7 @@ namespace Com.Inversoft.Rest
         void SetHeaders(HttpWebRequest req);
     }
 
-    /**
+        /**
          * Handles responses from the HTTP server.
          *
          * @param <T> The type that is returned from the handler.

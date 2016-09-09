@@ -4,5 +4,6 @@ obj
 bin
 .vs
 Restify.csproj.user
+Restify.userprefs
 /RESTClientTesting
 packages
