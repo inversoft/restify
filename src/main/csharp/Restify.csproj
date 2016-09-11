@@ -41,49 +41,26 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.8.0.3\lib\net20\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="NLog">
-      <HintPath>packages\NLog.2.0.0.2000\lib\net20\NLog.dll</HintPath>
+      <HintPath>..\..\..\packages\NLog.2.1.0\lib\net20\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.8.0.3\lib\net20\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include=".gitignore" />
-    <Content Include="src\main\java\com\inversoft\net\ssl\SSLTools.java" />
-    <Content Include="src\main\java\com\inversoft\rest\ClientResponse.java" />
-    <Content Include="src\main\java\com\inversoft\rest\FormDataBodyHandler.java" />
-    <Content Include="src\main\java\com\inversoft\rest\InputStreamBodyHandler.java" />
-    <Content Include="src\main\java\com\inversoft\rest\JSONBodyHandler.java" />
-    <Content Include="src\main\java\com\inversoft\rest\JSONException.java" />
-    <Content Include="src\main\java\com\inversoft\rest\JSONResponseHandler.java" />
-    <Content Include="src\main\java\com\inversoft\rest\RESTClient.java" />
-    <Content Include="src\main\java\com\inversoft\rest\TextResponseHandler.java" />
-    <Content Include="src\test\java\com\inversoft\net\ssl\SSLToolsTest.java" />
-    <Content Include="src\test\java\com\inversoft\rest\RESTClientTest.java" />
+    <Compile Include="ClientResponse.cs" />
+    <Compile Include="JSONException.cs" />
+    <Compile Include="JSONResponseHandler.cs" />
+    <Compile Include="JsonBodyHandler.cs" />
+    <Compile Include="RESTClient.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="build.savant" />
     <None Include="packages.config" />
-    <None Include="README.md" />
-    <None Include="restify.iml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include=".git\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="src\main\csharp\ClientResponse.cs" />
-    <Compile Include="src\main\csharp\JSONBodyHandler.cs" />
-    <Compile Include="src\main\csharp\JSONException.cs" />
-    <Compile Include="src\main\csharp\JSONResponseHandler.cs" />
-    <Compile Include="src\main\csharp\RESTClient.cs" />
-    <Compile Include="src\test\csharp\RESTClientTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>

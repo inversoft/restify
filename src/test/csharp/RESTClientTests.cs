@@ -2,55 +2,47 @@
  * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
  */
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using System.Net;
 
 namespace Com.Inversoft.Rest.Tests
 {
-    [TestClass()]
+    [TestFixture]
     public class RESTClientTests
     {
-        [TestMethod()]
-        public void Authorization_Test()
+        [Test]
+        public void Authorization()
         {
-            //arrange
             string testKey = "abc";
-            RESTClient<int, int> restTest = new RESTClient<int, int>();
-            //act
+            var restTest = new RESTClient<int, int>();
             restTest.Authorization(testKey);
             string actualKey = restTest.headers["Authorization"];
-            //assert
             Assert.AreEqual(testKey, actualKey);
         }
 
-        [TestMethod()]
-        public void Authorization_IsNull_Test()
+        [Test]
+        public void Authorization_IsNull()
         {
-            //arrange
             string testKey = null;
-            RESTClient<int, int> restTest = new RESTClient<int, int>();
-            //act
+            var restTest = new RESTClient<int, int>();
             restTest.Authorization(testKey);
             string actualKey = restTest.headers["Authorization"];
-            //assert
             Assert.IsNull(actualKey);
         }
 
-        [TestMethod()]
-        public void BasicAuthorization_UsrPwd_Test()
+        [Test]
+        public void BasicAuthorization_UsrPwd()
         {
             string testUsr = "username";
             string testPwd = "password";
             string cred = testUsr + ":" + testPwd;
-            string enc = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(cred));
+            string enc = Convert.ToBase64String(Encoding.UTF8.GetBytes(cred));
             string expected = "Basic " + enc;
-            RESTClient<int, int> restTest = new RESTClient<int, int>();
+            var restTest = new RESTClient<int, int>();
 
             restTest.BasicAuthorization(testUsr, testPwd);
             string actual = restTest.headers["Authorization"];
@@ -58,59 +50,56 @@ namespace Com.Inversoft.Rest.Tests
             Assert.AreEqual(expected, actual);
         }
 
-        [TestMethod()]
-        public void BasicAuthorization_UsrIsNull_Test()
+        [Test]
+        public void BasicAuthorization_UsrIsNull()
         {
             string testUsr = null;
             string testPwd = "password";
             string cred = testUsr + ":" + testPwd;
-            string enc = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(cred));
+            string enc = Convert.ToBase64String(Encoding.UTF8.GetBytes(cred));
             string expected = "Basic " + enc;
-            RESTClient<int, int> restTest = new RESTClient<int, int>();
+            var restTest = new RESTClient<int, int>();
 
             restTest.BasicAuthorization(testUsr, testPwd);
-            //string actual = restTest.headers["Authorization"];
 
             Assert.IsFalse(restTest.headers.ContainsKey("Authorization"));
         }
 
-        [TestMethod()]
-        public void BasicAuthorization_PwdIsNull_Test()
+        [Test]
+        public void BasicAuthorization_PwdIsNull()
         {
             string testUsr = "username";
             string testPwd = null;
             string cred = testUsr + ":" + testPwd;
-            string enc = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(cred));
+            string enc = Convert.ToBase64String(Encoding.UTF8.GetBytes(cred));
             string expected = "Basic " + enc;
-            RESTClient<int, int> restTest = new RESTClient<int, int>();
+            var restTest = new RESTClient<int, int>();
 
             restTest.BasicAuthorization(testUsr, testPwd);
-            //string actual = restTest.headers["Authorization"];
 
             Assert.IsFalse(restTest.headers.ContainsKey("Authorization"));
         }
 
-        [TestMethod()]
-        public void BasicAuthorization_BothNull_Test()
+        [Test]
+        public void BasicAuthorization_BothNull()
         {
             string testUsr = null;
             string testPwd = null;
             string cred = testUsr + ":" + testPwd;
-            string enc = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(cred));
+            string enc = Convert.ToBase64String(Encoding.UTF8.GetBytes(cred));
             string expected = "Basic " + enc;
-            RESTClient<int, int> restTest = new RESTClient<int, int>();
+            var restTest = new RESTClient<int, int>();
 
             restTest.BasicAuthorization(testUsr, testPwd);
-            //string actual = restTest.headers["Authorization"];
 
             Assert.IsFalse(restTest.headers.ContainsKey("Authorization"));
         }
 
-        [TestMethod()]
-        public void BodyHandler_Test()
+        [Test]
+        public void BodyHandler()
         {
             BodyHandler bodyTest = new JSONBodyHandler();
-            RESTClient<int, int> restTest = new RESTClient<int, int>();
+            var restTest = new RESTClient<int, int>();
 
             restTest.BodyHandler(bodyTest);
             BodyHandler actualBody = restTest.bodyHandler;
@@ -118,11 +107,11 @@ namespace Com.Inversoft.Rest.Tests
             Assert.AreEqual(bodyTest, actualBody);
         }
 
-        [TestMethod()]
-        public void BodyHandler_IsNull_Test()
+        [Test]
+        public void BodyHandler_IsNull()
         {
             BodyHandler bodyTest = null;
-            RESTClient<int, int> restTest = new RESTClient<int, int>();
+            var restTest = new RESTClient<int, int>();
 
             restTest.BodyHandler(bodyTest);
             BodyHandler actualBody = restTest.bodyHandler;
@@ -130,59 +119,59 @@ namespace Com.Inversoft.Rest.Tests
             Assert.AreEqual(bodyTest, actualBody);
         }
 
-        [TestMethod()]
-        public void Certificate_Test()
-        {
-            string testCert = "certificate";
-            RESTClient<int, int> restTest = new RESTClient<int, int>();
+        //[Test]
+        //public void Certificate()
+        //{
+        //    string testCert = "certificate";
+        //    var restTest = new RESTClient<int, int>();
 
-            restTest.Certificate(testCert);
-            string actualCert = restTest.certificate;
+        //    restTest.Certificate(testCert);
+        //    string actualCert = restTest.certificate;
 
-            Assert.AreEqual(testCert, actualCert);
-        }
+        //    Assert.AreEqual(testCert, actualCert);
+        //}
 
-        [TestMethod()]
-        public void Certificate_IsNull_Test()
-        {
-            string testCert = null;
-            RESTClient<int, int> restTest = new RESTClient<int, int>();
+        //[Test]
+        //public void Certificate_IsNull()
+        //{
+        //    string testCert = null;
+        //    var restTest = new RESTClient<int, int>();
 
-            restTest.Certificate(testCert);
-            string actualCert = restTest.certificate;
+        //    restTest.Certificate(testCert);
+        //    string actualCert = restTest.certificate;
 
-            Assert.AreEqual(testCert, actualCert);
-        }
+        //    Assert.AreEqual(testCert, actualCert);
+        //}
 
-        [TestMethod()]
-        public void Timeout_Test()
+        [Test]
+        public void Timeout()
         {
             int testTime = 9;
-            RESTClient<int, int> restTest = new RESTClient<int, int>();
+            var restTest = new RESTClient<int, int>();
 
             restTest.Timeout(testTime);
-            int actualTime = (int)restTest.timeout;
+            var actualTime = restTest.timeout;
 
             Assert.AreEqual(testTime, actualTime);
         }
 
-        [TestMethod()]
-        public void Timeout_IsZero_Test()
+        [Test]
+        public void Timeout_IsZero()
         {
             int testTime = 0;
-            RESTClient<int, int> restTest = new RESTClient<int, int>();
+            var restTest = new RESTClient<int, int>();
 
             restTest.Timeout(testTime);
-            int actualTime = (int)restTest.timeout;
+            var actualTime = restTest.timeout;
 
             Assert.AreEqual(testTime, actualTime);
         }
 
-        [TestMethod()]
-        public void Delete_Test()
+        [Test]
+        public void Delete()
         {
             RESTClient<int, int>.HTTPMethod testMethod = RESTClient<int, int>.HTTPMethod.DELETE;
-            RESTClient<int, int> testRest = new RESTClient<int, int>();
+            var testRest = new RESTClient<int, int>();
 
             testRest.Delete();
             RESTClient<int, int>.HTTPMethod actualMethod = testRest.method;
@@ -190,11 +179,11 @@ namespace Com.Inversoft.Rest.Tests
             Assert.AreEqual(testMethod, actualMethod);
         }
 
-        [TestMethod()]
-        public void ErrorResponseHandler_Test()
+        [Test]
+        public void ErrorResponseHandler()
         {
             ResponseHandler<int> testResponse = new JSONResponseHandler<int>();
-            RESTClient<int, int> testRest = new RESTClient<int, int>();
+            var testRest = new RESTClient<int, int>();
 
             testRest.ErrorResponseHandler(testResponse);
             ResponseHandler<int> actualResponse = testRest.errorResponseHandler;
@@ -202,11 +191,11 @@ namespace Com.Inversoft.Rest.Tests
             Assert.AreEqual(testResponse, actualResponse);
         }
 
-        [TestMethod()]
-        public void ErrorResponseHandler_IsNull_Test()
+        [Test]
+        public void ErrorResponseHandler_IsNull()
         {
             ResponseHandler<int> testResponse = null;
-            RESTClient<int, int> testRest = new RESTClient<int, int>();
+            var testRest = new RESTClient<int, int>();
 
             testRest.ErrorResponseHandler(testResponse);
             ResponseHandler<int> actualResponse = testRest.errorResponseHandler;
@@ -214,11 +203,11 @@ namespace Com.Inversoft.Rest.Tests
             Assert.AreEqual(testResponse, actualResponse);
         }
 
-        [TestMethod()]
-        public void Get_Test()
+        [Test]
+        public void Get()
         {
             RESTClient<int, int>.HTTPMethod testMethod = RESTClient<int, int>.HTTPMethod.GET;
-            RESTClient<int, int> testRest = new RESTClient<int, int>();
+            var testRest = new RESTClient<int, int>();
 
             testRest.Get();
             RESTClient<int, int>.HTTPMethod actualMethod = testRest.method;
@@ -226,8 +215,8 @@ namespace Com.Inversoft.Rest.Tests
             Assert.AreEqual(testMethod, actualMethod);
         }
 
-        [TestMethod()]
-        public void Go_Google_Test()
+        [Test]
+        public void Go_Google()
         {
             ClientResponse<string, RESTVoid> restTest = new RESTClient<string, RESTVoid>()
                 .Url("http://www.google.com")
@@ -239,8 +228,8 @@ namespace Com.Inversoft.Rest.Tests
             Assert.IsTrue(restTest.successResponse != null);
         }
 
-        [TestMethod()]
-        public void Go_Passport_Test()
+        [Test]
+        public void Go_Passport()
         {
             ClientResponse<string, RESTVoid> restTest = new RESTClient<string, RESTVoid>()
                 .Authorization("7844b96b-1e5f-40d7-bd5f-280b282a27e7")
@@ -255,8 +244,8 @@ namespace Com.Inversoft.Rest.Tests
             Console.WriteLine(restTest.successResponse);
         }
 
-        [TestMethod()]
-        public void Url_Parameter_Test()
+        [Test]
+        public void Url_Parameter()
         {
             DateTime now = DateTime.Now;
             double milliseconds = now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
@@ -274,9 +263,9 @@ namespace Com.Inversoft.Rest.Tests
 
             Assert.AreEqual("http://www.google.com/mee/garble", restTest.url.ToString());
             Assert.AreEqual(1, restTest.parameters["time"].Count);
-            Assert.AreEqual(now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds, restTest.parameters["time"].First<Object>());
+            Assert.AreEqual(now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds, restTest.parameters["time"].First());
             Assert.AreEqual(1, restTest.parameters["foo"].Count);
-            Assert.AreEqual("bar", restTest.parameters["foo"].First<Object>());
+            Assert.AreEqual("bar", restTest.parameters["foo"].First());
             Assert.IsFalse(restTest.parameters.ContainsKey("baz"));
 
             restTest.Go();

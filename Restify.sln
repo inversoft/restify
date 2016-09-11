@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restify", "Restify.csproj", "{0A9F2372-A5D7-4E11-951A-881FB313BD28}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restify", "src\main\csharp\Restify.csproj", "{0A9F2372-A5D7-4E11-951A-881FB313BD28}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestifyTest", "src\test\csharp\RestifyTest.csproj", "{CAA3B664-9488-4205-B9FB-7B393724B87C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,8 +20,17 @@ Global
 		{0A9F2372-A5D7-4E11-951A-881FB313BD28}.Debug|x86.ActiveCfg = Debug|x86
 		{0A9F2372-A5D7-4E11-951A-881FB313BD28}.Debug|x86.Build.0 = Debug|x86
 		{0A9F2372-A5D7-4E11-951A-881FB313BD28}.Release|Any CPU.ActiveCfg = Release|x86
+		{0A9F2372-A5D7-4E11-951A-881FB313BD28}.Release|Any CPU.Build.0 = Release|x86
 		{0A9F2372-A5D7-4E11-951A-881FB313BD28}.Release|x86.ActiveCfg = Release|x86
 		{0A9F2372-A5D7-4E11-951A-881FB313BD28}.Release|x86.Build.0 = Release|x86
+		{CAA3B664-9488-4205-B9FB-7B393724B87C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAA3B664-9488-4205-B9FB-7B393724B87C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAA3B664-9488-4205-B9FB-7B393724B87C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CAA3B664-9488-4205-B9FB-7B393724B87C}.Debug|x86.Build.0 = Debug|Any CPU
+		{CAA3B664-9488-4205-B9FB-7B393724B87C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAA3B664-9488-4205-B9FB-7B393724B87C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAA3B664-9488-4205-B9FB-7B393724B87C}.Release|x86.ActiveCfg = Release|Any CPU
+		{CAA3B664-9488-4205-B9FB-7B393724B87C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -31,7 +42,9 @@ Global
 		$1.ResourceNamePolicy = FileFormatDefault
 		$0.TextStylePolicy = $2
 		$2.inheritsSet = null
-		$2.scope = text/x-java-source
+		$2.scope = text/x-csharp
+		$2.FileWidth = 120
+		$2.inheritsScope = text/plain
 		$0.TextStylePolicy = $3
 		$3.FileWidth = 120
 		$3.inheritsSet = VisualStudio
@@ -41,8 +54,9 @@ Global
 		$4.inheritsSet = null
 		$4.scope = application/config+xml
 		$0.XmlFormattingPolicy = $5
-		$5.inheritsSet = null
-		$5.scope = application/config+xml
+		$5.inheritsSet = Mono
+		$5.scope = application/xml
+		$5.inheritsScope = application/xml
 		$0.TextStylePolicy = $6
 		$6.inheritsSet = null
 		$6.scope = application/xml
