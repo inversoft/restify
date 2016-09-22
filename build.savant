@@ -24,7 +24,7 @@ project(group: "com.inversoft", name: "restify", version: "3.0.2", licenses: ["A
       dependency(id: "com.newtonsoft:Newtonsoft.Json:8.0.3+net20:dll")
     }
     group(name: "csharp-test-compile") {
-      dependency(id: "org.nunit:nunit.framework:2.6.3:dll")
+      dependency(id: "org.nunit:nunit.framework:2.6.4:dll")
     }
     group(name: "test-compile", export: false) {
       dependency(id: "org.testng:testng:6.8.7")
@@ -45,8 +45,8 @@ java = loadPlugin(id: "org.savantbuild.plugin:java:${savantVersion}")
 javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:${savantVersion}")
 idea = loadPlugin(id: "org.savantbuild.plugin:idea:${savantVersion}")
 release = loadPlugin(id: "org.savantbuild.plugin:release-git:${savantVersion}")
-csharp = loadPlugin(id: "org.savantbuild.plugin:csharp:1.0.0-{integration}")
-csharpNUnit = loadPlugin(id: "org.savantbuild.plugin:csharp-nunit:1.0.0-{integration}")
+csharp = loadPlugin(id: "org.savantbuild.plugin:csharp:0.1.0-{integration}")
+csharpNUnit = loadPlugin(id: "org.savantbuild.plugin:csharp-nunit:0.1.0-{integration}")
 
 java.settings.javaVersion = "1.8"
 javaTestNG.settings.javaVersion = "1.8"
@@ -61,7 +61,12 @@ csharp.settings.testDependencies = [
 ]
 csharp.settings.references = ["System.Web"]
 csharpNUnit.settings.sdkVersion = "2.0"
-csharpNUnit.settings.nunitVersion = "2.6.3"
+csharpNUnit.settings.nunitVersion = "2.6.4"
+csharpNUnit.settings.dependencies = [
+    [group: "csharp-compile", transitive: true, fetchSource: false],
+    [group: "csharp-test-compile", transitive: true, fetchSource: false]
+]
+
 
 target(name: "clean", description: "Cleans the project") {
   java.clean()
