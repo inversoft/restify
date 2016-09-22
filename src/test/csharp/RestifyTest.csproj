@@ -7,7 +7,9 @@
     <OutputType>Library</OutputType>
     <RootNamespace>RestifyTest</RootNamespace>
     <AssemblyName>RestifyTest</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <UseMSBuildEngine>false</UseMSBuildEngine>
+    <ReleaseVersion>3.0.2</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

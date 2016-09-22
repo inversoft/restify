@@ -9,23 +9,31 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Web;
 using System.IO;
-using NLog;
 
 namespace Com.Inversoft.Rest
 {
     /**
-     * Make the logger the same instance across all RESTClient type classes
+     * A local interface for logging. If this isn't implemented or specified, the RESTClient will not log.
      */
-    public class BaseRESTClient
+    public interface Logger
     {
-        protected static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        void Debug(string message, Exception e);
     }
+
+    public class NoOpLogger : Logger
+    {
+        public void Debug(string message, Exception e)
+        {
+            // No-op
+        }
+    }
+
 
     /**
  	 * RESTful WebService call builder. This provides the ability to call RESTful WebServices using a builder pattern to
  	 * set up all the necessary request information and parse the response.
  	 */
-    public class RESTClient<RS, ERS>: BaseRESTClient
+    public class RESTClient<RS, ERS> 
     {
         public readonly IDictionary<string, string> headers = new Dictionary<string, string>();
 
@@ -37,15 +45,27 @@ namespace Com.Inversoft.Rest
 
         public X509Certificate certificate;
 
-        public int timeout = 2000;
-
         public ResponseHandler<ERS> errorResponseHandler;
+
+        public Logger logger;
 
         public HTTPMethod method;
 
         public int readWriteTimeout = 2000;
 
         public ResponseHandler<RS> successResponseHandler;
+
+        public int timeout = 2000;
+
+        public RESTClient()
+        {
+            this.logger = new NoOpLogger();
+        }
+
+        public RESTClient(Logger logger)
+        {
+            this.logger = logger;
+        }
 
         public RESTClient<RS, ERS> Authorization(string key)
         {
@@ -184,7 +204,7 @@ namespace Com.Inversoft.Rest
 
             catch (Exception e)
             {
-                logger.Debug(e.Message, "Error calling REST WebService at [" + url + "]");
+                logger.Debug("Error calling REST WebService at [" + url + "]", e);
                 response.exception = e;
                 return response;
             }
@@ -209,7 +229,7 @@ namespace Com.Inversoft.Rest
 
                 catch (Exception e)
                 {
-                    logger.Debug(e.Message, "Error calling REST WebService at [" + url + "]");
+                    logger.Debug("Error calling REST WebService at [" + url + "]", e);
                     response.exception = e;
                     return response;
                 }
@@ -240,7 +260,7 @@ namespace Com.Inversoft.Rest
                     }
                     catch (Exception ex)
                     {
-                        logger.Debug(e.Message, "Error calling REST WebService at [" + url + "]");
+                        logger.Debug("Error calling REST WebService at [" + url + "]", e);
                         response.exception = ex;
                         return response;
                     }    
@@ -433,11 +453,11 @@ namespace Com.Inversoft.Rest
         void SetHeaders(HttpWebRequest req);
     }
 
-        /**
-         * Handles responses from the HTTP server.
-         *
-         * @param <T> The type that is returned from the handler.
-         */
+    /**
+     * Handles responses from the HTTP server.
+     *
+     * @param <T> The type that is returned from the handler.
+     */
     public interface ResponseHandler<T>
     {
         /**

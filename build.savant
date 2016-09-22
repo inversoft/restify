@@ -20,6 +20,12 @@ project(group: "com.inversoft", name: "restify", version: "3.0.2", licenses: ["A
       dependency(id: "com.inversoft:jackson5:2.3.0")
       dependency(id: "org.slf4j:slf4j-api:1.7.7")
     }
+    group(name: "csharp-compile") {
+      dependency(id: "com.newtonsoft:Newtonsoft.Json:8.0.3+net20:dll")
+    }
+    group(name: "csharp-test-compile") {
+      dependency(id: "org.nunit:nunit.framework:2.6.3:dll")
+    }
     group(name: "test-compile", export: false) {
       dependency(id: "org.testng:testng:6.8.7")
     }
@@ -27,8 +33,10 @@ project(group: "com.inversoft", name: "restify", version: "3.0.2", licenses: ["A
 
   publications {
     standard()
+    main {
+      publication(name: "restify", type: "dll", file: "build/dlls/restify.dll")
+    }
   }
-
 }
 
 // Plugins
@@ -37,16 +45,32 @@ java = loadPlugin(id: "org.savantbuild.plugin:java:${savantVersion}")
 javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:${savantVersion}")
 idea = loadPlugin(id: "org.savantbuild.plugin:idea:${savantVersion}")
 release = loadPlugin(id: "org.savantbuild.plugin:release-git:${savantVersion}")
+csharp = loadPlugin(id: "org.savantbuild.plugin:csharp:1.0.0-{integration}")
+csharpNUnit = loadPlugin(id: "org.savantbuild.plugin:csharp-nunit:1.0.0-{integration}")
 
 java.settings.javaVersion = "1.8"
 javaTestNG.settings.javaVersion = "1.8"
+csharp.settings.sdkVersion = "2.0"
+csharp.settings.compilerExecutable = "gmcs"
+csharp.settings.mainDependencies = [
+    [group: "csharp-compile", transitive: false, fetchSource: false]
+]
+csharp.settings.testDependencies = [
+    [group: "csharp-compile", transitive: false, fetchSource: false],
+    [group: "csharp-test-compile", transitive: false, fetchSource: false]
+]
+csharp.settings.references = ["System.Web"]
+csharpNUnit.settings.sdkVersion = "2.0"
+csharpNUnit.settings.nunitVersion = "2.6.3"
 
 target(name: "clean", description: "Cleans the project") {
   java.clean()
+  csharp.clean()
 }
 
 target(name: "compile", description: "Compiles the project") {
   java.compile()
+  csharp.compile()
 }
 
 target(name: "jar", description: "JARs the project", dependsOn: ["compile"]) {
@@ -55,10 +79,12 @@ target(name: "jar", description: "JARs the project", dependsOn: ["compile"]) {
 
 target(name: "test", description: "Runs the project's tests", dependsOn: ["jar"]) {
   javaTestNG.test()
+  csharpNUnit.test()
 }
 
 target(name: "doc", description: "Generate the project's JavaDoc", dependsOn: ["jar"]) {
   java.document()
+  csharp.exportDocs()
 }
 
 target(name: "int", description: "Releases a local integration build of the project", dependsOn: ["test"]) {
