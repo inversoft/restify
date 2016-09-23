@@ -17,17 +17,8 @@ namespace Com.Inversoft.Rest
         {
             serializer.DefaultValueHandling = DefaultValueHandling.Ignore;
             serializer.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            serializer.Converters.Add(new Com.Inversoft.Rest.DateTimeOffsetConverter());
         }
-
-        //public readonly static ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
-        //                                                            .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
-        //                                                            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-        //                                                            .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
-        //                                                            .configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS, false)
-        //                                                            .configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false)
-        //                                                            .registerModule(new JacksonModule());
-
-        //public JsonWriter jWrite = new JsonWriter();
 
         private byte[] body;
 

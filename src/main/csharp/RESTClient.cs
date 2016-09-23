@@ -205,6 +205,7 @@ namespace Com.Inversoft.Rest
             catch (Exception e)
             {
                 logger.Debug("Error calling REST WebService at [" + url + "]", e);
+                response.status = -1;
                 response.exception = e;
                 return response;
             }
@@ -226,17 +227,19 @@ namespace Com.Inversoft.Rest
                         response.successResponse = successResponseHandler.Apply(str);
                     }
                 }
-
                 catch (Exception e)
                 {
                     logger.Debug("Error calling REST WebService at [" + url + "]", e);
+                    response.status = -1;
                     response.exception = e;
                     return response;
                 }
             }
             catch (WebException e)
             {
-                // The response will be null if the server couldn't be contacted, the connection broke, or 
+                response.status = -1;
+
+                // The response will be null if the server couldn't be contacted, the connection broke, or
                 // the communication with the server failed
                 if (e.Response == null)
                 {

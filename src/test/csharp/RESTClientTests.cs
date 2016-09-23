@@ -2,12 +2,12 @@
  * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
  */
 
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using NUnit.Framework;
 
 namespace Com.Inversoft.Rest.Tests
 {

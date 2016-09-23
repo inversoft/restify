@@ -52,8 +52,9 @@
     <Compile Include="ClientResponse.cs" />
     <Compile Include="JSONException.cs" />
     <Compile Include="JSONResponseHandler.cs" />
-    <Compile Include="JsonBodyHandler.cs" />
     <Compile Include="RESTClient.cs" />
+    <Compile Include="DateTimeOffsetConverter.cs" />
+    <Compile Include="JSONBodyHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

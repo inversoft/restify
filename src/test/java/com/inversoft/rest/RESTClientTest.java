@@ -142,7 +142,7 @@ public class RESTClientTest {
   }
 
   @Test
-  public void get_void_emptyJSOM() throws Exception {
+  public void get_void_emptyJSON() throws Exception {
     TestHandler handler = new TestHandler(null, null, null, "GET", 200, "");
     startServer(handler);
 
@@ -154,7 +154,8 @@ public class RESTClientTest {
         .go();
 
     assertEquals(handler.count, 1);
-    assertEquals(response.status, 200);
+    assertEquals(response.status, -1);
+    assertFalse(response.wasSuccessful());
     assertNull(response.successResponse);
   }
 

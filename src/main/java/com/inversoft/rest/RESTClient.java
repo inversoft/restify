@@ -195,6 +195,7 @@ public class RESTClient<RS, ERS> {
       }
     } catch (Exception e) {
       logger.debug("Error calling REST WebService at [" + url + "]", e);
+      response.status = -1;
       response.exception = e;
       return response;
     }
@@ -204,6 +205,7 @@ public class RESTClient<RS, ERS> {
       status = huc.getResponseCode();
     } catch (Exception e) {
       logger.debug("Error calling REST WebService at [" + url + "]", e);
+      response.status = -1;
       response.exception = e;
       return response;
     }
@@ -219,6 +221,7 @@ public class RESTClient<RS, ERS> {
         response.errorResponse = errorResponseHandler.apply(is);
       } catch (Exception e) {
         logger.debug("Error calling REST WebService at [" + url + "]", e);
+        response.status = -1;
         response.exception = e;
         return response;
       }
@@ -231,6 +234,7 @@ public class RESTClient<RS, ERS> {
         response.successResponse = successResponseHandler.apply(is);
       } catch (Exception e) {
         logger.debug("Error calling REST WebService at [" + url + "]", e);
+        response.status = -1;
         response.exception = e;
         return response;
       }

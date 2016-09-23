@@ -14,6 +14,7 @@ namespace Com.Inversoft.Rest
         static JSONResponseHandler()
         {
             serializer.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            serializer.Converters.Add(new Com.Inversoft.Rest.DateTimeOffsetConverter());
         }
 
         public JSONResponseHandler()
@@ -32,7 +33,7 @@ namespace Com.Inversoft.Rest
             }
 
             try
-            {         
+            {
                 TextReader streamText = new StreamReader(stream, Encoding.UTF8);
                 JsonReader reader = new JsonTextReader(streamText);
                 return serializer.Deserialize<T>(reader);
