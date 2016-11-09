@@ -143,8 +143,9 @@ namespace Com.Inversoft.Rest
             }
 
             var response = new ClientResponse<RS, ERS>();
-            HttpWebRequest request;
+            response.request = (bodyHandler != null) ? bodyHandler.GetBodyObject() : null;
 
+            HttpWebRequest request;
             try
             {
                 if (parameters.Count > 0)
@@ -165,11 +166,11 @@ namespace Com.Inversoft.Rest
                     url.Remove(url.Length-1, 1);        
                 }
 
-                var urlObject = new Uri(url.ToString());
-                request = (HttpWebRequest)WebRequest.Create(urlObject);
+                response.url = new Uri(url.ToString());
+                request = (HttpWebRequest)WebRequest.Create(response.url);
 
                 // Handle SSL certificates
-                if (urlObject.Scheme.ToLower().Equals("https") && certificate != null)
+                if (response.url.Scheme.ToLower().Equals("https") && certificate != null)
                 {
                     ServicePointManager.CertificatePolicy = new CertPolicy();
                     request.ClientCertificates.Add(certificate);
@@ -275,7 +276,7 @@ namespace Com.Inversoft.Rest
 
         public RESTClient<RS, ERS> Header(string name, string value)
         {
-			headers.Add(name, value);
+            headers.Add(name, value);
             return this;
         }
 
@@ -303,7 +304,7 @@ namespace Com.Inversoft.Rest
 
         public RESTClient<RS, ERS> ReadWriteTimeout(int readTimeout)
         {
-			readWriteTimeout = readTimeout;
+            readWriteTimeout = readTimeout;
             return this;
         }
 
@@ -447,6 +448,12 @@ namespace Com.Inversoft.Rest
          * @throws IOException If the write failed.
          */
         void Accept(Stream sw);
+
+        /**
+         * @return The unprocessed body object. This might be a JSON object, a Map of key value pairs or a String. By default, this returns
+         * null.
+         */
+        Object GetBodyObject();
 
         /**
          * Sets any headers for the HTTP body that will be written.

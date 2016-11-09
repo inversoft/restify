@@ -2,6 +2,7 @@
  * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
  */
 using System;
+using System.Net;
 
 namespace Com.Inversoft.Rest
 {
@@ -11,9 +12,13 @@ namespace Com.Inversoft.Rest
 
         public Exception exception;
 
+        public Object request;
+
         public int status;
 
         public T successResponse;
+
+        public Uri url;
 
         public bool WasSuccessful()
         {

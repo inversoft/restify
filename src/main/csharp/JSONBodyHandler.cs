@@ -41,6 +41,11 @@ namespace Com.Inversoft.Rest
             }
         }
 
+        public Object GetBodyObject()
+        {
+            return request;
+        }
+
         public void SetHeaders(HttpWebRequest req)
         {
             if (request != null)
