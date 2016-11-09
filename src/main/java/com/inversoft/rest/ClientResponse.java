@@ -27,6 +27,8 @@ public class ClientResponse<T, U> {
 
   public Exception exception;
 
+  public RESTClient.HTTPMethod method;
+
   public Object request;
 
   public int status;

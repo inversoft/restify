@@ -12,6 +12,8 @@ namespace Com.Inversoft.Rest
 
         public Exception exception;
 
+        public RESTClient.Method method;
+
         public Object request;
 
         public int status;

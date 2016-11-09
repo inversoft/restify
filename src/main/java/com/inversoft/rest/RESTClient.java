@@ -138,6 +138,7 @@ public class RESTClient<RS, ERS> {
 
     ClientResponse<RS, ERS> response = new ClientResponse<>();
     response.request = (bodyHandler != null) ? bodyHandler.getBodyObject() : null;
+    response.method = method;
 
     HttpURLConnection huc;
     try {

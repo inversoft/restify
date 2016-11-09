@@ -144,6 +144,7 @@ namespace Com.Inversoft.Rest
 
             var response = new ClientResponse<RS, ERS>();
             response.request = (bodyHandler != null) ? bodyHandler.GetBodyObject() : null;
+            response.method = method;
 
             HttpWebRequest request;
             try
