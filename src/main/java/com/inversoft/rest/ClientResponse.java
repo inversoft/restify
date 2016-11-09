@@ -15,6 +15,8 @@
  */
 package com.inversoft.rest;
 
+import java.net.URL;
+
 /**
  * Response information from a call to a REST API.
  *
@@ -25,9 +27,13 @@ public class ClientResponse<T, U> {
 
   public Exception exception;
 
+  public Object request;
+
   public int status;
 
   public T successResponse;
+
+  public URL url;
 
   public boolean wasSuccessful() {
     return status >= 200 && status <= 299 && exception == null;

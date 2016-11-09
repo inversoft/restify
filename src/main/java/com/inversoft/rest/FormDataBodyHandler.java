@@ -38,6 +38,11 @@ public class FormDataBodyHandler implements RESTClient.BodyHandler {
   }
 
   @Override
+  public Object getBodyObject() {
+    return request;
+  }
+
+  @Override
   public void setHeaders(HttpURLConnection huc) {
     if (request != null) {
       serializeRequest();

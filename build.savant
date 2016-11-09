@@ -3,7 +3,7 @@
  */
 savantVersion = "0.4.4"
 
-project(group: "com.inversoft", name: "restify", version: "3.0.2", licenses: ["ApacheV2_0"]) {
+project(group: "com.inversoft", name: "restify", version: "3.0.3", licenses: ["ApacheV2_0"]) {
   workflow {
     standard()
   }
@@ -33,9 +33,9 @@ project(group: "com.inversoft", name: "restify", version: "3.0.2", licenses: ["A
 
   publications {
     standard()
-    main {
-      publication(name: "restify", type: "dll", file: "build/dlls/restify.dll")
-    }
+    //main {
+      //publication(name: "restify", type: "dll", file: "build/dlls/restify.dll")
+    //}
   }
 }
 
@@ -45,37 +45,37 @@ java = loadPlugin(id: "org.savantbuild.plugin:java:${savantVersion}")
 javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:${savantVersion}")
 idea = loadPlugin(id: "org.savantbuild.plugin:idea:${savantVersion}")
 release = loadPlugin(id: "org.savantbuild.plugin:release-git:${savantVersion}")
-csharp = loadPlugin(id: "org.savantbuild.plugin:csharp:0.1.0-{integration}")
-csharpNUnit = loadPlugin(id: "org.savantbuild.plugin:csharp-nunit:0.1.0-{integration}")
+//csharp = loadPlugin(id: "org.savantbuild.plugin:csharp:0.1.0-{integration}")
+//csharpNUnit = loadPlugin(id: "org.savantbuild.plugin:csharp-nunit:0.1.0-{integration}")
 
 java.settings.javaVersion = "1.8"
 javaTestNG.settings.javaVersion = "1.8"
-csharp.settings.sdkVersion = "2.0"
-csharp.settings.compilerExecutable = "gmcs"
-csharp.settings.mainDependencies = [
-    [group: "csharp-compile", transitive: false, fetchSource: false]
-]
-csharp.settings.testDependencies = [
-    [group: "csharp-compile", transitive: false, fetchSource: false],
-    [group: "csharp-test-compile", transitive: false, fetchSource: false]
-]
-csharp.settings.references = ["System.Web"]
-csharpNUnit.settings.sdkVersion = "2.0"
-csharpNUnit.settings.nunitVersion = "2.6.4"
-csharpNUnit.settings.dependencies = [
-    [group: "csharp-compile", transitive: true, fetchSource: false],
-    [group: "csharp-test-compile", transitive: true, fetchSource: false]
-]
+//csharp.settings.sdkVersion = "2.0"
+//csharp.settings.compilerExecutable = "gmcs"
+//csharp.settings.mainDependencies = [
+//    [group: "csharp-compile", transitive: false, fetchSource: false]
+//]
+//csharp.settings.testDependencies = [
+//    [group: "csharp-compile", transitive: false, fetchSource: false],
+//    [group: "csharp-test-compile", transitive: false, fetchSource: false]
+//]
+//csharp.settings.references = ["System.Web"]
+//csharpNUnit.settings.sdkVersion = "2.0"
+//csharpNUnit.settings.nunitVersion = "2.6.4"
+//csharpNUnit.settings.dependencies = [
+//    [group: "csharp-compile", transitive: true, fetchSource: false],
+//    [group: "csharp-test-compile", transitive: true, fetchSource: false]
+//]
 
 
 target(name: "clean", description: "Cleans the project") {
   java.clean()
-  csharp.clean()
+  //csharp.clean()
 }
 
 target(name: "compile", description: "Compiles the project") {
   java.compile()
-  csharp.compile()
+  //csharp.compile()
 }
 
 target(name: "jar", description: "JARs the project", dependsOn: ["compile"]) {
@@ -84,12 +84,12 @@ target(name: "jar", description: "JARs the project", dependsOn: ["compile"]) {
 
 target(name: "test", description: "Runs the project's tests", dependsOn: ["jar"]) {
   javaTestNG.test()
-  csharpNUnit.test()
+  //csharpNUnit.test()
 }
 
 target(name: "doc", description: "Generate the project's JavaDoc", dependsOn: ["jar"]) {
   java.document()
-  csharp.exportDocs()
+  //csharp.exportDocs()
 }
 
 target(name: "int", description: "Releases a local integration build of the project", dependsOn: ["test"]) {

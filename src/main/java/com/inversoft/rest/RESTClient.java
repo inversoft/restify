@@ -137,6 +137,8 @@ public class RESTClient<RS, ERS> {
     }
 
     ClientResponse<RS, ERS> response = new ClientResponse<>();
+    response.request = (bodyHandler != null) ? bodyHandler.getBodyObject() : null;
+
     HttpURLConnection huc;
     try {
       if (parameters.size() > 0) {
@@ -161,9 +163,9 @@ public class RESTClient<RS, ERS> {
         }
       }
 
-      URL urlObject = new URL(url.toString());
-      huc = (HttpURLConnection) urlObject.openConnection();
-      if (urlObject.getProtocol().toLowerCase().equals("https") && certificate != null) {
+      response.url = new URL(url.toString());
+      huc = (HttpURLConnection) response.url.openConnection();
+      if (response.url.getProtocol().toLowerCase().equals("https") && certificate != null) {
         HttpsURLConnection hsuc = (HttpsURLConnection) huc;
         if (key != null) {
           hsuc.setSSLSocketFactory(SSLTools.getSSLServerContext(certificate, key).getSocketFactory());
@@ -384,6 +386,14 @@ public class RESTClient<RS, ERS> {
      * @return a byte array representing the body to be written to the output stream.
      */
     byte[] getBody();
+
+    /**
+     * @return The unprocessed body object. This might be a JSON object, a Map of key value pairs or a String. By default, this returns
+     * null.
+     */
+    default Object getBodyObject() {
+      return null;
+    }
 
     /**
      * Sets any headers for the HTTP body that will be written.

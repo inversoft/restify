@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
+import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -47,6 +48,7 @@ public class RESTClientTest {
         .go();
 
     assertEquals(handler.count, 1);
+    assertEquals(response.url, new URL("http://localhost:7000/test"));
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
   }
@@ -90,6 +92,7 @@ public class RESTClientTest {
         .go();
 
     assertEquals(handler.count, 1);
+    assertEquals(response.url, new URL("http://localhost:7000/test"));
     assertEquals(response.status, 200);
     assertEquals(response.successResponse, "");
   }
@@ -107,6 +110,7 @@ public class RESTClientTest {
         .go();
 
     assertEquals(handler.count, 1);
+    assertEquals(response.url, new URL("http://localhost:7000/test"));
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
   }
@@ -155,6 +159,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.status, -1);
+    assertEquals(response.url, new URL("http://localhost:7000/test"));
     assertFalse(response.wasSuccessful());
     assertNull(response.successResponse);
   }
@@ -177,6 +182,8 @@ public class RESTClientTest {
         .go();
 
     assertEquals(handler.count, 1);
+    assertSame(response.request, parameters);
+    assertEquals(response.url, new URL("http://localhost:7000/test"));
     assertEquals(response.status, 200);
     assertEquals(response.successResponse, "Testing 123");
   }
@@ -196,6 +203,8 @@ public class RESTClientTest {
         .go();
 
     assertEquals(handler.count, 1);
+    assertSame(response.request, bais);
+    assertEquals(response.url, new URL("http://localhost:7000/test"));
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
   }
@@ -218,6 +227,8 @@ public class RESTClientTest {
         .go();
 
     assertEquals(handler.count, 1);
+    assertSame(response.request, parameters);
+    assertEquals(response.url, new URL("http://localhost:7000/test"));
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
   }
@@ -240,6 +251,8 @@ public class RESTClientTest {
         .go();
 
     assertEquals(handler.count, 1);
+    assertSame(response.request, parameters);
+    assertEquals(response.url, new URL("http://localhost:7000/test"));
     assertEquals(response.status, 500);
     assertEquals(response.errorResponse, "Testing 123");
   }
@@ -262,6 +275,8 @@ public class RESTClientTest {
         .go();
 
     assertEquals(handler.count, 1);
+    assertSame(response.request, parameters);
+    assertEquals(response.url, new URL("http://localhost:7000/test"));
     assertEquals(response.status, 200);
     assertEquals(response.successResponse, "Testing 123");
   }
