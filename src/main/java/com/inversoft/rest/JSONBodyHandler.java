@@ -14,23 +14,47 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.inversoft.json.JacksonModule;
 
 /**
+ * Body handler that writes the body as JSON using Jackson. By default, this uses the <code>defaultObjectMapper</code> variable for
+ * JSON creation. You can optionally specify a different ObjectMapper to the constructor. The default ObjectMapper uses these settings
+ * for serializing:
+ * <p>
+ * <pre>
+ *   new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
+ *       .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
+ *       .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+ *       .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
+ *       .configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS, false)
+ *       .configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false)
+ *       .registerModule(new JacksonModule());
+ * </pre>
+ * <p>
+ * This also uses the <code>JacksonModule</code> from our <code>jackson5</code> project to help with type conversions.
+ *
  * @author Brian Pontarelli
  */
 public class JSONBodyHandler implements RESTClient.BodyHandler {
-  public final static ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
-                                                                    .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
-                                                                    .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-                                                                    .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
-                                                                    .configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS, false)
-                                                                    .configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false)
-                                                                    .registerModule(new JacksonModule());
+  public final static ObjectMapper defaultObjectMapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                                                                           .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
+                                                                           .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+                                                                           .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
+                                                                           .configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS, false)
+                                                                           .configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false)
+                                                                           .registerModule(new JacksonModule());
 
-  private byte[] body;
+  private final ObjectMapper instanceObjectMapper;
 
   public Object request;
 
+  private byte[] body;
+
   public JSONBodyHandler(Object request) {
     this.request = request;
+    this.instanceObjectMapper = defaultObjectMapper;
+  }
+
+  public JSONBodyHandler(Object request, ObjectMapper objectMapper) {
+    this.request = request;
+    this.instanceObjectMapper = objectMapper;
   }
 
   @Override
@@ -63,7 +87,7 @@ public class JSONBodyHandler implements RESTClient.BodyHandler {
   private void serializeRequest() {
     if (request != null && body == null) {
       try {
-        body = objectMapper.writeValueAsBytes(request);
+        body = instanceObjectMapper.writeValueAsBytes(request);
       } catch (IOException e) {
         throw new JSONException(e);
       }
