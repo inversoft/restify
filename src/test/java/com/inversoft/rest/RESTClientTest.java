@@ -10,7 +10,13 @@ import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Supplier;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
@@ -52,6 +58,49 @@ public class RESTClientTest {
     assertEquals(response.method, RESTClient.HTTPMethod.DELETE);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
+  }
+
+  @Test
+  public void get_emptyJSON() throws Exception {
+    TestHandler handler = new TestHandler(null, null, null, "GET", 200, "");
+    startServer(handler);
+
+    ClientResponse<Map, Map> response = expectException(() -> new RESTClient<>(Map.class, Map.class)
+        .url("http://localhost:7000/test")
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .get()
+        .go(), JSONException.class);
+
+    assertEquals(handler.count, 1);
+    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.method, RESTClient.HTTPMethod.GET);
+    assertEquals(response.status, -1);
+    assertNotNull(response.exception);
+    assertFalse(response.wasSuccessful());
+    assertNull(response.successResponse);
+  }
+
+  @Test
+  public void get_emptyJSON_error_404() throws Exception {
+    TestHandler handler = new TestHandler(null, null, null, "GET", 404, "");
+    startServer(handler);
+
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
+        .url("http://localhost:7000/test")
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .get()
+        .go();
+
+    assertEquals(handler.count, 1);
+    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.method, RESTClient.HTTPMethod.GET);
+    assertEquals(response.status, 404);
+    assertFalse(response.wasSuccessful());
+    assertNull(response.exception);
+    assertNull(response.errorResponse);
+    assertNull(response.successResponse);
   }
 
   @Test
@@ -146,26 +195,6 @@ public class RESTClientTest {
     client.go(); // finish building the final URL
     assertEquals(client.url.toString(), "https://www.inversoft.com/latest-clean-speak-version?time="
         + now.toInstant().toEpochMilli() + "&foo=bar&ids=" + new UUID(1, 0).toString() + "&ids=" + new UUID(2, 0).toString());
-  }
-
-  @Test
-  public void get_void_emptyJSON() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "GET", 200, "");
-    startServer(handler);
-
-    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
-        .url("http://localhost:7000/test")
-        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
-        .successResponseHandler(new JSONResponseHandler<>(Map.class))
-        .get()
-        .go();
-
-    assertEquals(handler.count, 1);
-    assertEquals(response.url, new URL("http://localhost:7000/test"));
-    assertEquals(response.method, RESTClient.HTTPMethod.GET);
-    assertEquals(response.status, -1);
-    assertFalse(response.wasSuccessful());
-    assertNull(response.successResponse);
   }
 
   @Test
@@ -290,17 +319,15 @@ public class RESTClientTest {
     assertEquals(response.successResponse, "Testing 123");
   }
 
-  private void expectException(Runnable runnable, Class<? extends Throwable> expected) {
+  private <T, U> ClientResponse<T, U> expectException(Supplier<ClientResponse<T, U>> supplier, Class<? extends Throwable> expected) {
     try {
-      runnable.run();
+      return supplier.get();
     } catch (Throwable e) {
       if (!e.getClass().equals(expected)) {
         fail("Expected exception [" + expected + "], but caught [" + e.getClass() + "].", e);
       }
-      return;
+      return null;
     }
-
-    fail("Expected exception [" + expected + "].");
   }
 
   private void startServer(TestHandler testHandler) throws Exception {
