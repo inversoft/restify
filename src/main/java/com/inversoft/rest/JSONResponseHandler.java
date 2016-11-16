@@ -3,6 +3,7 @@
  */
 package com.inversoft.rest;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -36,12 +37,22 @@ public class JSONResponseHandler<T> implements RESTClient.ResponseHandler<T> {
 
   @Override
   public T apply(InputStream is) throws IOException {
-    if (is == null || is.available() == 0) {
+    if (is == null) {
       return null;
     }
 
+    // Read a single byte of data to see if the stream is empty but then reset the stream back 0
+    BufferedInputStream bis = new BufferedInputStream(is, 1024);
+    bis.mark(1024);
+    int c = bis.read();
+    if (c == -1) {
+      return null;
+    }
+
+    bis.reset();
+
     try {
-      return instanceObjectMapper.readValue(is, type);
+      return instanceObjectMapper.readValue(bis, type);
     } catch (IOException e) {
       throw new JSONException(e);
     }
