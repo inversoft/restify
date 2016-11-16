@@ -75,9 +75,9 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7000/test"));
     assertEquals(response.method, RESTClient.HTTPMethod.GET);
-    assertEquals(response.status, -1);
-    assertNotNull(response.exception);
-    assertFalse(response.wasSuccessful());
+    assertEquals(response.status, 200);
+    assertNull(response.exception);
+    assertTrue(response.wasSuccessful());
     assertNull(response.successResponse);
   }
 
