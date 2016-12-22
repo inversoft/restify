@@ -1,9 +1,9 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "restify", "src\main\csharp\restify.csproj", "{C85687E2-F559-40AE-AD19-BC87F07BECA6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restify", "src\main\csharp\Restify.csproj", "{C85687E2-F559-40AE-AD19-BC87F07BECA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "restifytest", "src\test\csharp\restifytest.csproj", "{743B0515-16D2-408F-AF2B-C31482136B0C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestifyTest", "src\test\csharp\RestifyTest.csproj", "{743B0515-16D2-408F-AF2B-C31482136B0C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
