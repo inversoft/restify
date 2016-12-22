@@ -1,9 +1,8 @@
 build
-*.iws
-obj
-bin
-.vs
-Restify.csproj.user
-Restify.userprefs
-/RESTClientTesting
 packages
+bin
+obj
+*.iws
+.vs
+*.csproj.user
+*.userprefs

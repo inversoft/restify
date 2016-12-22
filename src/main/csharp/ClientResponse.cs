@@ -2,7 +2,6 @@
  * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
  */
 using System;
-using System.Net;
 
 namespace Com.Inversoft.Rest
 {
@@ -12,9 +11,9 @@ namespace Com.Inversoft.Rest
 
         public Exception exception;
 
-        public RESTClient.Method method;
+        public HTTPMethod method;
 
-        public Object request;
+        public object request;
 
         public int status;
 

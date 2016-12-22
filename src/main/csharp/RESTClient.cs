@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
-using System.Web;
 using System.IO;
+using System.Web;
 
 namespace Com.Inversoft.Rest
 {
@@ -422,25 +422,25 @@ namespace Com.Inversoft.Rest
             }
             return this;
         }
-
-        /**
-         * Standard HTTP methods. This doesn't have CONNECT, TRACE, HEAD or OPTIONS.
-         */
-        public enum HTTPMethod
-        {
-            UNSET,
-            GET,
-            POST,
-            PUT,
-            DELETE
-        }      
     }
 
     /**
+     * Standard HTTP methods. This doesn't have CONNECT, TRACE, HEAD or OPTIONS.
+     */
+    public enum HTTPMethod
+	{
+		UNSET,
+		GET,
+		POST,
+		PUT,
+		DELETE
+	}
+
+	/**
      * Body handler that manages sending the bytes of the HTTP request body to the HttpURLConnection. This also is able to
      * manage any HTTP headers that are associated with the body such as Content-Type and Content-Length.
      */
-    public interface BodyHandler
+	public interface BodyHandler
     {
         /**
          * Accepts the OutputStream and writes the bytes of the HTTP request body to it.

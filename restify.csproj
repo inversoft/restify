@@ -3,13 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CAA3B664-9488-4205-B9FB-7B393724B87C}</ProjectGuid>
+    <ProjectGuid>{CED85A9B-B267-4D03-8C2F-0821C9800032}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>RestifyTest</RootNamespace>
-    <AssemblyName>RestifyTest</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <UseMSBuildEngine>false</UseMSBuildEngine>
-    <ReleaseVersion>3.0.2</ReleaseVersion>
+    <RootNamespace>restify</RootNamespace>
+    <AssemblyName>restify</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,21 +28,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RESTClientTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\main\csharp\Restify.csproj">
-      <Project>{0A9F2372-A5D7-4E11-951A-881FB313BD28}</Project>
-      <Name>Restify</Name>
-    </ProjectReference>
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.IO;
 using NUnit.Framework;
@@ -170,11 +169,11 @@ namespace Com.Inversoft.Rest.Tests
         [Test]
         public void Delete()
         {
-            RESTClient<int, int>.HTTPMethod testMethod = RESTClient<int, int>.HTTPMethod.DELETE;
+            HTTPMethod testMethod = HTTPMethod.DELETE;
             var testRest = new RESTClient<int, int>();
 
             testRest.Delete();
-            RESTClient<int, int>.HTTPMethod actualMethod = testRest.method;
+            HTTPMethod actualMethod = testRest.method;
 
             Assert.AreEqual(testMethod, actualMethod);
         }
@@ -206,11 +205,11 @@ namespace Com.Inversoft.Rest.Tests
         [Test]
         public void Get()
         {
-            RESTClient<int, int>.HTTPMethod testMethod = RESTClient<int, int>.HTTPMethod.GET;
+            HTTPMethod testMethod = HTTPMethod.GET;
             var testRest = new RESTClient<int, int>();
 
             testRest.Get();
-            RESTClient<int, int>.HTTPMethod actualMethod = testRest.method;
+            HTTPMethod actualMethod = testRest.method;
 
             Assert.AreEqual(testMethod, actualMethod);
         }
@@ -263,9 +262,9 @@ namespace Com.Inversoft.Rest.Tests
 
             Assert.AreEqual("http://www.google.com/mee/garble", restTest.url.ToString());
             Assert.AreEqual(1, restTest.parameters["time"].Count);
-            Assert.AreEqual(now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds, restTest.parameters["time"].First());
+            Assert.AreEqual(now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds, restTest.parameters["time"][0]);
             Assert.AreEqual(1, restTest.parameters["foo"].Count);
-            Assert.AreEqual("bar", restTest.parameters["foo"].First());
+			Assert.AreEqual("bar", restTest.parameters["foo"][0]);
             Assert.IsFalse(restTest.parameters.ContainsKey("baz"));
 
             restTest.Go();
