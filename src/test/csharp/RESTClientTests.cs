@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Net;
 using NUnit.Framework;
 
 namespace Com.Inversoft.Rest.Tests
@@ -214,20 +215,35 @@ namespace Com.Inversoft.Rest.Tests
             Assert.AreEqual(testMethod, actualMethod);
         }
 
-        [Test]
-        public void Go_Google()
-        {
-            ClientResponse<string, RESTVoid> restTest = new RESTClient<string, RESTVoid>()
-                .Url("http://www.google.com")
-                .SuccessResponseHandler(new TestHTMLResponseHandler())
-                .Get()
-                .Go();
+		[Test]
+		public void Go_Google()
+		{
+			ClientResponse<string, RESTVoid> restTest = new RESTClient<string, RESTVoid>()
+				.Url("http://www.google.com")
+				.SuccessResponseHandler(new TestHTMLResponseHandler())
+				.Get()
+				.Go();
 
-            Assert.AreEqual(200, restTest.status);
-            Assert.IsTrue(restTest.successResponse != null);
-        }
+			Assert.AreEqual(200, restTest.status);
+			Assert.IsTrue(restTest.successResponse != null);
+		}
 
-        [Test]
+		[Test]
+		public void Go_Google_With_Proxy()
+		{
+			ClientResponse<string, RESTVoid> restTest = new RESTClient<string, RESTVoid>()
+				.Url("https://www.google.com")
+				.Proxy(new WebProxy("173.255.253.125:3128", true, null, new NetworkCredential("test", "password")))
+				.SuccessResponseHandler(new TestHTMLResponseHandler())
+				.Get()
+				.Go();
+
+			Console.WriteLine(restTest.successResponse);
+			Assert.AreEqual(200, restTest.status);
+			Assert.IsTrue(restTest.successResponse != null);
+		}
+
+		[Test]
         public void Go_Passport()
         {
             ClientResponse<string, RESTVoid> restTest = new RESTClient<string, RESTVoid>()
