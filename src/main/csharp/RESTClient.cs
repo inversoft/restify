@@ -51,6 +51,10 @@ namespace Com.Inversoft.Rest
 
         public HTTPMethod method;
 
+		public ICredentials proxyCredentials;
+
+		public Uri proxyServer;
+
         public int readWriteTimeout = 2000;
 
         public ResponseHandler<RS> successResponseHandler;
@@ -169,6 +173,12 @@ namespace Com.Inversoft.Rest
 
                 response.url = new Uri(url.ToString());
                 request = (HttpWebRequest)WebRequest.Create(response.url);
+
+				if (proxyServer != null)
+				{
+					request.Proxy = new WebProxy(this.proxyServer);
+					request.Proxy.Credentials = this.proxyCredentials;
+				}
 
                 // Handle SSL certificates
                 if (response.url.Scheme.ToLower().Equals("https") && certificate != null)
@@ -296,6 +306,13 @@ namespace Com.Inversoft.Rest
             method = HTTPMethod.POST;
             return this;
         }
+
+		public RESTClient<RS, ERS> Proxy(Uri proxyServer, ICredentials proxyCredentials)
+		{
+			this.proxyServer = proxyServer;
+			this.proxyCredentials = proxyCredentials;
+			return this;
+		}
 
         public RESTClient<RS, ERS> Put()
         {
