@@ -14,7 +14,7 @@ namespace Com.Inversoft.Rest
         {
             get
             {
-//                System.Console.WriteLine("CanRead");
+//                Console.WriteLine("CanRead");
                 return true;
             }
         }
@@ -23,15 +23,15 @@ namespace Com.Inversoft.Rest
         {
             get
             {
-//                System.Console.WriteLine("CanWrite");
+//                Console.WriteLine("CanWrite");
                 return true;
             }
         }
 
         public override bool CanConvert(Type objectType)
         {
-//            System.Console.WriteLine("Checking type = " + objectType);
-            return objectType == typeof(DateTimeOffset) || objectType == typeof(Nullable<DateTimeOffset>);
+//            Console.WriteLine("Checking type = " + objectType);
+            return objectType == typeof(DateTimeOffset) || objectType == typeof(DateTimeOffset?);
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
