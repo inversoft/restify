@@ -3,6 +3,8 @@ packages
 bin
 obj
 *.iws
+src/main/csharp/lib
 .vs
+*.nupkg
 *.csproj.user
 *.userprefs

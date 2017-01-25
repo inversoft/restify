@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="2564c151-cf79-450e-9318-e7e735ce0792" name="Default" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="ErrorTreeViewConfiguration">
+    <option name="hideWarnings" value="true" />
+    <option name="HIDE_WARNINGS" value="true" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>namespace Inversoft.Rest</find>
+      <find>Http</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>namespace Inversoft.Restify</replace>
+    </replaceStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/src/main/csharp/Properties/AssemblyInfo.cs" />
+        <option value="$PROJECT_DIR$/src/main/csharp/RESTClient.cs" />
+        <option value="$PROJECT_DIR$/src/main/csharp/JSONException.cs" />
+        <option value="$PROJECT_DIR$/src/main/csharp/JSONBodyHandler.cs" />
+        <option value="$PROJECT_DIR$/src/main/csharp/DateTimeOffsetConverter.cs" />
+        <option value="$PROJECT_DIR$/src/main/csharp/JSONResponseHandler.cs" />
+        <option value="$PROJECT_DIR$/src/test/csharp/RESTClientTests.cs" />
+        <option value="$PROJECT_DIR$/src/main/csharp/Build/Inversoft.Restify.nuspec" />
+        <option value="$PROJECT_DIR$/src/main/csharp/packages.config" />
+        <option value="$PROJECT_DIR$/src/main/csharp/ClientResponse.cs" />
+        <option value="$PROJECT_DIR$/src/main/csharp/Inversoft.Restify.nuspec" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="2893" />
+    <option name="y" value="96" />
+    <option name="width" value="2069" />
+    <option name="height" value="1221" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="SolutionExplorer" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="SolutionExplorer">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" />
+              <option name="myItemType" value="com.jetbrains.resharper.projectView.solutionExplorer.SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Restify (2 projects)" />
+              <option name="myItemType" value="com.jetbrains.resharper.projectView.solutionExplorer.SolutionExplorerNodeRider" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RestifyTest" />
+              <option name="myItemType" value="com.jetbrains.resharper.projectView.solutionExplorer.SolutionExplorerNodeRider" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" />
+              <option name="myItemType" value="com.jetbrains.resharper.projectView.solutionExplorer.SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Restify (2 projects)" />
+              <option name="myItemType" value="com.jetbrains.resharper.projectView.solutionExplorer.SolutionExplorerNodeRider" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Restify" />
+              <option name="myItemType" value="com.jetbrains.resharper.projectView.solutionExplorer.SolutionExplorerNodeRider" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+        <option name="show-file-system" value="false" />
+        <option name="show-all-items" value="false" />
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="settings.editor.selected.configurable" value="preferences.editor" />
+  </component>
+  <component name="RunManager" selected=".NET Project.Default">
+    <configuration default="true" type="DotNetProject" factoryName=".NET Project">
+      <option name="PROJECT_PATH" value="" />
+      <option name="PROJECT_KIND" value="None" />
+      <option name="PROJECT_TFM" value="" />
+      <option name="EXE_PATH" value="" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="USE_MONO" value="0" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="Default" type="DotNetProject" factoryName=".NET Project">
+      <option name="PROJECT_PATH" value="" />
+      <option name="PROJECT_KIND" value="None" />
+      <option name="PROJECT_TFM" value="" />
+      <option name="EXE_PATH" value="" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="USE_MONO" value="0" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <envs />
+      <method />
+    </configuration>
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue=".NET Project.Default" />
+    </list>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2564c151-cf79-450e-9318-e7e735ce0792" name="Default" comment="" />
+      <created>1485372017996</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1485372017996</updated>
+      <workItem from="1485372019372" duration="1756000" />
+      <workItem from="1485374505271" duration="910000" />
+      <workItem from="1485376915002" duration="206000" />
+      <workItem from="1485377345923" duration="132000" />
+      <workItem from="1485378093982" duration="45000" />
+      <workItem from="1485378311983" duration="195000" />
+      <workItem from="1485383253001" duration="1170000" />
+    </task>
+    <task id="LOCAL-00001" summary="Nuget spec, code cleanup and formatting.">
+      <created>1485384395407</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1485384395407</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Rider EAP idea settings">
+      <created>1485384417949</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1485384417949</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="4414000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="2893" y="96" width="2069" height="1221" extended-state="0" />
+    <editor active="false" />
+    <layout>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Errors in solution" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="UnitTesting" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298611" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="NuGet" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3298611" sideWeight="0.50942487" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Change Signature" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24987917" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3298611" sideWeight="0.49057516" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298611" sideWeight="0.49830836" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="Nuget spec, code cleanup and formatting." />
+    <MESSAGE value="Rider EAP idea settings" />
+    <option name="LAST_COMMIT_MESSAGE" value="Rider EAP idea settings" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/main/csharp/Inversoft.Restify.nuspec">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/csharp/packages.config">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="11" lean-forward="true" selection-start-line="3" selection-start-column="11" selection-end-line="3" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.local/share/JetBrains/Shared/v08/DecompilerCache/decompiler/5A2748CB-8DB8-4A56-B1DB-8F59D9BDA51F/7c/529ae248/StringBuilder.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="404">
+          <caret line="150" column="45" lean-forward="true" selection-start-line="150" selection-start-column="45" selection-end-line="150" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.local/share/JetBrains/Shared/v08/DecompilerCache/decompiler/5A2748CB-8DB8-4A56-B1DB-8F59D9BDA51F/b9/0d4952a1/Exception.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" column="42" lean-forward="true" selection-start-line="20" selection-start-column="42" selection-end-line="20" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/csharp/Build/Inversoft.Restify.nuspec" />
+    <entry file="file://$PROJECT_DIR$/src/test/csharp/packages.config">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="11" lean-forward="true" selection-start-line="3" selection-start-column="11" selection-end-line="3" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/csharp/JSONException.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/csharp/Properties/AssemblyInfo.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="18" column="29" lean-forward="true" selection-start-line="18" selection-start-column="29" selection-end-line="18" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/csharp/ClientResponse.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/csharp/DateTimeOffsetConverter.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/csharp/RESTClient.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="17" lean-forward="true" selection-start-line="11" selection-start-column="17" selection-end-line="11" selection-end-column="17" />
+          <folding>
+            <marker date="1485377427000" expanded="true" signature="0:70" ph="/* Copyright (c) 2016-2017, Inversoft Inc., All Rights Reserved ... */" />
+            <marker date="1485377427000" expanded="true" signature="78:270" ph="..." />
+            <marker date="1485377427000" expanded="true" signature="304:418" ph="/* A local interface for logging. If this isn't implemented or specified, the RESTClient will not log. ... */" />
+            <marker date="1485377427000" expanded="true" signature="444:497" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="533:619" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="588:615" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="624:823" ph="/* RESTful WebService call builder. This provides the ability to call RESTful WebServices using a builder pattern ... */" />
+            <marker date="1485377427000" expanded="true" signature="858:11170" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="1501:1546" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="1584:1624" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="1682:1754" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="1839:2128" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="1893:2103" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="2197:2266" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="2339:2408" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="2468:2531" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="2572:2637" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="2733:2820" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="2858:2920" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="2961:7417" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="2994:3081" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="3120:3215" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="3292:3490" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="3566:3762" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="3973:5583" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="4015:4496" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="4070:4123" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="4167:4444" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="4225:4432" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="4644:4700" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="4818:4961" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="5126:5271" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="5178:5261" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="5305:5368" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="5402:5575" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="5473:5565" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="5610:5788" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="5799:6438" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="5961:6008" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="6021:6212" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="6104:6202" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="6240:6430" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="6467:7387" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="6515:6657" ph="/* The response will be null if the server couldn't be contacted, the connection broke, or ... */" />
+            <marker date="1485377427000" expanded="true" signature="6689:6770" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="6820:7379" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="6982:7035" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="7050:7169" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="7200:7369" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="7483:7546" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="7625:7761" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="7672:7735" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="7800:7863" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="7921:7984" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="8022:8084" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="8150:8219" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="8318:8409" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="8457:8850" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="8490:8549" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="8605:8659" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="8719:8772" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="8783:8824" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="8898:9055" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="8936:9001" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="9061:9709" ph="/* Add a URL parameter as a key value pair. ... */" />
+            <marker date="1485377427000" expanded="true" signature="9780:10587" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="9811:9848" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="9951:10042" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="10072:10264" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="10301:10413" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="10358:10405" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="10443:10507" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="10518:10561" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="10593:10924" ph="/* Append a url path segment. &lt;p&gt; ... */" />
+            <marker date="1485377427000" expanded="true" signature="10980:11166" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="11011:11141" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="11059:11106" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="11174:11262" ph="/* Standard HTTP methods. This doesn't have CONNECT, TRACE, HEAD or OPTIONS. ... */" />
+            <marker date="1485377427000" expanded="true" signature="11287:11345" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="11349:11589" ph="/* Body handler that manages sending the bytes of the HTTP request body to the HttpURLConnection. This also is ab ... */" />
+            <marker date="1485377427000" expanded="true" signature="11620:12252" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="11629:11836" ph="/* Accepts the OutputStream and writes the bytes of the HTTP request body to it. ... */" />
+            <marker date="1485377427000" expanded="true" signature="11870:12030" ph="/* @return The unprocessed body object. This might be a JSON object, a Map of key value pairs or a String. By def ... */" />
+            <marker date="1485377427000" expanded="true" signature="12064:12207" ph="/* Sets any headers for the HTTP body that will be written. ... */" />
+            <marker date="1485377427000" expanded="true" signature="12256:12375" ph="/* Handles responses from the HTTP server. ... */" />
+            <marker date="1485377427000" expanded="true" signature="12413:12689" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="12422:12661" ph="/* Handles the InputStream that is the HTTP response and reads it in and converts it to a value. ... */" />
+            <marker date="1485377427000" expanded="true" signature="12721:12729" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="12784:13002" ph="{...}" />
+            <marker date="1485377427000" expanded="true" signature="12967:12998" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/csharp/JSONResponseHandler.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1485377453000" expanded="true" signature="0:65" ph="/* Copyright (c) 2016, Inversoft Inc., All Rights Reserved ... */" />
+            <marker date="1485377453000" expanded="true" signature="73:125" ph="..." />
+            <marker date="1485377453000" expanded="true" signature="215:1002" ph="{...}" />
+            <marker date="1485377453000" expanded="true" signature="331:494" ph="{...}" />
+            <marker date="1485377453000" expanded="true" signature="528:540" ph="{...}" />
+            <marker date="1485377453000" expanded="true" signature="580:592" ph="{...}" />
+            <marker date="1485377453000" expanded="true" signature="627:998" ph="{...}" />
+            <marker date="1485377453000" expanded="true" signature="659:702" ph="{...}" />
+            <marker date="1485377453000" expanded="true" signature="713:912" ph="{...}" />
+            <marker date="1485377453000" expanded="true" signature="940:992" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/csharp/Restify.csproj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-150">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/csharp/packages.config">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="11" lean-forward="true" selection-start-line="4" selection-start-column="11" selection-end-line="4" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/csharp/Inversoft.Restify.nuspec">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="28" column="0" lean-forward="true" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/csharp/RESTClientTests.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="23" lean-forward="false" selection-start-line="14" selection-start-column="23" selection-end-line="14" selection-end-column="23" />
+          <folding>
+            <marker date="1485377455000" expanded="true" signature="0:65" ph="/* Copyright (c) 2016, Inversoft Inc., All Rights Reserved ... */" />
+            <marker date="1485377455000" expanded="true" signature="73:191" ph="..." />
+            <marker date="1485377455000" expanded="true" signature="226:8881" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="275:8879" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="322:549" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="600:818" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="874:1301" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="1360:1755" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="1814:2209" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="2267:2659" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="2701:2944" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="2993:3219" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="3225:3823" ph="/* [Test] ... */" />
+            <marker date="1485377455000" expanded="true" signature="3861:4068" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="4113:4320" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="4357:4578" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="4629:4928" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="4986:5259" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="5293:5508" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="5548:5856" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="5907:6377" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="6419:6860" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="6904:8678" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="8746:8875" ph="{...}" />
+            <marker date="1485377455000" expanded="true" signature="8789:8869" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/csharp/JSONBodyHandler.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="435">
+          <caret line="29" column="0" lean-forward="true" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+          <folding>
+            <marker date="1485377452000" expanded="true" signature="0:65" ph="/* Copyright (c) 2016, Inversoft Inc., All Rights Reserved ... */" />
+            <marker date="1485377452000" expanded="true" signature="73:143" ph="..." />
+            <marker date="1485377452000" expanded="true" signature="172:1578" ph="{...}" />
+            <marker date="1485377452000" expanded="true" signature="219:1576" ph="{...}" />
+            <marker date="1485377452000" expanded="true" signature="331:563" ph="{...}" />
+            <marker date="1485377452000" expanded="true" signature="647:659" ph="{...}" />
+            <marker date="1485377452000" expanded="true" signature="703:745" ph="{...}" />
+            <marker date="1485377452000" expanded="true" signature="784:898" ph="{...}" />
+            <marker date="1485377452000" expanded="true" signature="832:892" ph="{...}" />
+            <marker date="1485377452000" expanded="true" signature="933:967" ph="{...}" />
+            <marker date="1485377452000" expanded="true" signature="1015:1572" ph="{...}" />
+            <marker date="1485377452000" expanded="true" signature="1048:1566" ph="{...}" />
+            <marker date="1485377452000" expanded="true" signature="1115:1470" ph="{...}" />
+            <marker date="1485377452000" expanded="true" signature="1500:1558" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
