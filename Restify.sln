@@ -18,6 +18,11 @@ Global
 		{743B0515-16D2-408F-AF2B-C31482136B0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{743B0515-16D2-408F-AF2B-C31482136B0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{743B0515-16D2-408F-AF2B-C31482136B0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{743B0515-16D2-408F-AF2B-C31482136B0C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+		$1.DirectoryNamespaceAssociation = None
+		$1.ResourceNamePolicy = FileFormatDefault
 	EndGlobalSection
 EndGlobal
