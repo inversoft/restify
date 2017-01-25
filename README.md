@@ -29,6 +29,8 @@ For more information, checkout [savantbuild.org](http://savantbuild.org/).
 
 **Note:** This project is using .Net 2.0 and versions of various libraries that are compatible with .Net 2.0. This is done so that this library can be used with Unity.
 
+Find me on NuGet [Inversoft.Restify](https://www.nuget.org/packages/Inversoft.Restify/)
+
 To get started, you can import the C# project into your solution. The C# project file is located here:
 
 ```bash
