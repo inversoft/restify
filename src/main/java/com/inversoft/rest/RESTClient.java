@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2016-2017, Inversoft Inc., All Rights Reserved
  */
 package com.inversoft.rest;
 
@@ -228,7 +228,7 @@ public class RESTClient<RS, ERS> {
         return response;
       }
     } else {
-      if (successResponseHandler == null) {
+      if (successResponseHandler == null || method == HTTPMethod.HEAD) {
         return response;
       }
 
@@ -242,6 +242,11 @@ public class RESTClient<RS, ERS> {
     }
 
     return response;
+  }
+
+  public RESTClient<RS, ERS> head() {
+    this.method = HTTPMethod.HEAD;
+    return this;
   }
 
   public RESTClient<RS, ERS> header(String name, String value) {
@@ -355,13 +360,14 @@ public class RESTClient<RS, ERS> {
   }
 
   /**
-   * Standard HTTP methods. This doesn't have CONNECT, TRACE, HEAD or OPTIONS.
+   * Standard HTTP methods. This doesn't have CONNECT, TRACE or OPTIONS.
    */
   public enum HTTPMethod {
     GET,
     POST,
     PUT,
-    DELETE
+    DELETE,
+    HEAD
   }
 
   /**

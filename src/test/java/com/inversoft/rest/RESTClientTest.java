@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2016-2017, Inversoft Inc., All Rights Reserved
  */
 package com.inversoft.rest;
 
@@ -25,7 +25,12 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 /**
  * @author Brian Pontarelli
@@ -195,6 +200,25 @@ public class RESTClientTest {
     client.go(); // finish building the final URL
     assertEquals(client.url.toString(), "https://www.inversoft.com/latest-clean-speak-version?time="
         + now.toInstant().toEpochMilli() + "&foo=bar&ids=" + new UUID(1, 0).toString() + "&ids=" + new UUID(2, 0).toString());
+  }
+
+  @Test
+  public void head() throws Exception {
+    TestHandler handler = new TestHandler(null, null, null, "HEAD", 200, "{\"code\": 200}");
+    startServer(handler);
+
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
+        .url("http://localhost:7000/test")
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .head()
+        .go();
+
+    assertEquals(handler.count, 1);
+    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.method, RESTClient.HTTPMethod.HEAD);
+    assertEquals(response.status, 200);
+    assertNull(response.successResponse);
   }
 
   @Test
@@ -398,12 +422,13 @@ public class RESTClientTest {
 
       httpExchange.sendResponseHeaders(responseCode, response != null ? response.length() : 0);
 
-      if (response != null) {
-        httpExchange.getResponseBody().write(response.getBytes());
-        httpExchange.getResponseBody().flush();
+      if (!method.equals("HEAD")) {
+        if (response != null) {
+          httpExchange.getResponseBody().write(response.getBytes());
+          httpExchange.getResponseBody().flush();
+        }
+        httpExchange.getResponseBody().close();
       }
-      httpExchange.getResponseBody().close();
-
       count++;
     }
   }
