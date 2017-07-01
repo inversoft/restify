@@ -17,11 +17,22 @@ namespace Inversoft.Restify.Tests
     [Test]
     public void Authorization()
     {
-      var testKey = "abc";
+      const string testKey = "abc";
       var restTest = new RESTClient<int, int>();
       restTest.Authorization(testKey);
       var actualKey = restTest.headers["Authorization"];
       Assert.AreEqual(testKey, actualKey);
+    }
+
+    [Test]
+    public void Replace_Header()
+    {
+      // verify we can replace an existing header value once set 
+      var restTest = new RESTClient<int, int>();
+      restTest.Authorization("foo");
+      restTest.Authorization("bar");
+      var actualKey = restTest.headers["Authorization"];
+      Assert.AreEqual("bar", actualKey);
     }
 
     [Test]
@@ -37,15 +48,15 @@ namespace Inversoft.Restify.Tests
     [Test]
     public void BasicAuthorization_UsrPwd()
     {
-      var testUsr = "username";
-      var testPwd = "password";
-      var cred = testUsr + ":" + testPwd;
+      const string testUsr = "username";
+      const string testPwd = "password";
+      const string cred = testUsr + ":" + testPwd;
       var enc = Convert.ToBase64String(Encoding.UTF8.GetBytes(cred));
       var expected = "Basic " + enc;
       var restTest = new RESTClient<int, int>();
 
       restTest.BasicAuthorization(testUsr, testPwd);
-      string actual = restTest.headers["Authorization"];
+      var actual = restTest.headers["Authorization"];
 
       Assert.AreEqual(expected, actual);
     }
@@ -54,10 +65,8 @@ namespace Inversoft.Restify.Tests
     public void BasicAuthorization_UsrIsNull()
     {
       string testUsr = null;
-      var testPwd = "password";
+      const string testPwd = "password";
       var cred = testUsr + ":" + testPwd;
-      var enc = Convert.ToBase64String(Encoding.UTF8.GetBytes(cred));
-      var expected = "Basic " + enc;
       var restTest = new RESTClient<int, int>();
 
       restTest.BasicAuthorization(testUsr, testPwd);
@@ -68,11 +77,8 @@ namespace Inversoft.Restify.Tests
     [Test]
     public void BasicAuthorization_PwdIsNull()
     {
-      var testUsr = "username";
+      const string testUsr = "username";
       string testPwd = null;
-      var cred = testUsr + ":" + testPwd;
-      var enc = Convert.ToBase64String(Encoding.UTF8.GetBytes(cred));
-      var expected = "Basic " + enc;
       var restTest = new RESTClient<int, int>();
 
       restTest.BasicAuthorization(testUsr, testPwd);
@@ -85,9 +91,6 @@ namespace Inversoft.Restify.Tests
     {
       string testUsr = null;
       string testPwd = null;
-      var cred = testUsr + ":" + testPwd;
-      var enc = Convert.ToBase64String(Encoding.UTF8.GetBytes(cred));
-      var expected = "Basic " + enc;
       var restTest = new RESTClient<int, int>();
 
       restTest.BasicAuthorization(testUsr, testPwd);
@@ -146,7 +149,7 @@ namespace Inversoft.Restify.Tests
     [Test]
     public void Timeout()
     {
-      var testTime = 9;
+      const int testTime = 9;
       var restTest = new RESTClient<int, int>();
 
       restTest.Timeout(testTime);
@@ -158,7 +161,7 @@ namespace Inversoft.Restify.Tests
     [Test]
     public void Timeout_IsZero()
     {
-      var testTime = 0;
+      const int testTime = 0;
       var restTest = new RESTClient<int, int>();
 
       restTest.Timeout(testTime);
@@ -170,7 +173,7 @@ namespace Inversoft.Restify.Tests
     [Test]
     public void Delete()
     {
-      var testMethod = HTTPMethod.DELETE;
+      const HTTPMethod testMethod = HTTPMethod.DELETE;
       var testRest = new RESTClient<int, int>();
 
       testRest.Delete();
@@ -219,10 +222,10 @@ namespace Inversoft.Restify.Tests
     public void Go_Google()
     {
       var restTest = new RESTClient<string, RESTVoid>()
-          .Url("http://www.google.com")
-          .SuccessResponseHandler(new TestHTMLResponseHandler())
-          .Get()
-          .Go();
+        .Url("http://www.google.com")
+        .SuccessResponseHandler(new TestHTMLResponseHandler())
+        .Get()
+        .Go();
 
       Assert.AreEqual(200, restTest.status);
       Assert.IsTrue(restTest.successResponse != null);
@@ -232,11 +235,11 @@ namespace Inversoft.Restify.Tests
     public void Go_Google_With_Proxy()
     {
       var restTest = new RESTClient<string, RESTVoid>()
-          .Url("https://www.google.com")
-          .Proxy(new WebProxy("173.255.253.125:3128", true, null, new NetworkCredential("test", "password")))
-          .SuccessResponseHandler(new TestHTMLResponseHandler())
-          .Get()
-          .Go();
+        .Url("https://www.google.com")
+        .Proxy(new WebProxy("173.255.253.125:3128", true, null, new NetworkCredential("test", "password")))
+        .SuccessResponseHandler(new TestHTMLResponseHandler())
+        .Get()
+        .Go();
 
       Console.WriteLine(restTest.successResponse);
       Assert.AreEqual(200, restTest.status);
@@ -247,11 +250,11 @@ namespace Inversoft.Restify.Tests
     public void Go_Passport()
     {
       var restTest = new RESTClient<string, RESTVoid>()
-          .Authorization("7844b96b-1e5f-40d7-bd5f-280b282a27e7")
-          .Url("http://localhost:9011/api/application")
-          .SuccessResponseHandler(new TestHTMLResponseHandler())
-          .Get()
-          .Go();
+        .Authorization("7844b96b-1e5f-40d7-bd5f-280b282a27e7")
+        .Url("http://localhost:9011/api/application")
+        .SuccessResponseHandler(new TestHTMLResponseHandler())
+        .Get()
+        .Go();
 
       Assert.AreEqual(200, restTest.status);
       Assert.IsTrue(restTest.successResponse != null);
@@ -264,24 +267,24 @@ namespace Inversoft.Restify.Tests
     {
       var now = DateTime.Now;
       var milliseconds = now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
-                            .TotalMilliseconds;
+        .TotalMilliseconds;
 
       var restTest = new RESTClient<RESTVoid, RESTVoid>().Url("http://www.google.com")
-                                                         .Uri("mee")
-                                                         .UrlSegment(null)
-                                                         .UrlSegment("garble")
-                                                         .UrlParameter("time", now)
-                                                         .UrlParameter("foo", "bar")
-                                                         .UrlParameter("baz", null)
-                                                         .UrlParameter("ids",
-                                                                       new List<string> {"abc", "efg", "hij", "k"})
-                                                         .Get();
+        .Uri("mee")
+        .UrlSegment(null)
+        .UrlSegment("garble")
+        .UrlParameter("time", now)
+        .UrlParameter("foo", "bar")
+        .UrlParameter("baz", null)
+        .UrlParameter("ids",
+          new List<string> {"abc", "efg", "hij", "k"})
+        .Get();
 
       Assert.AreEqual("http://www.google.com/mee/garble", restTest.url.ToString());
       Assert.AreEqual(1, restTest.parameters["time"].Count);
       Assert.AreEqual(
-                      now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
-                         .TotalMilliseconds, restTest.parameters["time"][0]);
+        now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
+          .TotalMilliseconds, restTest.parameters["time"][0]);
       Assert.AreEqual(1, restTest.parameters["foo"].Count);
       Assert.AreEqual("bar", restTest.parameters["foo"][0]);
       Assert.IsFalse(restTest.parameters.ContainsKey("baz"));
@@ -289,8 +292,8 @@ namespace Inversoft.Restify.Tests
       restTest.Go();
 
       Assert.AreEqual(
-                      "http://www.google.com/mee/garble?time=" + milliseconds
-                      + "&foo=bar&ids=abc&ids=efg&ids=hij&ids=k", restTest.url.ToString());
+        "http://www.google.com/mee/garble?time=" + milliseconds
+        + "&foo=bar&ids=abc&ids=efg&ids=hij&ids=k", restTest.url.ToString());
     }
 
     public class TestHTMLResponseHandler : ResponseHandler<string>

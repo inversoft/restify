@@ -72,7 +72,7 @@ namespace Inversoft.Restify
 
     public RESTClient<RS, ERS> Authorization(string key)
     {
-      headers.Add("Authorization", key);
+      headers["Authorization"] = key; 
       return this;
     }
 
@@ -82,7 +82,7 @@ namespace Inversoft.Restify
       {
         var credentials = username + ":" + password;
         var encoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(credentials));
-        headers.Add("Authorization", "Basic " + encoded);
+        headers["Authorization"] = "Basic " + encoded;
       }
       return this;
     }
@@ -196,7 +196,7 @@ namespace Inversoft.Restify
         {
           foreach (var header in headers)
           {
-            request.Headers.Add(header.Key, header.Value);
+            request.Headers[header.Key] = header.Value;
           }
         }
 
@@ -207,7 +207,7 @@ namespace Inversoft.Restify
 
         if (bodyHandler != null)
         {
-          using (Stream stream = request.GetRequestStream())
+          using (var stream = request.GetRequestStream())
           {
             bodyHandler.Accept(stream);
             stream.Flush();
@@ -235,7 +235,7 @@ namespace Inversoft.Restify
 
         try
         {
-          using (Stream str = request.GetResponse().GetResponseStream())
+          using (var str = request.GetResponse().GetResponseStream())
           {
             response.successResponse = successResponseHandler.Apply(str);
           }
@@ -288,7 +288,7 @@ namespace Inversoft.Restify
 
     public RESTClient<RS, ERS> Header(string name, string value)
     {
-      headers.Add(name, value);
+      headers[name] = value;
       return this;
     }
 
@@ -296,7 +296,7 @@ namespace Inversoft.Restify
     {
       foreach (var header in newHeaders)
       {
-        headers.Add(header.Key, header.Value);
+        headers[header.Key] = header.Value;
       }
 
       return this;
@@ -390,7 +390,7 @@ namespace Inversoft.Restify
       if (values == null)
       {
         values = new List<object>();
-        parameters.Add(name, values);
+        parameters[name] = values;
       }
 
       if (value is DateTime)
