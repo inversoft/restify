@@ -1,10 +1,39 @@
-<project>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.inversoft</groupId>
   <artifactId>restify</artifactId>
   <version>3.1.5</version>
   <packaging>jar</packaging>
+
+  <name>Inversoft Java 8 REST Client</name>
+  <description>The Java 8 REST Client used in our commercial REST Client libraries such as Passport Java Client and our Java 8 Chef Client called Barista</description>
+  <url>https://www.inversoft.org</url>
+
+  <developers>
+    <developer>
+      <name>Brian Pontarelli</name>
+      <email>brian@inversoft.com</email>
+      <organization>Inversoft</organization>
+      <organizationUrl>https://www.inversoft.com</organizationUrl>
+    </developer>
+    <developer>
+      <name>Daniel DeGroff</name>
+      <email>daniel@inversoft.com</email>
+      <organization>Inversoft</organization>
+      <organizationUrl>https://www.inversoft.com</organizationUrl>
+    </developer>
+  </developers>
+
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
 
   <scm>
     <connection>scm:git:ssh://github.com:inversoft/prime-jwt</connection>
