@@ -11,7 +11,7 @@
 
   <name>Inversoft Java 8 REST Client</name>
   <description>The Java 8 REST Client used in our commercial REST Client libraries such as Passport Java Client and our Java 8 Chef Client called Barista</description>
-  <url>https://www.inversoft.org</url>
+  <url>http://www.inversoft.org</url>
 
   <developers>
     <developer>
