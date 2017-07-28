@@ -13,6 +13,17 @@
   <description>The Java 8 REST Client used in our commercial REST Client libraries such as Passport Java Client and our Java 8 Chef Client called Barista</description>
   <url>http://www.inversoft.org</url>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+
   <developers>
     <developer>
       <name>Brian Pontarelli</name>
@@ -36,8 +47,8 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:ssh://github.com:inversoft/prime-jwt</connection>
-    <developerConnection>scm:git:ssh://github.com:inversoft/prime-jwt</developerConnection>
+    <connection>scm:git:ssh://github.com:inversoft/restify</connection>
+    <url>https://github.com/inversoft/restify</url>
   </scm>
 
   <properties>
@@ -79,6 +90,54 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.5</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+            <configuration>
+              <keyname>Inversoft</keyname>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
 
