@@ -8,3 +8,4 @@ src/main/csharp/lib
 *.nupkg
 *.csproj.user
 *.userprefs
+target
