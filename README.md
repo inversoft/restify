@@ -3,7 +3,17 @@ Inversoft's REST Client. A simple REST Client to make life simpler when calling 
 
 ## Java REST Client
 
-### Building
+### Maven
+
+```xml
+<dependency>
+  <groupId>com.inversoft</groupId>
+  <artifactId>restify</artifactId>
+  <version>3.1.5</version>
+</dependency>
+```
+
+### Building with Savant
 
 **Note:** This project uses the Savant build tool. To compile using using Savant, follow these instructions:
 
