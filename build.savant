@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2015-2017, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2015-2018, Inversoft Inc., All Rights Reserved
  */
-savantVersion = "0.4.4"
+savantVersion = "1.0.0"
 
-project(group: "com.inversoft", name: "restify", version: "3.1.5", licenses: ["ApacheV2_0"]) {
+project(group: "com.inversoft", name: "restify", version: "3.2.0", licenses: ["ApacheV2_0"]) {
   workflow {
     standard()
   }
@@ -14,10 +14,10 @@ project(group: "com.inversoft", name: "restify", version: "3.1.5", licenses: ["A
 
   dependencies {
     group(name: "compile") {
-      dependency(id: "com.fasterxml.jackson.core:jackson-core:2.8.1")
-      dependency(id: "com.fasterxml.jackson.core:jackson-databind:2.8.1")
-      dependency(id: "com.fasterxml.jackson.core:jackson-annotations:2.8.1")
-      dependency(id: "com.inversoft:jackson5:2.3.1")
+      dependency(id: "com.fasterxml.jackson.core:jackson-core:2.8.8")
+      dependency(id: "com.fasterxml.jackson.core:jackson-databind:2.8.8")
+      dependency(id: "com.fasterxml.jackson.core:jackson-annotations:2.8.8")
+      dependency(id: "com.inversoft:jackson5:2.4.1")
       dependency(id: "org.slf4j:slf4j-api:1.7.7")
     }
     group(name: "csharp-compile") {

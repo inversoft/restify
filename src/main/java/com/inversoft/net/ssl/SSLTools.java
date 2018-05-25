@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2014-2018, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.inversoft.net.ssl;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -73,6 +74,39 @@ public class SSLTools {
    * RSA Private Key file (PKCS#1)  Start Tag
    */
   public static final String PKCS_1_KEY_START = "BEGIN RSA PRIVATE KEY-----";
+
+  // Disable SNI so that it doesn't mess up our use of JSSE with some certificates
+  static {
+    System.setProperty("jsse.enableSNIExtension", "false");
+  }
+
+  /**
+   * Disabling SSL validation is strongly discouraged. This is generally only intended for use during testing or perhaps
+   * when used in a private network with a self signed certificate.
+   *
+   * <p>Even when using with a self signed certificate it is recommended that instead of disabling SSL validation you
+   * instead add your self signed certificate to the Java keystore.</p>
+   */
+  public static void disableSSLValidation() {
+    try {
+      SSLContext context = SSLContext.getInstance("SSL");
+      context.init(null, new TrustManager[]{new UnsafeTrustManager()}, null);
+      HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Enable SSL Validation.
+   */
+  public static void enableSSLValidation() {
+    try {
+      SSLContext.getInstance("SSL").init(null, null, null);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   /**
    * This creates an in-memory keystore containing the certificate and private key and initializes the SSLContext with
@@ -232,10 +266,5 @@ public class SSLTools {
     // Strip all the whitespace since the PEM and DER allow them but they aren't valid in Base 64 encoding
     String base64 = pem.substring(startIndex + beginDelimiter.length(), endIndex).replaceAll("\\s", "");
     return Base64.getDecoder().decode(base64);
-  }
-
-  // Disable SNI so that it doesn't mess up our use of JSSE with some certificates
-  static {
-    System.setProperty("jsse.enableSNIExtension", "false");
   }
 }
