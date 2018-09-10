@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2016-2017, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2016-2018, Inversoft Inc., All Rights Reserved
  */
 
 using System;
@@ -225,27 +225,28 @@ namespace Inversoft.Restify
 
       try
       {
-        var resp = (HttpWebResponse) request.GetResponse();
-        response.status = (int) resp.StatusCode;
-
-        if (successResponseHandler == null)
+        using (var resp = (HttpWebResponse) request.GetResponse())
         {
-          return response;
-        }
-
-        try
-        {
-          using (var str = request.GetResponse().GetResponseStream())
+          response.status = (int) resp.StatusCode;
+          if (successResponseHandler == null)
           {
-            response.successResponse = successResponseHandler.Apply(str);
+            return response;
           }
-        }
-        catch (Exception e)
-        {
-          logger.Debug("Error calling REST WebService at [" + url + "]", e);
-          response.status = -1;
-          response.exception = e;
-          return response;
+
+          try
+          {
+            using (var str = resp.GetResponseStream())
+            {
+              response.successResponse = successResponseHandler.Apply(str);
+            }
+          }
+          catch (Exception e)
+          {
+            logger.Debug("Error calling REST WebService at [" + url + "]", e);
+            response.status = -1;
+            response.exception = e;
+            return response;
+          }
         }
       }
       catch (WebException e)
@@ -260,7 +261,7 @@ namespace Inversoft.Restify
           return response;
         }
 
-        using (WebResponse webResp = e.Response)
+        using (var webResp = e.Response)
         {
           var httpResp = (HttpWebResponse) webResp;
           response.status = (int) httpResp.StatusCode;
@@ -272,7 +273,10 @@ namespace Inversoft.Restify
 
           try
           {
-            response.errorResponse = errorResponseHandler.Apply(httpResp.GetResponseStream());
+            using (var str = httpResp.GetResponseStream())
+            {
+              response.errorResponse = errorResponseHandler.Apply(str);
+            }
           }
           catch (Exception ex)
           {

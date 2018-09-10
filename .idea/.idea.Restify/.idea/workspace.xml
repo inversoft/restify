@@ -2,13 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2564c151-cf79-450e-9318-e7e735ce0792" name="Default" comment="Allow the same key to be added to the headers map.">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/.idea.Restify/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/.idea.Restify/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Restify.sln.DotSettings" afterPath="$PROJECT_DIR$/Restify.sln.DotSettings" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/csharp/Inversoft.Restify.nuspec" afterPath="$PROJECT_DIR$/src/main/csharp/Inversoft.Restify.nuspec" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/csharp/Restify.csproj" afterPath="$PROJECT_DIR$/src/main/csharp/Restify.csproj" />
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.Restify/.idea/indexLayout.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Restify/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Restify/.idea/contentModel.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Restify/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Restify/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Restify/riderModule.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Restify/riderModule.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Restify.sln" beforeDir="false" afterPath="$PROJECT_DIR$/Restify.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Restify.sln.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/Restify.sln.DotSettings" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/csharp/Inversoft.Restify.nuspec" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/csharp/Inversoft.Restify.nuspec" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/csharp/RESTClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/csharp/RESTClient.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/csharp/Restify.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/csharp/Restify.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/csharp/packages.config" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/csharp/packages.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/csharp/RestifyTest.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/csharp/RestifyTest.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/csharp/packages.config" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/csharp/packages.config" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
-    <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -21,7 +28,52 @@
     <option name="hideWarnings" value="true" />
     <option name="HIDE_WARNINGS" value="true" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FUSProjectUsageTrigger">
+    <session id="1626502470">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="2" />
+          <entry key="project.open.time.0" value="1" />
+          <entry key="project.open.time.1" value="1" />
+          <entry key="project.opened" value="2" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="config" value="1" />
+          <entry key="cs" value="7" />
+          <entry key="csproj" value="1" />
+          <entry key="nuspec" value="1" />
+          <entry key="targets" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="C#" value="7" />
+          <entry key="Config" value="1" />
+          <entry key="Csproj" value="1" />
+          <entry key="MsBuild targets file" value="1" />
+          <entry key="NuGet spec" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="config" value="2" />
+          <entry key="cs" value="57" />
+          <entry key="csproj" value="3" />
+          <entry key="nuspec" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="C#" value="57" />
+          <entry key="Config" value="2" />
+          <entry key="Csproj" value="3" />
+          <entry key="NuGet spec" value="1" />
+        </counts>
+      </usages-collector>
+    </session>
+  </component>
   <component name="FileEditorManager">
     <leaf />
   </component>
@@ -34,6 +86,7 @@
       <find>parameters.Add</find>
       <find>parameters.</find>
       <find>.Add</find>
+      <find>3.1.5</find>
     </findStrings>
     <replaceStrings>
       <replace>namespace Inversoft.Restify</replace>
@@ -41,6 +94,16 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/test/csharp/RESTClientTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/test/csharp/packages.config" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/csharp/packages.config" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/BF8183A4-5D58-47D8-85EE-DFFD83533A7B/60/6790302d/IDisposable.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/csharp/RESTClient.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/81BA78C8-DC79-4B7F-9F7B-530C53DB0F84/b2/e28e4f69/WebException.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/81BA78C8-DC79-4B7F-9F7B-530C53DB0F84/28/414af911/HttpWebRequest.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/81BA78C8-DC79-4B7F-9F7B-530C53DB0F84/5d/47091792/WebResponse.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -55,9 +118,10 @@
         <option value="$PROJECT_DIR$/src/main/csharp/ClientResponse.cs" />
         <option value="$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/1B75D008-0229-4AD3-9503-E51907A06BDC/89/384c9011/Assert.cs" />
         <option value="$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/F666904F-99E9-49F4-9991-EEADC1F953E0/a6/910ff683/HttpWebRequest.cs" />
-        <option value="$PROJECT_DIR$/src/main/csharp/RESTClient.cs" />
         <option value="$PROJECT_DIR$/src/test/csharp/RESTClientTests.cs" />
+        <option value="$PROJECT_DIR$/src/main/csharp/RESTClient.cs" />
         <option value="$PROJECT_DIR$/src/main/csharp/Inversoft.Restify.nuspec" />
+        <option value="$PROJECT_DIR$/src/main/csharp/Restify.csproj" />
       </list>
     </option>
   </component>
@@ -68,47 +132,41 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="23" />
-    <option name="width" value="1440" />
-    <option name="height" value="873" />
+    <option name="x" value="211" />
+    <option name="y" value="265" />
+    <option name="width" value="2400" />
+    <option name="height" value="1332" />
   </component>
   <component name="ProjectView">
     <navigator currentView="SolutionExplorer" proportions="" version="1">
-      <flattenPackages />
-      <showMembers />
-      <showModules />
-      <showLibraryContents />
-      <hideEmptyPackages />
-      <abbreviatePackageNames />
-      <autoscrollToSource />
-      <autoscrollFromSource />
-      <sortByType />
-      <manualOrder />
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="SolutionExplorer">
         <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" />
-              <option name="myItemType" value="com.jetbrains.resharper.projectView.solutionExplorer.SolutionExplorerViewPane$ProjectViewPaneTreeStructure$createRoot$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Restify (2 projects)" />
-              <option name="myItemType" value="com.jetbrains.resharper.projectView.solutionExplorer.SolutionExplorerNodeRider" />
-            </PATH_ELEMENT>
-          </PATH>
+          <expand>
+            <path>
+              <item name="Project" type="784c90a0:SolutionExplorerRootNode" />
+              <item name="Restify" type="24d0babc:SolutionExplorerModelNode" />
+            </path>
+            <path>
+              <item name="Project" type="784c90a0:SolutionExplorerRootNode" />
+              <item name="Restify" type="24d0babc:SolutionExplorerModelNode" />
+              <item name="Restify" type="24d0babc:SolutionExplorerModelNode" />
+            </path>
+          </expand>
+          <select />
         </subPane>
-        <option name="show-file-system" value="false" />
-        <option name="show-all-items" value="false" />
+        <option name="show-all-files" value="false" />
       </pane>
+      <pane id="FileSystemExplorer" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.C#" />
+    <property name="Rider.DefaultBreakpoints.AreToggled" value="true" />
+    <property name="Rider.ProjectViewActivator.IsNotFirstRun" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.C#" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -123,36 +181,23 @@
     </option>
   </component>
   <component name="RunManager" selected=".NET Project.Default">
-    <configuration default="true" type="DotNetProject" factoryName=".NET Project">
-      <option name="PROJECT_PATH" value="" />
-      <option name="PROJECT_KIND" value="None" />
-      <option name="PROJECT_TFM" value="" />
+    <configuration name="Default" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
       <option name="WORKING_DIRECTORY" value="" />
-      <option name="USE_MONO" value="0" />
+      <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
-      <envs />
-      <method />
-    </configuration>
-    <configuration default="true" type="JavaScriptTestRunnerJest" factoryName="Jest">
-      <node-interpreter value="project" />
-      <working-dir value="" />
-      <envs />
-      <scope-kind value="ALL" />
-      <method />
-    </configuration>
-    <configuration default="true" type="JavaScriptTestRunnerProtractor" factoryName="Protractor">
-      <config-file value="" />
-      <node-interpreter value="project" />
-      <envs />
-      <method />
-    </configuration>
-    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
-      <method />
-    </configuration>
-    <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" working-dir="">
-      <method />
+      <option name="USE_MONO" value="0" />
+      <option name="RUNTIME_ARGUMENTS" value="" />
+      <option name="PROJECT_PATH" value="" />
+      <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
+      <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
+      <option name="PROJECT_WORKING_DIRECTORY_TRACKING" value="1" />
+      <option name="PROJECT_KIND" value="None" />
+      <option name="PROJECT_TFM" value="" />
+      <method v="2">
+        <option name="Build" enabled="true" />
+      </method>
     </configuration>
     <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
       <node-interpreter>project</node-interpreter>
@@ -161,49 +206,14 @@
       <tasks />
       <arguments />
       <envs />
-      <method />
+      <method v="2" />
     </configuration>
-    <configuration default="true" type="js.build_tools.npm" factoryName="npm">
-      <command value="run" />
-      <scripts />
-      <node-interpreter value="project" />
-      <envs />
-      <method />
-    </configuration>
-    <configuration default="true" type="mocha-javascript-test-runner" factoryName="Mocha">
-      <node-interpreter>project</node-interpreter>
-      <node-options />
-      <working-directory />
-      <pass-parent-env>true</pass-parent-env>
-      <envs />
-      <ui />
-      <extra-mocha-options />
-      <test-kind>DIRECTORY</test-kind>
-      <test-directory />
-      <recursive>false</recursive>
-      <method />
-    </configuration>
-    <configuration default="false" name="Default" type="DotNetProject" factoryName=".NET Project">
-      <option name="PROJECT_PATH" value="" />
-      <option name="PROJECT_KIND" value="None" />
-      <option name="PROJECT_TFM" value="" />
-      <option name="EXE_PATH" value="" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="USE_MONO" value="0" />
-      <option name="USE_EXTERNAL_CONSOLE" value="0" />
-      <envs />
-      <method />
-    </configuration>
-    <configuration />
-    <list size="1">
-      <item index="0" class="java.lang.String" itemvalue=".NET Project.Default" />
+    <list>
+      <item itemvalue=".NET Project.Default" />
     </list>
-    <configuration />
-    <configuration />
   </component>
-  <component name="ShelveChangesManager" show_recycled="false">
-    <option name="remove_strategy" value="false" />
+  <component name="SvnConfiguration">
+    <configuration />
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -223,6 +233,8 @@
       <workItem from="1498876935858" duration="647000" />
       <workItem from="1498877730748" duration="171000" />
       <workItem from="1498880981243" duration="13000" />
+      <workItem from="1536612018621" duration="843000" />
+      <workItem from="1536615570373" duration="319000" />
     </task>
     <task id="LOCAL-00001" summary="Nuget spec, code cleanup and formatting.">
       <created>1485384395407</created>
@@ -249,7 +261,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5260000" />
+    <option name="totallyTimeSpent" value="6422000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -261,38 +273,42 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1440" height="873" extended-state="6" />
+    <frame x="211" y="265" width="2400" height="1332" extended-state="0" />
     <layout>
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Errors In Solution" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Unit Tests" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.329602" sideWeight="0.49166667" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="NuGet" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.329602" sideWeight="0.5083333" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24930556" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32913268" sideWeight="0.4890625" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Errors in solution" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="UnitTesting" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298611" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Change Signature" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298611" sideWeight="0.49830836" order="1" side_tool="false" content_ui="tabs" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15182358" />
+      <window_info id="Structure" order="1" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49830836" weight="0.3298611" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info active="true" anchor="bottom" id="NuGet" order="7" sideWeight="0.5101781" side_tool="true" visible="true" weight="0.32903227" />
+      <window_info anchor="bottom" id="UnitTesting" order="8" weight="0.3298611" />
+      <window_info anchor="bottom" id="Unit Tests" order="9" sideWeight="0.49166667" weight="0.40564516" />
+      <window_info anchor="bottom" id="Terminal" order="10" />
+      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5101781" side_tool="true" weight="0.32903227" />
+      <window_info anchor="bottom" id="Version Control" order="12" />
+      <window_info anchor="bottom" id="Change Signature" order="13" side_tool="true" />
+      <window_info anchor="bottom" id="Build" order="14" sideWeight="0.48982188" visible="true" weight="0.32903227" />
+      <window_info anchor="bottom" id="Messages" order="15" />
+      <window_info anchor="bottom" id="Docker" order="16" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Database Changes" order="17" show_stripe_button="false" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Errors in solution" order="3" />
+      <window_info anchor="right" id="Errors In Solution" order="4" />
+      <window_info anchor="right" id="Database" order="5" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="processedProjectFiles" value="true" />
+    <option name="version" value="1" />
   </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
@@ -305,52 +321,29 @@
     <option name="LAST_COMMIT_MESSAGE" value="Allow the same key to be added to the headers map." />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
-    <watches-manager />
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" suspend="NONE" type="DotNet Exception Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/csharp/Inversoft.Restify.nuspec">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/csharp/packages.config">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="11" lean-forward="true" selection-start-line="3" selection-start-column="11" selection-end-line="3" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.local/share/JetBrains/Shared/v08/DecompilerCache/decompiler/5A2748CB-8DB8-4A56-B1DB-8F59D9BDA51F/7c/529ae248/StringBuilder.cs" />
     <entry file="file://$USER_HOME$/.local/share/JetBrains/Shared/v08/DecompilerCache/decompiler/5A2748CB-8DB8-4A56-B1DB-8F59D9BDA51F/b9/0d4952a1/Exception.cs" />
     <entry file="file://$PROJECT_DIR$/src/main/csharp/Build/Inversoft.Restify.nuspec" />
     <entry file="file://$PROJECT_DIR$/src/main/csharp/DateTimeOffsetConverter.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/csharp/RestifyTest.csproj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/csharp/Restify.csproj">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/1B75D008-0229-4AD3-9503-E51907A06BDC/89/384c9011/Assert.cs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="171">
-          <caret line="371" column="23" lean-forward="false" selection-start-line="371" selection-start-column="23" selection-end-line="371" selection-end-column="23" />
+          <caret line="371" column="23" selection-start-line="371" selection-start-column="23" selection-end-line="371" selection-end-column="23" />
         </state>
       </provider>
     </entry>
@@ -362,86 +355,230 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/.idea/.idea.Restify/.idea/workspace.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/csharp/Properties/AssemblyInfo.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/csharp/packages.config">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
-          <caret line="3" column="11" lean-forward="false" selection-start-line="3" selection-start-column="11" selection-end-line="3" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/csharp/RESTClientTests.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="58" column="7" lean-forward="false" selection-start-line="58" selection-start-column="7" selection-end-line="58" selection-end-column="7" />
+          <caret line="3" column="11" selection-start-line="3" selection-start-column="11" selection-end-line="3" selection-end-column="11" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/csharp/ClientResponse.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/csharp/Properties/AssemblyInfo.cs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
-          <caret line="20" column="32" lean-forward="false" selection-start-line="20" selection-start-column="32" selection-end-line="20" selection-end-column="32" />
+          <caret line="20" column="32" selection-start-line="20" selection-start-column="32" selection-end-line="20" selection-end-column="32" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/csharp/RESTClient.cs">
+    <entry file="file://$PROJECT_DIR$/src/main/csharp/JSONResponseHandler.cs">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/csharp/JSONException.cs">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/csharp/JSONBodyHandler.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="291">
-          <caret line="247" column="26" lean-forward="true" selection-start-line="247" selection-start-column="26" selection-end-line="247" selection-end-column="26" />
+        <state relative-caret-position="171">
+          <caret line="29" selection-start-line="29" selection-end-line="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/81BA78C8-DC79-4B7F-9F7B-530C53DB0F84/5d/47091792/WebResponse.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="601">
+          <caret line="53" column="56" lean-forward="true" selection-start-line="53" selection-start-column="56" selection-end-line="53" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/81BA78C8-DC79-4B7F-9F7B-530C53DB0F84/28/414af911/HttpWebRequest.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="319">
+          <caret line="1344" column="25" selection-start-line="1344" selection-start-column="25" selection-end-line="1344" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/csharp/Restify.csproj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" column="57" lean-forward="true" selection-start-line="16" selection-start-column="57" selection-end-line="16" selection-end-column="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/csharp/Inversoft.Restify.nuspec">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="22" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="22" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/csharp/packages.config">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
-          <caret line="4" column="11" lean-forward="false" selection-start-line="4" selection-start-column="11" selection-end-line="4" selection-end-column="11" />
+          <caret line="4" column="41" lean-forward="true" selection-start-line="4" selection-start-column="41" selection-end-line="4" selection-end-column="41" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/csharp/JSONResponseHandler.cs">
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/81BA78C8-DC79-4B7F-9F7B-530C53DB0F84/b2/e28e4f69/WebException.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="223">
+          <caret line="67" column="36" lean-forward="true" selection-start-line="67" selection-start-column="36" selection-end-line="67" selection-end-column="36" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/csharp/JSONException.cs">
+    <entry file="file://$PROJECT_DIR$/src/main/csharp/RESTClient.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="928">
+          <caret line="178" column="29" selection-start-line="178" selection-start-column="29" selection-end-line="178" selection-end-column="29" />
+          <folding>
+            <marker date="1536615446199" expanded="true" signature="0:70" ph="/* Copyright (c) 2016-2017, Inversoft Inc., All Rights Reserved ... */" />
+            <marker date="1536615446199" expanded="false" signature="78:270" ph="..." />
+            <marker date="1536615446199" expanded="true" signature="304:418" ph="/* A local interface for logging. If this isn't implemented or specified, the RESTClient will not log. ... */" />
+            <marker date="1536615446199" expanded="true" signature="444:497" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="533:619" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="588:615" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="624:823" ph="/* RESTful WebService call builder. This provides the ability to call RESTful WebServices using a builder pattern ... */" />
+            <marker date="1536615446199" expanded="true" signature="858:11250" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="1501:1546" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="1584:1624" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="1682:1752" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="1837:2123" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="1891:2098" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="2192:2261" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="2334:2403" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="2463:2526" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="2567:2632" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="2728:2815" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="2853:2915" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="2956:7506" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="2989:3076" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="3115:3210" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="3287:3485" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="3561:3757" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="3968:5572" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="4010:4491" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="4065:4118" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="4162:4439" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="4220:4427" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="4639:4695" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="4813:4956" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="5121:5263" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="5173:5253" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="5297:5360" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="5394:5564" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="5462:5554" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="5599:5777" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="5788:6471" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="5863:6463" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="5970:6023" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="6038:6221" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="6105:6209" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="6251:6453" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="6500:7476" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="6548:6690" ph="/* The response will be null if the server couldn't be contacted, the connection broke, or ... */" />
+            <marker date="1536615446199" expanded="true" signature="6722:6803" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="6845:7468" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="7007:7060" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="7075:7258" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="7146:7246" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="7289:7458" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="7572:7632" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="7711:7844" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="7758:7818" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="7883:7946" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="8004:8067" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="8105:8167" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="8233:8302" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="8401:8492" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="8540:8933" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="8573:8632" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="8688:8742" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="8802:8855" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="8866:8907" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="8981:9138" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="9019:9084" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="9144:9792" ph="/* Add a URL parameter as a key value pair. ... */" />
+            <marker date="1536615446199" expanded="true" signature="9863:10667" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="9894:9931" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="10034:10122" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="10152:10344" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="10381:10493" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="10438:10485" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="10523:10587" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="10598:10641" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="10673:11004" ph="/* Append a url path segment. &lt;p&gt; ... */" />
+            <marker date="1536615446199" expanded="true" signature="11060:11246" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="11091:11221" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="11139:11186" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="11254:11342" ph="/* Standard HTTP methods. This doesn't have CONNECT, TRACE, HEAD or OPTIONS. ... */" />
+            <marker date="1536615446199" expanded="true" signature="11367:11425" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="11429:11669" ph="/* Body handler that manages sending the bytes of the HTTP request body to the HttpURLConnection. This also is ab ... */" />
+            <marker date="1536615446199" expanded="true" signature="11700:12332" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="11709:11916" ph="/* Accepts the OutputStream and writes the bytes of the HTTP request body to it. ... */" />
+            <marker date="1536615446199" expanded="true" signature="11950:12110" ph="/* @return The unprocessed body object. This might be a JSON object, a Map of key value pairs or a String. By def ... */" />
+            <marker date="1536615446199" expanded="true" signature="12144:12287" ph="/* Sets any headers for the HTTP body that will be written. ... */" />
+            <marker date="1536615446199" expanded="true" signature="12336:12455" ph="/* Handles responses from the HTTP server. ... */" />
+            <marker date="1536615446199" expanded="true" signature="12493:12769" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="12502:12741" ph="/* Handles the InputStream that is the HTTP response and reads it in and converts it to a value. ... */" />
+            <marker date="1536615446199" expanded="true" signature="12801:12809" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="12864:13082" ph="{...}" />
+            <marker date="1536615446199" expanded="true" signature="13047:13078" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/csharp/JSONBodyHandler.cs">
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/BF8183A4-5D58-47D8-85EE-DFFD83533A7B/60/6790302d/IDisposable.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="29" column="0" lean-forward="false" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+        <state relative-caret-position="165">
+          <caret line="11" column="19" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="19" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/csharp/Inversoft.Restify.nuspec">
+    <entry file="file://$PROJECT_DIR$/packages/NuGet.Build.Packaging.0.1.157-dev/build/NuGet.Build.Packaging.targets">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="26" column="15" lean-forward="false" selection-start-line="26" selection-start-column="15" selection-end-line="26" selection-end-column="15" />
+        <state relative-caret-position="179">
+          <caret line="572" column="44" lean-forward="true" selection-start-line="572" selection-start-column="44" selection-end-line="572" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/csharp/RESTClientTests.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1200">
+          <caret line="255" column="66" lean-forward="true" selection-start-line="255" selection-start-column="66" selection-end-line="255" selection-end-column="66" />
+          <folding>
+            <marker date="1498877535000" expanded="true" signature="0:65" ph="/* Copyright (c) 2016, Inversoft Inc., All Rights Reserved ... */" />
+            <marker date="1498877535000" expanded="false" signature="73:191" ph="..." />
+            <marker date="1498877535000" expanded="true" signature="226:8338" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="275:8336" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="322:558" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="603:902" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="953:1171" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="1227:1678" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="1737:2034" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="2093:2348" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="2406:2649" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="2691:2934" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="2983:3209" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="3215:3813" ph="/* [Test] ... */" />
+            <marker date="1498877535000" expanded="true" signature="3851:4064" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="4109:4322" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="4359:4593" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="4644:4943" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="5001:5274" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="5308:5523" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="5563:5863" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="5914:6374" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="6416:6847" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="6891:8135" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="8203:8332" ph="{...}" />
+            <marker date="1498877535000" expanded="true" signature="8246:8326" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
