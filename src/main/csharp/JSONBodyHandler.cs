@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2016-2018, Inversoft Inc., All Rights Reserved
  */
 
 using System.Text;
@@ -11,13 +11,15 @@ namespace Inversoft.Restify
 {
   public class JSONBodyHandler : BodyHandler
   {
-    private static readonly JsonSerializer serializer = new JsonSerializer();
+    private static readonly JsonSerializer defaultSerializer = new JsonSerializer();
+
+    private readonly JsonSerializer serializer;
 
     static JSONBodyHandler()
     {
-      serializer.DefaultValueHandling = DefaultValueHandling.Ignore;
-      serializer.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-      serializer.Converters.Add(new DateTimeOffsetConverter());
+      defaultSerializer.DefaultValueHandling = DefaultValueHandling.Ignore;
+      defaultSerializer.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+      defaultSerializer.Converters.Add(new DateTimeOffsetConverter());
     }
 
     private byte[] body;
@@ -26,11 +28,19 @@ namespace Inversoft.Restify
 
     public JSONBodyHandler()
     {
+      serializer = defaultSerializer;
+    }
+
+    public JSONBodyHandler(object request, JsonSerializer serializer)
+    {
+      this.request = request;
+      this.serializer = serializer;
     }
 
     public JSONBodyHandler(object request)
     {
       this.request = request;
+      this.serializer = defaultSerializer;
     }
 
     public void Accept(Stream stream)
@@ -48,25 +58,27 @@ namespace Inversoft.Restify
 
     public void SetHeaders(HttpWebRequest req)
     {
-      if (request != null)
+      if (request == null)
       {
-        req.ContentType = "application/json";
+        return;
+      }
 
-        try
-        {
-          StringWriter writer = new StringWriter();
-          serializer.Serialize(writer, request);
+      req.ContentType = "application/json";
 
-          var jsonBody = writer.ToString();
-          System.Diagnostics.Debug.WriteLine("\n\n\n" + "JSON Body: " + jsonBody + "\n\n\n");
-          body = Encoding.UTF8.GetBytes(jsonBody);
+      try
+      {
+        var writer = new StringWriter();
+        serializer.Serialize(writer, request);
 
-          req.ContentLength = body.Length;
-        }
-        catch (IOException e)
-        {
-          throw new JSONException(e);
-        }
+        var jsonBody = writer.ToString();
+        System.Diagnostics.Debug.WriteLine("\n\n\n" + "JSON Body: " + jsonBody + "\n\n\n");
+        body = Encoding.UTF8.GetBytes(jsonBody);
+
+        req.ContentLength = body.Length;
+      }
+      catch (IOException e)
+      {
+        throw new JSONException(e);
       }
     }
   }
