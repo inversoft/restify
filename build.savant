@@ -3,7 +3,7 @@
  */
 savantVersion = "1.0.0"
 
-project(group: "com.inversoft", name: "restify", version: "3.2.1", licenses: ["ApacheV2_0"]) {
+project(group: "com.inversoft", name: "restify", version: "3.2.2", licenses: ["ApacheV2_0"]) {
   workflow {
     standard()
   }
@@ -14,8 +14,8 @@ project(group: "com.inversoft", name: "restify", version: "3.2.1", licenses: ["A
 
   dependencies {
     group(name: "compile") {
-      dependency(id: "com.fasterxml.jackson.core:jackson-core:2.9.6")
-      dependency(id: "com.fasterxml.jackson.core:jackson-databind:2.9.6")
+      dependency(id: "com.fasterxml.jackson.core:jackson-core:2.9.8")
+      dependency(id: "com.fasterxml.jackson.core:jackson-databind:2.9.8")
       dependency(id: "com.fasterxml.jackson.core:jackson-annotations:2.9.6")
       dependency(id: "com.inversoft:jackson5:2.4.2")
       dependency(id: "org.slf4j:slf4j-api:1.7.7")
@@ -40,10 +40,10 @@ project(group: "com.inversoft", name: "restify", version: "3.2.1", licenses: ["A
 }
 
 // Plugins
-dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:${savantVersion}")
-java = loadPlugin(id: "org.savantbuild.plugin:java:${savantVersion}")
-javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:${savantVersion}")
-idea = loadPlugin(id: "org.savantbuild.plugin:idea:${savantVersion}")
+dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:1.0.2")
+java = loadPlugin(id: "org.savantbuild.plugin:java:1.0.2")
+javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:1.0.2")
+idea = loadPlugin(id: "org.savantbuild.plugin:idea:1.0.1")
 release = loadPlugin(id: "org.savantbuild.plugin:release-git:${savantVersion}")
 //csharp = loadPlugin(id: "org.savantbuild.plugin:csharp:0.1.0-{integration}")
 //csharpNUnit = loadPlugin(id: "org.savantbuild.plugin:csharp-nunit:0.1.0-{integration}")
