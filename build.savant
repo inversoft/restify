@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2015-2018, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2015-2019, Inversoft Inc., All Rights Reserved
  */
 savantVersion = "1.0.0"
 
-project(group: "com.inversoft", name: "restify", version: "3.2.2", licenses: ["ApacheV2_0"]) {
+project(group: "com.inversoft", name: "restify", version: "3.2.3", licenses: ["ApacheV2_0"]) {
   workflow {
     standard()
   }

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2564c151-cf79-450e-9318-e7e735ce0792" name="Default" comment="Serialization customizatioon" />
+    <list default="true" id="2564c151-cf79-450e-9318-e7e735ce0792" name="Default" comment="Serialization customizatioon">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Restify/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Restify/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -14,59 +16,6 @@
   <component name="ErrorTreeViewConfiguration">
     <option name="hideWarnings" value="true" />
     <option name="HIDE_WARNINGS" value="true" />
-  </component>
-  <component name="FUSProjectUsageTrigger">
-    <session id="1626502470">
-      <usages-collector id="statistics.lifecycle.project">
-        <counts>
-          <entry key="project.closed" value="6" />
-          <entry key="project.open.time.0" value="2" />
-          <entry key="project.open.time.1" value="2" />
-          <entry key="project.open.time.4" value="2" />
-          <entry key="project.opened" value="6" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.open">
-        <counts>
-          <entry key="config" value="2" />
-          <entry key="cs" value="21" />
-          <entry key="csproj" value="1" />
-          <entry key="md" value="1" />
-          <entry key="nuspec" value="1" />
-          <entry key="sln" value="1" />
-          <entry key="targets" value="1" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.open">
-        <counts>
-          <entry key="C#" value="21" />
-          <entry key="Config" value="2" />
-          <entry key="Csproj" value="1" />
-          <entry key="MsBuild targets file" value="1" />
-          <entry key="NuGet spec" value="1" />
-          <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Solution File" value="1" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.edit">
-        <counts>
-          <entry key="config" value="2" />
-          <entry key="cs" value="328" />
-          <entry key="csproj" value="3" />
-          <entry key="nuspec" value="1" />
-          <entry key="txt" value="32" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.edit">
-        <counts>
-          <entry key="C#" value="328" />
-          <entry key="Config" value="2" />
-          <entry key="Csproj" value="3" />
-          <entry key="NuGet spec" value="1" />
-          <entry key="PLAIN_TEXT" value="32" />
-        </counts>
-      </usages-collector>
-    </session>
   </component>
   <component name="FileEditorManager">
     <leaf />
@@ -123,24 +72,18 @@
       </list>
     </option>
   </component>
-  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
-  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
-  <component name="JsGulpfileManager">
-    <detection-done>true</detection-done>
-    <sorting>DEFINITION_ORDER</sorting>
-  </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="136" />
     <option name="y" value="23" />
     <option name="width" value="1580" />
-    <option name="height" value="1078" />
+    <option name="height" value="1027" />
   </component>
   <component name="ProjectView">
     <navigator currentView="SolutionExplorer" proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="FileSystemExplorer" />
+      <pane id="AssemblyExplorer" />
       <pane id="SolutionExplorer">
         <subPane>
           <expand>
@@ -148,21 +91,12 @@
               <item name="Project" type="784c90a0:SolutionExplorerRootNode" />
               <item name="Restify" type="24d0babc:SolutionExplorerModelNode" />
             </path>
-            <path>
-              <item name="Project" type="784c90a0:SolutionExplorerRootNode" />
-              <item name="Restify" type="24d0babc:SolutionExplorerModelNode" />
-              <item name="Restify" type="24d0babc:SolutionExplorerModelNode" />
-            </path>
-            <path>
-              <item name="Project" type="784c90a0:SolutionExplorerRootNode" />
-              <item name="Restify" type="24d0babc:SolutionExplorerModelNode" />
-              <item name="RestifyTest" type="24d0babc:SolutionExplorerModelNode" />
-            </path>
           </expand>
           <select />
         </subPane>
         <option name="show-all-files" value="false" />
       </pane>
+      <pane id="FileSystemExplorer" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -183,7 +117,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected=".NET Project.Default">
+  <component name="RunManager">
     <configuration name="Default" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -202,7 +136,7 @@
         <option name="Build" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+    <configuration default="true" type="js.build_tools.gulp">
       <node-interpreter>project</node-interpreter>
       <node-options />
       <gulpfile />
@@ -211,9 +145,6 @@
       <envs />
       <method v="2" />
     </configuration>
-    <list>
-      <item itemvalue=".NET Project.Default" />
-    </list>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -242,6 +173,7 @@
       <workItem from="1542226200905" duration="1299000" />
       <workItem from="1542239363487" duration="1352000" />
       <workItem from="1542270380438" duration="131000" />
+      <workItem from="1556671825463" duration="7000" />
     </task>
     <task id="LOCAL-00001" summary="Nuget spec, code cleanup and formatting.">
       <created>1485384395407</created>
@@ -275,7 +207,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="10800000" />
+    <option name="totallyTimeSpent" value="10807000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -287,9 +219,11 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="136" y="23" width="1580" height="1078" extended-state="0" />
+    <frame x="136" y="23" width="1580" height="1027" extended-state="0" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24187256" />
+      <window_info id="Image Layers" />
+      <window_info id="Capture Tool" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24512354" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -304,12 +238,13 @@
       <window_info anchor="bottom" id="Unit Tests" order="9" sideWeight="0.49109414" weight="0.44523326" />
       <window_info anchor="bottom" id="Terminal" order="10" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5101781" side_tool="true" weight="0.32903227" />
-      <window_info active="true" anchor="bottom" id="Version Control" order="12" visible="true" weight="0.3296146" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="12" visible="true" weight="0.32941177" />
       <window_info anchor="bottom" id="Change Signature" order="13" side_tool="true" />
       <window_info anchor="bottom" id="Build" order="14" sideWeight="0.4893978" weight="0.32853717" />
       <window_info anchor="bottom" id="Messages" order="15" />
       <window_info anchor="bottom" id="Docker" order="16" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="17" show_stripe_button="false" />
+      <window_info anchor="right" id="Capture Analysis" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -323,9 +258,6 @@
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
-  </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />

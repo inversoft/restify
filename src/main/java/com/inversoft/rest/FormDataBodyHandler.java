@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2016-2019, Inversoft Inc., All Rights Reserved
  */
 package com.inversoft.rest;
 
@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -65,11 +66,7 @@ public class FormDataBodyHandler implements RESTClient.BodyHandler {
         }
       });
 
-      try {
-        body = build.toString().getBytes("UTF-8");
-      } catch (UnsupportedEncodingException e) {
-        throw new IllegalStateException(e);
-      }
+      body = build.toString().getBytes(StandardCharsets.UTF_8);
     }
   }
 }

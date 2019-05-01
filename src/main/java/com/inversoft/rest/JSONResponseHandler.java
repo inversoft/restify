@@ -1,11 +1,17 @@
 /*
- * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2016-2019, Inversoft Inc., All Rights Reserved
  */
 package com.inversoft.rest;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inversoft.json.JacksonModule;
@@ -20,6 +26,8 @@ import com.inversoft.json.JacksonModule;
  */
 public class JSONResponseHandler<T> implements RESTClient.ResponseHandler<T> {
   public final static ObjectMapper defaultObjectMapper = new ObjectMapper().registerModule(new JacksonModule());
+
+  private static final Logger logger = LoggerFactory.getLogger(JSONResponseHandler.class);
 
   private final ObjectMapper instanceObjectMapper;
 
@@ -54,6 +62,14 @@ public class JSONResponseHandler<T> implements RESTClient.ResponseHandler<T> {
     try {
       return instanceObjectMapper.readValue(bis, type);
     } catch (IOException e) {
+      if (logger.isDebugEnabled()) {
+        try {
+          String body = new BufferedReader(new InputStreamReader(bis)).lines().collect(Collectors.joining("\n"));
+          logger.debug("An exception occurred reading the HTTP response as JSON. Here is the actual HTTP response body returned:\n" + body);
+        } catch (Exception ignore) {
+
+        }
+      }
       throw new JSONException(e);
     }
   }

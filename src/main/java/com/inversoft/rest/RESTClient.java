@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2016-2019, Inversoft Inc., All Rights Reserved
  */
 package com.inversoft.rest;
 
@@ -62,6 +62,8 @@ public class RESTClient<RS, ERS> {
   public ResponseHandler<RS> successResponseHandler;
 
   public Class<RS> successType;
+
+  public String userAgent = "Restify (https://github.com/inversoft/restify)";
 
   public RESTClient(Class<RS> successType, Class<ERS> errorType) {
     if (successType == Void.class || errorType == Void.class) {
@@ -179,6 +181,10 @@ public class RESTClient<RS, ERS> {
       huc.setConnectTimeout(connectTimeout);
       huc.setReadTimeout(readTimeout);
       huc.setRequestMethod(method.toString());
+
+      if (headers.keySet().stream().noneMatch(name -> name.equalsIgnoreCase("User-Agent"))) {
+        headers.put("User-Agent", userAgent);
+      }
 
       if (headers.size() > 0) {
         headers.forEach(huc::addRequestProperty);
@@ -322,11 +328,7 @@ public class RESTClient<RS, ERS> {
       return this;
     }
 
-    List<Object> values = this.parameters.get(name);
-    if (values == null) {
-      values = new ArrayList<>();
-      this.parameters.put(name, values);
-    }
+    List<Object> values = this.parameters.computeIfAbsent(name, k -> new ArrayList<>());
 
     if (value instanceof ZonedDateTime) {
       values.add(((ZonedDateTime) value).toInstant().toEpochMilli());
