@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2016-2019, Inversoft Inc., All Rights Reserved
  */
 package com.inversoft.rest;
 
@@ -27,6 +27,7 @@ import com.sun.net.httpserver.HttpServer;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
@@ -63,6 +64,31 @@ public class RESTClientTest {
     assertEquals(response.method, RESTClient.HTTPMethod.DELETE);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
+  }
+
+  @Test
+  public void get_JSONParseException() throws Exception {
+    TestHandler handler = new TestHandler(null, null, null, "GET", 403, "<html><body>Hello!</body></html>");
+    startServer(handler);
+
+    // Expecting JSON, but get HTML
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
+        .url("http://localhost:7000/test")
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .get()
+        .go();
+
+    assertEquals(handler.count, 1);
+    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.method, RESTClient.HTTPMethod.GET);
+    assertEquals(response.status, 403);
+    assertFalse(response.wasSuccessful());
+    assertNull(response.errorResponse);
+    assertNull(response.successResponse);
+    assertNotNull(response.exception);
+    assertEquals(response.exception.getMessage(), "com.fasterxml.jackson.core.JsonParseException: Unexpected character ('<' (code 60)): expected a valid value (number, String, array, object, 'true', 'false' or 'null')\n" +
+        " at [Source: (BufferedInputStream); line: 1, column: 2]");
   }
 
   @Test
