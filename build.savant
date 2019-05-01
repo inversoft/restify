@@ -3,7 +3,7 @@
  */
 savantVersion = "1.0.0"
 
-project(group: "com.inversoft", name: "restify", version: "3.2.3", licenses: ["ApacheV2_0"]) {
+project(group: "com.inversoft", name: "restify", version: "3.2.4", licenses: ["ApacheV2_0"]) {
   workflow {
     standard()
   }

@@ -4,11 +4,9 @@
 package com.inversoft.rest;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inversoft.json.JacksonModule;
@@ -54,16 +52,21 @@ public class JSONResponseHandler<T> implements RESTClient.ResponseHandler<T> {
 
     bis.reset();
 
-    try {
-      return instanceObjectMapper.readValue(bis, type);
-    } catch (IOException e) {
-      try {
-        String body = new BufferedReader(new InputStreamReader(bis)).lines().collect(Collectors.joining("\n"));
-        throw new JSONException("Failed to parse the HTTP response body. Actual response body:\n" + body, e);
-      } catch (Exception ignore) {
-      }
+    // Read the input stream so we can optionally write the original response body to an exception.
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+    int length;
 
-      throw new JSONException(e);
+    byte[] buffer = new byte[1024];
+    while ((length = bis.read(buffer)) != -1) {
+      os.write(buffer, 0, length);
+    }
+
+    byte[] bytes = os.toByteArray();
+
+    try {
+      return instanceObjectMapper.readValue(bytes, type);
+    } catch (IOException e) {
+      throw new JSONException("Failed to read the JSON body. \n\n" + new String(bytes), e);
     }
   }
 }
