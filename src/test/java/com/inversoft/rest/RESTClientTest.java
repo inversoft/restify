@@ -87,8 +87,35 @@ public class RESTClientTest {
     assertNull(response.errorResponse);
     assertNull(response.successResponse);
     assertNotNull(response.exception);
-    assertEquals(response.exception.getMessage(), "com.fasterxml.jackson.core.JsonParseException: Unexpected character ('<' (code 60)): expected a valid value (number, String, array, object, 'true', 'false' or 'null')\n" +
-        " at [Source: (BufferedInputStream); line: 1, column: 2]");
+    assertEquals(response.exception.getMessage(), "Failed to parse the HTTP response as JSON. Actual HTTP response body:\n" +
+        "<html><body>Hello!</body></html>");
+  }
+
+  @Test
+  public void get_JSONParseExceptionTruncatedResponse() throws Exception {
+    TestHandler handler = new TestHandler(null, null, null, "GET", 403, "<html><body>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</body></html>");
+    startServer(handler);
+
+    // Expecting JSON, but get HTML
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
+        .url("http://localhost:7000/test")
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .get()
+        .go();
+
+    assertEquals(handler.count, 1);
+    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.method, RESTClient.HTTPMethod.GET);
+    assertEquals(response.status, 403);
+    assertFalse(response.wasSuccessful());
+    assertNull(response.errorResponse);
+    assertNull(response.successResponse);
+    assertNotNull(response.exception);
+    assertEquals(response.exception.getMessage(), "Failed to parse the HTTP response as JSON. Actual HTTP response body:\n" +
+        "Note: Output has been truncated to the first 1024 of 1363 bytes.\n" +
+        "\n" +
+        "<html><body>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliq");
   }
 
   @Test

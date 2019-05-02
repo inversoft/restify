@@ -6,6 +6,7 @@ package com.inversoft.rest;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inversoft.json.JacksonModule;
@@ -42,7 +43,7 @@ public class JSONResponseHandler<T> implements RESTClient.ResponseHandler<T> {
     }
 
     // Read a single byte of data to see if the stream is empty but then reset the stream back 0
-    BufferedInputStream bis = new BufferedInputStream(is, 1024);
+    BetterBufferedInputStream bis = new BetterBufferedInputStream(is, 1024, 1024);
     bis.mark(1024);
     int c = bis.read();
     if (c == -1) {
@@ -54,7 +55,84 @@ public class JSONResponseHandler<T> implements RESTClient.ResponseHandler<T> {
     try {
       return instanceObjectMapper.readValue(bis, type);
     } catch (IOException e) {
-      throw new JSONException(e);
+      throw new JSONException("Failed to parse the HTTP response as JSON. Actual HTTP response body:\n" +
+          (bis.isObservableTruncated()
+              ? ("Note: Output has been truncated to the first " + bis.getObservableLength() + " of " + bis.actualLength + " bytes.\n\n") : "") +
+          bis.getObservableAsString(), e);
+    }
+  }
+
+  public static class BetterBufferedInputStream extends BufferedInputStream {
+    private final int maximumBytesToObserve;
+
+    private final byte[] observableBuffer;
+
+    private int actualLength;
+
+    private int index;
+
+    public BetterBufferedInputStream(InputStream in, int size, int maximumBytesToObserve) {
+      super(in, size);
+      this.maximumBytesToObserve = maximumBytesToObserve;
+      observableBuffer = new byte[maximumBytesToObserve];
+    }
+
+    public BetterBufferedInputStream(InputStream in) {
+      super(in);
+      this.maximumBytesToObserve = 1024;
+      observableBuffer = new byte[maximumBytesToObserve];
+    }
+
+    public int getActualLength() {
+      return actualLength;
+    }
+
+    public String getObservableAsString() {
+      return new String(observableBuffer, 0, Math.min(index, maximumBytesToObserve), StandardCharsets.UTF_8);
+    }
+
+    public int getObservableLength() {
+      return Math.min(index, maximumBytesToObserve);
+    }
+
+    public boolean isObservableTruncated() {
+      return actualLength > maximumBytesToObserve;
+    }
+
+    @Override
+    public synchronized int read() throws IOException {
+      int c = super.read();
+      if (c != -1 && index < maximumBytesToObserve) {
+        observableBuffer[index++] = (byte) c;
+      }
+
+      actualLength++;
+      return c;
+    }
+
+    @Override
+    public synchronized int read(byte[] b, int off, int len) throws IOException {
+      int read = super.read(b, off, len);
+
+      int copyToObservable = Math.min(read, maximumBytesToObserve - index);
+      if (index < maximumBytesToObserve) {
+        System.arraycopy(b, 0, observableBuffer, index, copyToObservable);
+      }
+
+      actualLength += read;
+      index += copyToObservable;
+      return read;
+    }
+
+    @Override
+    public synchronized void reset() throws IOException {
+      super.reset();
+      for (int i = 0; i < index; i++) {
+        observableBuffer[i] = 0;
+      }
+
+      actualLength = 0;
+      index = 0;
     }
   }
 }
