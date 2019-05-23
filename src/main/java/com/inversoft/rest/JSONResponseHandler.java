@@ -113,6 +113,9 @@ public class JSONResponseHandler<T> implements RESTClient.ResponseHandler<T> {
     @Override
     public synchronized int read(byte[] b, int off, int len) throws IOException {
       int read = super.read(b, off, len);
+      if (read == -1) {
+        return read;
+      }
 
       int copyToObservable = Math.min(read, maximumBytesToObserve - index);
       if (index < maximumBytesToObserve) {
