@@ -127,10 +127,6 @@ public class JSONResponseHandler<T> implements RESTClient.ResponseHandler<T> {
     @Override
     public synchronized void reset() throws IOException {
       super.reset();
-      for (int i = 0; i < index; i++) {
-        observableBuffer[i] = 0;
-      }
-
       actualLength = 0;
       index = 0;
     }
