@@ -7,21 +7,26 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +70,27 @@ public class RESTClient<RS, ERS> {
 
   public String userAgent = "Restify (https://github.com/inversoft/restify)";
 
+  // Add support for PATCH to the HttpUrlConnection
+  static {
+    try {
+      Field methodsField = HttpURLConnection.class.getDeclaredField("methods");
+
+      Field modifiersField = Field.class.getDeclaredField("modifiers");
+      modifiersField.setAccessible(true);
+      modifiersField.setInt(methodsField, methodsField.getModifiers() & ~Modifier.FINAL);
+
+      methodsField.setAccessible(true);
+
+      String[] oldMethods = (String[]) methodsField.get(null);
+      Set<String> methodsSet = new LinkedHashSet<>(Arrays.asList(oldMethods));
+      methodsSet.add("PATCH");
+      String[] newMethods = methodsSet.toArray(new String[0]);
+
+      methodsField.set(null/*static field*/, newMethods);
+    } catch (NoSuchFieldException | IllegalAccessException ignore) {
+    }
+  }
+
   public RESTClient(Class<RS> successType, Class<ERS> errorType) {
     if (successType == Void.class || errorType == Void.class) {
       throw new IllegalArgumentException("Void.class isn't valid. Use Void.TYPE instead.");
@@ -75,7 +101,11 @@ public class RESTClient<RS, ERS> {
   }
 
   public RESTClient<RS, ERS> authorization(String key) {
-    this.headers.put("Authorization", key);
+    if (key != null && !key.isEmpty()) {
+      this.headers.put("Authorization", key);
+    } else {
+      this.headers.remove("Authorization");
+    }
     return this;
   }
 
@@ -270,6 +300,11 @@ public class RESTClient<RS, ERS> {
     return this;
   }
 
+  public RESTClient<RS, ERS> patch() {
+    this.method = HTTPMethod.PATCH;
+    return this;
+  }
+
   public RESTClient<RS, ERS> post() {
     this.method = HTTPMethod.POST;
     return this;
@@ -369,7 +404,8 @@ public class RESTClient<RS, ERS> {
     POST,
     PUT,
     DELETE,
-    HEAD
+    HEAD,
+    PATCH
   }
 
   /**

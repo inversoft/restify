@@ -306,6 +306,12 @@ namespace Inversoft.Restify
       return this;
     }
 
+    public RESTClient<RS, ERS> Patch()
+    {
+      method = HTTPMethod.PATCH;
+      return this;
+    }
+
     public RESTClient<RS, ERS> Post()
     {
       method = HTTPMethod.POST;
@@ -455,7 +461,8 @@ namespace Inversoft.Restify
     GET,
     POST,
     PUT,
-    DELETE
+    DELETE,
+    PATCH
   }
 
   /**

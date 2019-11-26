@@ -347,6 +347,31 @@ public class RESTClientTest {
   }
 
   @Test
+  public void patch_json_json() throws Exception {
+    TestHandler handler = new TestHandler("{\"test1\":\"value1\",\"test2\":\"value2\"}", "application/json", null, "PATCH", 200, "{\"code\": 200}");
+    startServer(handler);
+
+    Map<String, String> parameters = new LinkedHashMap<>();
+    parameters.put("test1", "value1");
+    parameters.put("test2", "value2");
+
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
+        .url("http://localhost:7000/test")
+        .bodyHandler(new JSONBodyHandler(parameters))
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .patch()
+        .go();
+
+    assertEquals(handler.count, 1);
+    assertSame(response.request, parameters);
+    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.method, RESTClient.HTTPMethod.PATCH);
+    assertEquals(response.status, 200);
+    assertEquals(response.successResponse.get("code"), 200);
+  }
+
+  @Test
   public void put_formData_errorString() throws Exception {
     TestHandler handler = new TestHandler("test1=value1&test2=value2", "application/x-www-form-urlencoded", null, "PUT", 500, "Testing 123");
     startServer(handler);
