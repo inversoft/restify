@@ -14,9 +14,9 @@ project(group: "com.inversoft", name: "restify", version: "3.3.0", licenses: ["A
 
   dependencies {
     group(name: "compile") {
-      dependency(id: "com.fasterxml.jackson.core:jackson-core:2.10.0")
-      dependency(id: "com.fasterxml.jackson.core:jackson-databind:2.10.0")
-      dependency(id: "com.fasterxml.jackson.core:jackson-annotations:2.10.0")
+      dependency(id: "com.fasterxml.jackson.core:jackson-core:2.10.1")
+      dependency(id: "com.fasterxml.jackson.core:jackson-databind:2.10.1")
+      dependency(id: "com.fasterxml.jackson.core:jackson-annotations:2.10.1")
       dependency(id: "com.inversoft:jackson5:2.4.2")
       dependency(id: "org.slf4j:slf4j-api:1.7.7")
     }
