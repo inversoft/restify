@@ -7,26 +7,22 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,27 +65,6 @@ public class RESTClient<RS, ERS> {
   public Class<RS> successType;
 
   public String userAgent = "Restify (https://github.com/inversoft/restify)";
-
-  // Add support for PATCH to the HttpUrlConnection
-  static {
-    try {
-      Field methodsField = HttpURLConnection.class.getDeclaredField("methods");
-
-      Field modifiersField = Field.class.getDeclaredField("modifiers");
-      modifiersField.setAccessible(true);
-      modifiersField.setInt(methodsField, methodsField.getModifiers() & ~Modifier.FINAL);
-
-      methodsField.setAccessible(true);
-
-      String[] oldMethods = (String[]) methodsField.get(null);
-      Set<String> methodsSet = new LinkedHashSet<>(Arrays.asList(oldMethods));
-      methodsSet.add("PATCH");
-      String[] newMethods = methodsSet.toArray(new String[0]);
-
-      methodsField.set(null/*static field*/, newMethods);
-    } catch (NoSuchFieldException | IllegalAccessException ignore) {
-    }
-  }
 
   public RESTClient(Class<RS> successType, Class<ERS> errorType) {
     if (successType == Void.class || errorType == Void.class) {
@@ -184,7 +159,7 @@ public class RESTClient<RS, ERS> {
 
           for (Iterator<Object> j = entry.getValue().iterator(); j.hasNext(); ) {
             Object value = j.next();
-            url.append(URLEncoder.encode(entry.getKey(), "UTF-8")).append("=").append(URLEncoder.encode(value.toString(), "UTF-8"));
+            url.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8)).append("=").append(URLEncoder.encode(value.toString(), StandardCharsets.UTF_8));
             if (j.hasNext()) {
               url.append("&");
             }
@@ -210,7 +185,15 @@ public class RESTClient<RS, ERS> {
       huc.setDoOutput(bodyHandler != null);
       huc.setConnectTimeout(connectTimeout);
       huc.setReadTimeout(readTimeout);
-      huc.setRequestMethod(method.toString());
+
+      // We used to use Reflection to add support for PATCH, this no longer works in JDK >= 12
+      // https://stackoverflow.com/questions/56039341/get-declared-fields-of-java-lang-reflect-fields-in-jdk12
+      if (method == HTTPMethod.PATCH) {
+        huc.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+        huc.setRequestMethod("POST");
+      } else {
+        huc.setRequestMethod(method.toString());
+      }
 
       if (headers.keySet().stream().noneMatch(name -> name.equalsIgnoreCase("User-Agent"))) {
         headers.put("User-Agent", userAgent);
