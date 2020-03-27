@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -275,6 +276,32 @@ public class RESTClientTest {
   }
 
   @Test
+  public void patch_json_json() throws Exception {
+    TestHandler handler = new TestHandler("{\"test1\":\"value1\",\"test2\":\"value2\"}", "application/json", null, "PATCH", 200, "{\"code\": 200}");
+    startServer(handler);
+
+    Map<String, String> parameters = new LinkedHashMap<>();
+    parameters.put("test1", "value1");
+    parameters.put("test2", "value2");
+
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
+        .url("http://localhost:7000/test")
+        .bodyHandler(new JSONBodyHandler(parameters))
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .patch()
+        .go();
+
+    assertEquals(handler.count, 1);
+    assertSame(response.request, parameters);
+    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    // We're using POST with X-HTTP-Method-Override for PATCH
+    assertEquals(response.method, RESTClient.HTTPMethod.POST);
+    assertEquals(response.status, 200);
+    assertEquals(response.successResponse.get("code"), 200);
+  }
+
+  @Test
   public void post_formData_string() throws Exception {
     TestHandler handler = new TestHandler("test1=value1&test2=value2", "application/x-www-form-urlencoded", null, "POST", 200, "Testing 123");
     startServer(handler);
@@ -342,31 +369,6 @@ public class RESTClientTest {
     assertSame(response.request, parameters);
     assertEquals(response.url, new URL("http://localhost:7000/test"));
     assertEquals(response.method, RESTClient.HTTPMethod.POST);
-    assertEquals(response.status, 200);
-    assertEquals(response.successResponse.get("code"), 200);
-  }
-
-  @Test
-  public void patch_json_json() throws Exception {
-    TestHandler handler = new TestHandler("{\"test1\":\"value1\",\"test2\":\"value2\"}", "application/json", null, "PATCH", 200, "{\"code\": 200}");
-    startServer(handler);
-
-    Map<String, String> parameters = new LinkedHashMap<>();
-    parameters.put("test1", "value1");
-    parameters.put("test2", "value2");
-
-    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
-        .url("http://localhost:7000/test")
-        .bodyHandler(new JSONBodyHandler(parameters))
-        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
-        .successResponseHandler(new JSONResponseHandler<>(Map.class))
-        .patch()
-        .go();
-
-    assertEquals(handler.count, 1);
-    assertSame(response.request, parameters);
-    assertEquals(response.url, new URL("http://localhost:7000/test"));
-    assertEquals(response.method, RESTClient.HTTPMethod.PATCH);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
   }
@@ -481,11 +483,12 @@ public class RESTClientTest {
         }
       }
 
-        assertEquals(httpExchange.getRequestMethod(), method);
+      String expectedMethod = method.equalsIgnoreCase("PATCH") ? "POST" : method;
+      assertEquals(httpExchange.getRequestMethod(), expectedMethod);
 
       // Read the request and save it
       StringBuilder body = new StringBuilder();
-      try (BufferedReader reader = new BufferedReader(new InputStreamReader(httpExchange.getRequestBody(), "UTF-8"))) {
+      try (BufferedReader reader = new BufferedReader(new InputStreamReader(httpExchange.getRequestBody(), StandardCharsets.UTF_8))) {
         String line;
         while ((line = reader.readLine()) != null) {
           body.append(line);
