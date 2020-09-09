@@ -3,7 +3,7 @@
  */
 savantVersion = "1.0.0"
 
-project(group: "com.inversoft", name: "restify", version: "3.4.1", licenses: ["ApacheV2_0"]) {
+project(group: "com.inversoft", name: "restify", version: "3.4.2", licenses: ["ApacheV2_0"]) {
   workflow {
     standard()
   }
@@ -18,7 +18,7 @@ project(group: "com.inversoft", name: "restify", version: "3.4.1", licenses: ["A
       dependency(id: "com.fasterxml.jackson.core:jackson-databind:2.10.3")
       dependency(id: "com.fasterxml.jackson.core:jackson-annotations:2.10.3")
       dependency(id: "com.inversoft:jackson5:2.4.6")
-      dependency(id: "org.slf4j:slf4j-api:1.7.7")
+      dependency(id: "org.slf4j:slf4j-api:1.7.21")
     }
     group(name: "test-compile", export: false) {
       dependency(id: "org.testng:testng:6.14.3")
