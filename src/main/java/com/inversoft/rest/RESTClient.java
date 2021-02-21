@@ -59,6 +59,8 @@ public class RESTClient<RS, ERS> {
 
   public int readTimeout = 2000;
 
+  public boolean sniVerificationDisabled;
+
   public ResponseHandler<RS> successResponseHandler;
 
   public Class<RS> successType;
@@ -110,6 +112,11 @@ public class RESTClient<RS, ERS> {
 
   public RESTClient<RS, ERS> delete() {
     this.method = HTTPMethod.DELETE;
+    return this;
+  }
+
+  public RESTClient<RS, ERS> disableSNIVerification() {
+    this.sniVerificationDisabled = true;
     return this;
   }
 
@@ -172,12 +179,18 @@ public class RESTClient<RS, ERS> {
 
       response.url = new URL(url.toString());
       huc = (HttpURLConnection) response.url.openConnection();
-      if (response.url.getProtocol().toLowerCase().equals("https") && certificate != null) {
+      if (response.url.getProtocol().toLowerCase().equals("https")) {
         HttpsURLConnection hsuc = (HttpsURLConnection) huc;
-        if (key != null) {
-          hsuc.setSSLSocketFactory(SSLTools.getSSLServerContext(certificate, key).getSocketFactory());
-        } else {
-          hsuc.setSSLSocketFactory(SSLTools.getSSLSocketFactory(certificate));
+        if (certificate != null) {
+          if (key != null) {
+            hsuc.setSSLSocketFactory(SSLTools.getSSLServerContext(certificate, key).getSocketFactory());
+          } else {
+            hsuc.setSSLSocketFactory(SSLTools.getSSLSocketFactory(certificate));
+          }
+        }
+
+        if (sniVerificationDisabled) {
+          hsuc.setHostnameVerifier((hostname, session) -> true);
         }
       }
 

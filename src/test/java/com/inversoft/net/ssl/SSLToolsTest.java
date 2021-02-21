@@ -27,7 +27,6 @@ import static org.testng.Assert.fail;
  * @author Seth Musselman
  */
 public class SSLToolsTest {
-
   static final String almostGoodCert =
       "MIIDUjCCArugAwIBAgIJANZCTNN98L9ZMA0GCSqGSIb3DQEBBQUAMHoxCzAJBgNV\n" +
           "BAYTAlVTMQswCQYDVQQIEwJDTzEPMA0GA1UEBxMGZGVudmVyMQ8wDQYDVQQKEwZz\n" +
