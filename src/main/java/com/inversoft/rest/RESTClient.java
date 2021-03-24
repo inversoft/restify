@@ -354,11 +354,14 @@ public class RESTClient<RS, ERS> {
   /**
    * Add URL parameters from a <code>Map<String, Object></code>.
    *
-   * @param paramaters The url parameters <code>Map</code> to add.  For each item in the <code>Map</code>
+   * @param parameters The url parameters <code>Map</code> to add.  For each item in the <code>Map</code>
    *                   this will call <code>urlParameter(String, Object)</code>
    * @return This.
    */
-  public RESTClient<RS, ERS> urlParameter(Map<String, Object> paramaters) {
+  public RESTClient<RS, ERS> urlParameter(Map<String, Object> parameters) {
+    if (parameters != null) {
+      parameters.forEach(this::urlParameter);
+    }
     return this;
   }
 
