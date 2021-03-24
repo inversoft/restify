@@ -352,7 +352,7 @@ public class RESTClient<RS, ERS> {
   }
 
   /**
-   * Add URL parameters from a <code>Map<String, Object></code>.
+   * Add URL parameters from a {@code Map<String, Object>}.
    *
    * @param parameters The url parameters <code>Map</code> to add.  For each item in the <code>Map</code>
    *                   this will call <code>urlParameter(String, Object)</code>
