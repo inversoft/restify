@@ -352,6 +352,17 @@ public class RESTClient<RS, ERS> {
   }
 
   /**
+   * Add URL parameters from a <code>Map<String, Object></code>.
+   *
+   * @param paramaters The url parameters <code>Map</code> to add.  For each item in the <code>Map</code>
+   *                   this will call <code>urlParameter(String, Object)</code>
+   * @return This.
+   */
+  public RESTClient<RS, ERS> urlParameter(Map<String, Object> paramaters) {
+    return this;
+  }
+
+  /**
    * Append a url path segment. <p>
    * For Example: <pre>
    *     .url("http://www.foo.com")
@@ -433,7 +444,6 @@ public class RESTClient<RS, ERS> {
      *
      * @param is The InputStream to read from.
      * @return The value.
-     *
      * @throws IOException If the read failed.
      */
     T apply(InputStream is) throws IOException;

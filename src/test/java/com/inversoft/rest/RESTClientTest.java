@@ -257,6 +257,35 @@ public class RESTClientTest {
   }
 
   @Test
+  public void url_parameters_from_map() {
+    ZonedDateTime now = ZonedDateTime.now();
+
+    Map<String, Object> paramaters = new LinkedHashMap<>();
+    paramaters.put("time", now);
+    paramaters.put("string", "value");
+    paramaters.put("null", null);
+    paramaters.put("list", new ArrayList<>(Arrays.asList(new UUID(1, 0), new UUID(2, 0))));
+
+    // Test null parameter, ZoneDateTime parameter, and a collection parameter as added from a Map
+    RESTClient<Void, Void> client = new RESTClient<>(Void.TYPE, Void.TYPE)
+        .url("https://www.inversoft.com")
+        .urlParameter(paramaters)
+        .get();
+
+    assertEquals(client.parameters.get("time").size(), 1);
+    assertEquals(client.parameters.get("time").get(0), now.toInstant().toEpochMilli());
+
+    assertEquals(client.parameters.get("string").size(), 1);
+    assertEquals(client.parameters.get("string").get(0), "value");
+
+    assertNull(client.parameters.get("null"));
+
+    client.go(); // finish building the final URL
+    assertEquals(client.url.toString(), "https://www.inversoft.com?time="
+        + now.toInstant().toEpochMilli() + "&string=value&list=" + new UUID(1, 0).toString() + "&list=" + new UUID(2, 0).toString());
+  }
+
+  @Test
   public void head() throws Exception {
     TestHandler handler = new TestHandler(null, null, null, "HEAD", 200, "{\"code\": 200}");
     startServer(handler);
