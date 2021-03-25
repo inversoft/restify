@@ -9,7 +9,7 @@ Inversoft's REST Client. A simple REST Client to make life simpler when calling 
 <dependency>
   <groupId>com.inversoft</groupId>
   <artifactId>restify</artifactId>
-  <version>3.5.0</version>
+  <version>3.5.1</version>
 </dependency>
 ```
 
