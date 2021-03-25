@@ -2,6 +2,7 @@
  * Copyright (c) 2015-2019, Inversoft Inc., All Rights Reserved
  */
 savantVersion = "1.0.0"
+jacksonVersion = "2.12.2"
 
 project(group: "com.inversoft", name: "restify", version: "3.5.1", licenses: ["ApacheV2_0"]) {
   workflow {
@@ -14,9 +15,9 @@ project(group: "com.inversoft", name: "restify", version: "3.5.1", licenses: ["A
 
   dependencies {
     group(name: "compile") {
-      dependency(id: "com.fasterxml.jackson.core:jackson-core:2.12.2")
-      dependency(id: "com.fasterxml.jackson.core:jackson-databind:2.12.2")
-      dependency(id: "com.fasterxml.jackson.core:jackson-annotations:2.12.2")
+      dependency(id: "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
+      dependency(id: "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
+      dependency(id: "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
       dependency(id: "com.inversoft:jackson5:2.4.6")
       dependency(id: "org.slf4j:slf4j-api:1.7.21")
     }
