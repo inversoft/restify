@@ -6,7 +6,7 @@
 
   <groupId>com.inversoft</groupId>
   <artifactId>restify</artifactId>
-  <version>3.5.0</version>
+  <version>3.5.1</version>
   <packaging>jar</packaging>
 
   <name>Inversoft Java 8 REST Client</name>
