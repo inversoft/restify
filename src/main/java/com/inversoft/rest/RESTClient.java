@@ -358,7 +358,7 @@ public class RESTClient<RS, ERS> {
    *                      this will call <code>urlParameter(String, Object)</code>
    * @return This.
    */
-  public RESTClient<RS, ERS> urlParameter(Map<String, Object> urlParameters) {
+  public RESTClient<RS, ERS> urlParameters(Map<String, Object> urlParameters) {
     if (urlParameters != null) {
       urlParameters.forEach(this::urlParameter);
     }
@@ -447,6 +447,7 @@ public class RESTClient<RS, ERS> {
      *
      * @param is The InputStream to read from.
      * @return The value.
+     *
      * @throws IOException If the read failed.
      */
     T apply(InputStream is) throws IOException;

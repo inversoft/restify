@@ -260,17 +260,17 @@ public class RESTClientTest {
   public void get_url_parameters_from_map() {
     ZonedDateTime now = ZonedDateTime.now();
 
-    Map<String, Object> paramaters = new LinkedHashMap<>();
-    paramaters.put("time", now);
-    paramaters.put("string", "value");
-    paramaters.put("null", null);
-    paramaters.put("list", new ArrayList<>(Arrays.asList(new UUID(1, 0), new UUID(2, 0))));
+    Map<String, Object> parameters = new LinkedHashMap<>();
+    parameters.put("time", now);
+    parameters.put("string", "value");
+    parameters.put("null", null);
+    parameters.put("list", new ArrayList<>(Arrays.asList(new UUID(1, 0), new UUID(2, 0))));
 
     // Test null parameter, ZoneDateTime parameter, and a collection parameter as added from a Map
     RESTClient<Void, Void> client = new RESTClient<>(Void.TYPE, Void.TYPE)
         .url("https://www.inversoft.com")
-        .urlParameter(null)
-        .urlParameter(paramaters)
+        .urlParameters(null)
+        .urlParameters(parameters)
         .get();
 
     assertEquals(client.parameters.get("time").size(), 1);
