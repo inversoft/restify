@@ -365,6 +365,20 @@ public class RESTClient<RS, ERS> {
   }
 
   /**
+   * Add URL parameters from a {@code Map<String, Object>}.
+   *
+   * @param urlParameters The url parameters <code>Map</code> to add.  For each item in the <code>Map</code>
+   *                      this will call <code>urlParameter(String, Object)</code>
+   * @return This.
+   */
+  public RESTClient<RS, ERS> urlParameters(Map<String, Object> urlParameters) {
+    if (urlParameters != null) {
+      urlParameters.forEach(this::urlParameter);
+    }
+    return this;
+  }
+
+  /**
    * Append a url path segment. <p>
    * For Example: <pre>
    *     .url("http://www.foo.com")
