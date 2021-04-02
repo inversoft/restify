@@ -33,6 +33,7 @@ project(group: "com.inversoft", name: "restify", version: "3.5.2", licenses: ["A
 
 // Plugins
 dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:1.0.2")
+file = loadPlugin(id: "org.savantbuild.plugin:file:1.0.2")
 java = loadPlugin(id: "org.savantbuild.plugin:java:1.0.2")
 javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:1.0.8")
 idea = loadPlugin(id: "org.savantbuild.plugin:idea:1.0.1")
