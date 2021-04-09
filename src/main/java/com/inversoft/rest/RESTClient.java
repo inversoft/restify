@@ -287,6 +287,11 @@ public class RESTClient<RS, ERS> {
     return this;
   }
 
+  public RESTClient<RS, ERS> method(HTTPMethod method) {
+    this.method = method;
+    return this;
+  }
+
   public RESTClient<RS, ERS> patch() {
     this.method = HTTPMethod.POST;
     this.headers.put("X-HTTP-Method-Override", "PATCH");
