@@ -4,7 +4,7 @@
 savantVersion = "1.0.0"
 jacksonVersion = "2.12.2"
 
-project(group: "com.inversoft", name: "restify", version: "3.5.2", licenses: ["ApacheV2_0"]) {
+project(group: "com.inversoft", name: "restify", version: "3.6.0", licenses: ["ApacheV2_0"]) {
   workflow {
     standard()
   }
