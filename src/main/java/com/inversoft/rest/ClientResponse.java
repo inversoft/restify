@@ -16,6 +16,8 @@
 package com.inversoft.rest;
 
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Response information from a call to a REST API.
@@ -26,6 +28,8 @@ public class ClientResponse<T, U> {
   public U errorResponse;
 
   public Exception exception;
+
+  public Map<String, List<String>> headers;
 
   public RESTClient.HTTPMethod method;
 
