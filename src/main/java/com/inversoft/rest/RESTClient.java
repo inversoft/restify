@@ -53,6 +53,8 @@ public class RESTClient<RS, ERS> {
 
   public Class<ERS> errorType;
 
+  public boolean followRedirects = true;
+
   public String key;
 
   public HTTPMethod method;
@@ -125,6 +127,11 @@ public class RESTClient<RS, ERS> {
     return this;
   }
 
+  public RESTClient<RS, ERS> followRedirects(boolean followRedirects) {
+    this.followRedirects = followRedirects;
+    return this;
+  }
+
   public RESTClient<RS, ERS> get() {
     this.method = HTTPMethod.GET;
     return this;
@@ -179,7 +186,7 @@ public class RESTClient<RS, ERS> {
 
       response.url = new URL(url.toString());
       huc = (HttpURLConnection) response.url.openConnection();
-      if (response.url.getProtocol().toLowerCase().equals("https")) {
+      if (response.url.getProtocol().equalsIgnoreCase("https")) {
         HttpsURLConnection hsuc = (HttpsURLConnection) huc;
         if (certificate != null) {
           if (key != null) {
@@ -194,6 +201,7 @@ public class RESTClient<RS, ERS> {
         }
       }
 
+      huc.setInstanceFollowRedirects(followRedirects);
       huc.setDoOutput(bodyHandler != null);
       huc.setConnectTimeout(connectTimeout);
       huc.setReadTimeout(readTimeout);
