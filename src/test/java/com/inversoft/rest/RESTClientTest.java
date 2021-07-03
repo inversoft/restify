@@ -37,6 +37,7 @@ import static org.testng.Assert.fail;
 /**
  * @author Brian Pontarelli
  */
+@SuppressWarnings("rawtypes")
 public class RESTClientTest {
   private HttpServer server;
 
@@ -65,6 +66,8 @@ public class RESTClientTest {
     assertEquals(response.method, RESTClient.HTTPMethod.DELETE);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
+
+    assertNotNull(response.date);
   }
 
   @Test
@@ -132,6 +135,7 @@ public class RESTClientTest {
         .go(), JSONException.class);
 
     assertEquals(handler.count, 1);
+    assertNotNull(response);
     assertEquals(response.url, new URL("http://localhost:7000/test"));
     assertEquals(response.method, RESTClient.HTTPMethod.GET);
     assertEquals(response.status, 200);
@@ -471,7 +475,7 @@ public class RESTClientTest {
     server.start();
   }
 
-  private class TestHandler implements HttpHandler {
+  private static class TestHandler implements HttpHandler {
     private final String contentType;
 
     private final String method;

@@ -244,7 +244,7 @@ public class RESTClient<RS, ERS> {
       return response;
     }
 
-    response.headers = huc.getHeaderFields();
+    response.setHeaders(huc.getHeaderFields());
     response.status = status;
 
     if (status < 200 || status > 299) {

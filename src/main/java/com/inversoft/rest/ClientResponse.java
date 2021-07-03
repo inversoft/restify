@@ -16,6 +16,9 @@
 package com.inversoft.rest;
 
 import java.net.URL;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,11 +28,15 @@ import java.util.Map;
  * @author Brian Pontarelli
  */
 public class ClientResponse<T, U> {
+  public final Map<String, List<String>> headers = new HashMap<>();
+
+  public ZonedDateTime date;
+
   public U errorResponse;
 
   public Exception exception;
 
-  public Map<String, List<String>> headers;
+  public ZonedDateTime lastModified;
 
   public RESTClient.HTTPMethod method;
 
@@ -41,7 +48,27 @@ public class ClientResponse<T, U> {
 
   public URL url;
 
+  public void setHeaders(Map<String, List<String>> headers) {
+    headers.forEach((key, values) -> this.headers.put(key != null ? key.toLowerCase() : null, values));
+
+    date = parseDateHeader("date");
+    lastModified = parseDateHeader("last-modified");
+  }
+
   public boolean wasSuccessful() {
     return status >= 200 && status <= 299 && exception == null;
+  }
+
+  private ZonedDateTime parseDateHeader(String name) {
+    List<String> values = headers.get(name);
+    if (values != null && values.size() > 0) {
+      try {
+        return ZonedDateTime.parse(values.get(0), DateTimeFormatter.RFC_1123_DATE_TIME);
+      } catch (Exception e) {
+        // Ignore this exception so that we aren't depending on a valid web server
+      }
+    }
+
+    return null;
   }
 }

@@ -10,16 +10,16 @@
       <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
+    <orderEntry type="jdk" jdkName="Java 1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/.savant/cache/com/inversoft/jackson5/2.4.6/jackson5-2.4.6.jar!/" />
+          <root url="jar://$USER_HOME$/.savant/cache/com/inversoft/jackson5/2.4.8/jackson5-2.4.8.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$USER_HOME$/.savant/cache/com/inversoft/jackson5/2.4.6/jackson5-2.4.6-src.jar!/" />
+          <root url="jar://$USER_HOME$/.savant/cache/com/inversoft/jackson5/2.4.8/jackson5-2.4.8-src.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
@@ -59,11 +59,11 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/.savant/cache/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21.jar!/" />
+          <root url="jar://$USER_HOME$/.savant/cache/org/slf4j/slf4j-api/1.7.30/slf4j-api-1.7.30.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$USER_HOME$/.savant/cache/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21-src.jar!/" />
+          <root url="jar://$USER_HOME$/.savant/cache/org/slf4j/slf4j-api/1.7.30/slf4j-api-1.7.30-src.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
