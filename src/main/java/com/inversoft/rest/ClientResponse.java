@@ -17,7 +17,6 @@ package com.inversoft.rest;
 
 import java.net.URL;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +62,7 @@ public class ClientResponse<T, U> {
     List<String> values = headers.get(name);
     if (values != null && values.size() > 0) {
       try {
-        return ZonedDateTime.parse(values.get(0), DateTimeFormatter.RFC_1123_DATE_TIME);
+        return ZonedDateTime.parse(values.get(0), DateTools.RFC_5322_DATE_TIME);
       } catch (Exception e) {
         // Ignore this exception so that we aren't depending on a valid web server
       }
