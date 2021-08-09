@@ -83,7 +83,7 @@ target(name: "idea", description: "Updates the IntelliJ IDEA module file") {
 }
 
 target(name: "publish", description: "Publish to MVN repo", dependsOn: ["clean", "test"]) {
-  if (new ProcessBuilder('mvn', 'deploy', '-Prelease').inheritIO().start().waitFor() != 0) {
+  if (new ProcessBuilder('mvn', 'clean', 'deploy', '-Prelease').inheritIO().start().waitFor() != 0) {
     fail("deploy failed")
   }
 }
