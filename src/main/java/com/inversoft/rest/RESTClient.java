@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -59,6 +61,8 @@ public class RESTClient<RS, ERS> {
 
   public HTTPMethod method;
 
+  public ProxyInfo proxyInfo;
+
   public int readTimeout = 2000;
 
   public boolean sniVerificationDisabled;
@@ -89,10 +93,7 @@ public class RESTClient<RS, ERS> {
 
   public RESTClient<RS, ERS> basicAuthorization(String username, String password) {
     if (username != null && password != null) {
-      String credentials = username + ":" + password;
-      Base64.Encoder encoder = Base64.getEncoder();
-      String encoded = encoder.encodeToString(credentials.getBytes());
-      this.headers.put("Authorization", "Basic " + encoded);
+      this.headers.put("Authorization", base64Basic(username, password));
     }
     return this;
   }
@@ -185,7 +186,17 @@ public class RESTClient<RS, ERS> {
       }
 
       response.url = new URL(url.toString());
-      huc = (HttpURLConnection) response.url.openConnection();
+
+      Proxy proxy = Proxy.NO_PROXY;
+      if (proxyInfo.host != null && proxyInfo.port != -1) {
+        proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyInfo.host, proxyInfo.port));
+      }
+
+      if (proxyInfo.username != null && proxyInfo.password != null) {
+        headers.put("Proxy-Authorization", base64Basic(proxyInfo.username, proxyInfo.password));
+      }
+
+      huc = (HttpURLConnection) response.url.openConnection(proxy);
       if (response.url.getProtocol().equalsIgnoreCase("https")) {
         HttpsURLConnection hsuc = (HttpsURLConnection) huc;
         if (certificate != null) {
@@ -312,6 +323,11 @@ public class RESTClient<RS, ERS> {
     return this;
   }
 
+  public RESTClient<RS, ERS> proxy(ProxyInfo proxyInfo) {
+    this.proxyInfo = proxyInfo;
+    return this;
+  }
+
   public RESTClient<RS, ERS> put() {
     this.method = HTTPMethod.PUT;
     return this;
@@ -413,6 +429,12 @@ public class RESTClient<RS, ERS> {
     return this;
   }
 
+  private String base64Basic(String username, String password) {
+    String credentials = username + ":" + password;
+    Base64.Encoder encoder = Base64.getEncoder();
+    return "Basic " + encoder.encodeToString(credentials.getBytes());
+  }
+
   /**
    * Standard HTTP methods. This doesn't have CONNECT, TRACE or OPTIONS.
    */
@@ -478,5 +500,26 @@ public class RESTClient<RS, ERS> {
      * @throws IOException If the read failed.
      */
     T apply(InputStream is) throws IOException;
+  }
+
+  public static class ProxyInfo {
+    public final String host;
+
+    public final String password;
+
+    public final int port;
+
+    public final String username;
+
+    public ProxyInfo(String host, int port) {
+      this(host, port, null, null);
+    }
+
+    public ProxyInfo(String host, int port, String username, String password) {
+      this.host = host;
+      this.port = port;
+      this.username = username;
+      this.password = password;
+    }
   }
 }

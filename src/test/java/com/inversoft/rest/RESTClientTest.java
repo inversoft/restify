@@ -26,6 +26,8 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+import static com.inversoft.rest.RESTClient.HTTPMethod;
+import static com.inversoft.rest.RESTClient.ProxyInfo;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -63,7 +65,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7000/test"));
-    assertEquals(response.method, RESTClient.HTTPMethod.DELETE);
+    assertEquals(response.method, HTTPMethod.DELETE);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
 
@@ -85,7 +87,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7000/test"));
-    assertEquals(response.method, RESTClient.HTTPMethod.GET);
+    assertEquals(response.method, HTTPMethod.GET);
     assertEquals(response.status, 403);
     assertFalse(response.wasSuccessful());
     assertNull(response.errorResponse);
@@ -110,7 +112,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7000/test"));
-    assertEquals(response.method, RESTClient.HTTPMethod.GET);
+    assertEquals(response.method, HTTPMethod.GET);
     assertEquals(response.status, 403);
     assertFalse(response.wasSuccessful());
     assertNull(response.errorResponse);
@@ -137,7 +139,7 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertNotNull(response);
     assertEquals(response.url, new URL("http://localhost:7000/test"));
-    assertEquals(response.method, RESTClient.HTTPMethod.GET);
+    assertEquals(response.method, HTTPMethod.GET);
     assertEquals(response.status, 200);
     assertNull(response.exception);
     assertTrue(response.wasSuccessful());
@@ -158,7 +160,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7000/test"));
-    assertEquals(response.method, RESTClient.HTTPMethod.GET);
+    assertEquals(response.method, HTTPMethod.GET);
     assertEquals(response.status, 404);
     assertFalse(response.wasSuccessful());
     assertNull(response.exception);
@@ -206,7 +208,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7000/test"));
-    assertEquals(response.method, RESTClient.HTTPMethod.GET);
+    assertEquals(response.method, HTTPMethod.GET);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse, "");
   }
@@ -225,7 +227,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7000/test"));
-    assertEquals(response.method, RESTClient.HTTPMethod.GET);
+    assertEquals(response.method, HTTPMethod.GET);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
   }
@@ -304,7 +306,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7000/test"));
-    assertEquals(response.method, RESTClient.HTTPMethod.HEAD);
+    assertEquals(response.method, HTTPMethod.HEAD);
     assertEquals(response.status, 200);
     assertNull(response.successResponse);
   }
@@ -330,7 +332,7 @@ public class RESTClientTest {
     assertSame(response.request, parameters);
     assertEquals(response.url, new URL("http://localhost:7000/test"));
     // We're using POST with X-HTTP-Method-Override for PATCH
-    assertEquals(response.method, RESTClient.HTTPMethod.POST);
+    assertEquals(response.method, HTTPMethod.POST);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
   }
@@ -355,7 +357,7 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertSame(response.request, parameters);
     assertEquals(response.url, new URL("http://localhost:7000/test"));
-    assertEquals(response.method, RESTClient.HTTPMethod.POST);
+    assertEquals(response.method, HTTPMethod.POST);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse, "Testing 123");
   }
@@ -377,7 +379,7 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertSame(response.request, bais);
     assertEquals(response.url, new URL("http://localhost:7000/test"));
-    assertEquals(response.method, RESTClient.HTTPMethod.POST);
+    assertEquals(response.method, HTTPMethod.POST);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
   }
@@ -402,9 +404,33 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertSame(response.request, parameters);
     assertEquals(response.url, new URL("http://localhost:7000/test"));
-    assertEquals(response.method, RESTClient.HTTPMethod.POST);
+    assertEquals(response.method, HTTPMethod.POST);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
+  }
+
+  @Test(enabled = false)
+  public void proxy() {
+    ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
+        .url("http://info.cern.ch")
+        .errorResponseHandler(new TextResponseHandler())
+        .successResponseHandler(new TextResponseHandler())
+        .proxy(new ProxyInfo("localhost", 12345, "admin", "password"))
+        .get()
+        .go();
+    assertTrue(response.wasSuccessful());
+    assertNotNull(response.successResponse);
+    assertTrue(response.successResponse.contains("<html"));
+
+    response = new RESTClient<>(String.class, String.class)
+        .url("http://info.cern.ch")
+        .errorResponseHandler(new TextResponseHandler())
+        .successResponseHandler(new TextResponseHandler())
+        .proxy(new ProxyInfo("localhost", 12345))
+        .get()
+        .go();
+    assertFalse(response.wasSuccessful());
+    assertEquals(response.status, 407);
   }
 
   @Test
@@ -427,7 +453,7 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertSame(response.request, parameters);
     assertEquals(response.url, new URL("http://localhost:7000/test"));
-    assertEquals(response.method, RESTClient.HTTPMethod.PUT);
+    assertEquals(response.method, HTTPMethod.PUT);
     assertEquals(response.status, 500);
     assertEquals(response.errorResponse, "Testing 123");
   }
@@ -452,7 +478,7 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertSame(response.request, parameters);
     assertEquals(response.url, new URL("http://localhost:7000/test"));
-    assertEquals(response.method, RESTClient.HTTPMethod.PUT);
+    assertEquals(response.method, HTTPMethod.PUT);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse, "Testing 123");
   }
