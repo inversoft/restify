@@ -10,5 +10,6 @@ import java.util.function.Supplier;
  *
  * @author Daniel DeGroff
  */
+@FunctionalInterface
 public interface ProxyInfoSupplier extends Supplier<ProxyInfo> {
 }
