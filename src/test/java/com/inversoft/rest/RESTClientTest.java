@@ -27,7 +27,6 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import static com.inversoft.rest.RESTClient.HTTPMethod;
-import static com.inversoft.rest.RESTClient.ProxyInfo;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;

@@ -188,12 +188,14 @@ public class RESTClient<RS, ERS> {
       response.url = new URL(url.toString());
 
       Proxy proxy = Proxy.NO_PROXY;
-      if (proxyInfo.host != null && proxyInfo.port != -1) {
-        proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyInfo.host, proxyInfo.port));
-      }
+      if (proxyInfo != null) {
+        if (proxyInfo.host != null && proxyInfo.port != -1) {
+          proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyInfo.host, proxyInfo.port));
+        }
 
-      if (proxyInfo.username != null && proxyInfo.password != null) {
-        headers.put("Proxy-Authorization", base64Basic(proxyInfo.username, proxyInfo.password));
+        if (proxyInfo.username != null && proxyInfo.password != null) {
+          headers.put("Proxy-Authorization", base64Basic(proxyInfo.username, proxyInfo.password));
+        }
       }
 
       huc = (HttpURLConnection) response.url.openConnection(proxy);
@@ -500,26 +502,5 @@ public class RESTClient<RS, ERS> {
      * @throws IOException If the read failed.
      */
     T apply(InputStream is) throws IOException;
-  }
-
-  public static class ProxyInfo {
-    public final String host;
-
-    public final String password;
-
-    public final int port;
-
-    public final String username;
-
-    public ProxyInfo(String host, int port) {
-      this(host, port, null, null);
-    }
-
-    public ProxyInfo(String host, int port, String username, String password) {
-      this.host = host;
-      this.port = port;
-      this.username = username;
-      this.password = password;
-    }
   }
 }
