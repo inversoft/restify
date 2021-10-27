@@ -2,12 +2,13 @@
  * Copyright (c) 2015-2019, Inversoft Inc., All Rights Reserved
  */
 savantVersion = "1.0.0"
-jackson5Version = "2.4.8"
+guavaVersion = "30.1.0-jre"
+jackson5Version = "2.5.0-{integration}"
 jacksonVersion = "2.12.2"
-slf4jVersion = "1.7.30"
-testngVersion = "6.14.3"
+slf4jVersion = "2.0.0-alpha5"
+testngVersion = "7.3.0"
 
-project(group: "com.inversoft", name: "restify", version: "3.8.1", licenses: ["ApacheV2_0"]) {
+project(group: "com.inversoft", name: "restify", version: "3.9.0", licenses: ["ApacheV2_0"]) {
   workflow {
     standard()
   }
@@ -22,6 +23,7 @@ project(group: "com.inversoft", name: "restify", version: "3.8.1", licenses: ["A
       dependency(id: "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
       dependency(id: "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
       dependency(id: "com.inversoft:jackson5:${jackson5Version}")
+      dependency(id: "com.google.guava:guava:${guavaVersion}", skipCompatibilityCheck: true)
       dependency(id: "org.slf4j:slf4j-api:${slf4jVersion}")
     }
     group(name: "test-compile", export: false) {
