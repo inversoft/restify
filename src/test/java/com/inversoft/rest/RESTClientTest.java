@@ -56,14 +56,14 @@ public class RESTClientTest {
     startServer(handler);
 
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
-        .url("http://localhost:7000/test")
+        .url("http://localhost:7042/test")
         .errorResponseHandler(new JSONResponseHandler<>(Map.class))
         .successResponseHandler(new JSONResponseHandler<>(Map.class))
         .delete()
         .go();
 
     assertEquals(handler.count, 1);
-    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.url, new URL("http://localhost:7042/test"));
     assertEquals(response.method, HTTPMethod.DELETE);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
@@ -78,14 +78,14 @@ public class RESTClientTest {
 
     // Expecting JSON, but get HTML
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
-        .url("http://localhost:7000/test")
+        .url("http://localhost:7042/test")
         .errorResponseHandler(new JSONResponseHandler<>(Map.class))
         .successResponseHandler(new JSONResponseHandler<>(Map.class))
         .get()
         .go();
 
     assertEquals(handler.count, 1);
-    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.url, new URL("http://localhost:7042/test"));
     assertEquals(response.method, HTTPMethod.GET);
     assertEquals(response.status, 403);
     assertFalse(response.wasSuccessful());
@@ -103,14 +103,14 @@ public class RESTClientTest {
 
     // Expecting JSON, but get HTML
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
-        .url("http://localhost:7000/test")
+        .url("http://localhost:7042/test")
         .errorResponseHandler(new JSONResponseHandler<>(Map.class))
         .successResponseHandler(new JSONResponseHandler<>(Map.class))
         .get()
         .go();
 
     assertEquals(handler.count, 1);
-    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.url, new URL("http://localhost:7042/test"));
     assertEquals(response.method, HTTPMethod.GET);
     assertEquals(response.status, 403);
     assertFalse(response.wasSuccessful());
@@ -129,7 +129,7 @@ public class RESTClientTest {
     startServer(handler);
 
     ClientResponse<Map, Map> response = expectException(() -> new RESTClient<>(Map.class, Map.class)
-        .url("http://localhost:7000/test")
+        .url("http://localhost:7042/test")
         .errorResponseHandler(new JSONResponseHandler<>(Map.class))
         .successResponseHandler(new JSONResponseHandler<>(Map.class))
         .get()
@@ -137,7 +137,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertNotNull(response);
-    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.url, new URL("http://localhost:7042/test"));
     assertEquals(response.method, HTTPMethod.GET);
     assertEquals(response.status, 200);
     assertNull(response.exception);
@@ -151,14 +151,14 @@ public class RESTClientTest {
     startServer(handler);
 
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
-        .url("http://localhost:7000/test")
+        .url("http://localhost:7042/test")
         .errorResponseHandler(new JSONResponseHandler<>(Map.class))
         .successResponseHandler(new JSONResponseHandler<>(Map.class))
         .get()
         .go();
 
     assertEquals(handler.count, 1);
-    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.url, new URL("http://localhost:7042/test"));
     assertEquals(response.method, HTTPMethod.GET);
     assertEquals(response.status, 404);
     assertFalse(response.wasSuccessful());
@@ -174,14 +174,14 @@ public class RESTClientTest {
 
     expectException(() ->
         new RESTClient<>(Map.class, Map.class)
-            .url("http://localhost:7000/test")
+            .url("http://localhost:7042/test")
             .successResponseHandler(new JSONResponseHandler<>(Map.class))
             .get()
             .go(), IllegalStateException.class);
 
     expectException(() ->
         new RESTClient<>(Map.class, Map.class)
-            .url("http://localhost:7000/test")
+            .url("http://localhost:7042/test")
             .errorResponseHandler(new JSONResponseHandler<>(Map.class))
             .get()
             .go(), IllegalStateException.class);
@@ -197,7 +197,7 @@ public class RESTClientTest {
     startServer(handler);
 
     ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
-        .url("http://localhost:7000/test")
+        .url("http://localhost:7042/test")
         .authorization("key")
         .header("header1", "value1")
         .errorResponseHandler(new TextResponseHandler())
@@ -206,7 +206,7 @@ public class RESTClientTest {
         .go();
 
     assertEquals(handler.count, 1);
-    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.url, new URL("http://localhost:7042/test"));
     assertEquals(response.method, HTTPMethod.GET);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse, "");
@@ -218,14 +218,14 @@ public class RESTClientTest {
     startServer(handler);
 
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
-        .url("http://localhost:7000/test")
+        .url("http://localhost:7042/test")
         .errorResponseHandler(new JSONResponseHandler<>(Map.class))
         .successResponseHandler(new JSONResponseHandler<>(Map.class))
         .get()
         .go();
 
     assertEquals(handler.count, 1);
-    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.url, new URL("http://localhost:7042/test"));
     assertEquals(response.method, HTTPMethod.GET);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
@@ -297,14 +297,14 @@ public class RESTClientTest {
     startServer(handler);
 
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
-        .url("http://localhost:7000/test")
+        .url("http://localhost:7042/test")
         .errorResponseHandler(new JSONResponseHandler<>(Map.class))
         .successResponseHandler(new JSONResponseHandler<>(Map.class))
         .head()
         .go();
 
     assertEquals(handler.count, 1);
-    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.url, new URL("http://localhost:7042/test"));
     assertEquals(response.method, HTTPMethod.HEAD);
     assertEquals(response.status, 200);
     assertNull(response.successResponse);
@@ -320,7 +320,7 @@ public class RESTClientTest {
     parameters.put("test2", "value2");
 
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
-        .url("http://localhost:7000/test")
+        .url("http://localhost:7042/test")
         .bodyHandler(new JSONBodyHandler(parameters))
         .errorResponseHandler(new JSONResponseHandler<>(Map.class))
         .successResponseHandler(new JSONResponseHandler<>(Map.class))
@@ -329,7 +329,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertSame(response.request, parameters);
-    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.url, new URL("http://localhost:7042/test"));
     // We're using POST with X-HTTP-Method-Override for PATCH
     assertEquals(response.method, HTTPMethod.POST);
     assertEquals(response.status, 200);
@@ -346,7 +346,7 @@ public class RESTClientTest {
     parameters.put("test2", "value2");
 
     ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
-        .url("http://localhost:7000/test")
+        .url("http://localhost:7042/test")
         .bodyHandler(new FormDataBodyHandler(parameters))
         .errorResponseHandler(new TextResponseHandler())
         .successResponseHandler(new TextResponseHandler())
@@ -355,7 +355,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertSame(response.request, parameters);
-    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.url, new URL("http://localhost:7042/test"));
     assertEquals(response.method, HTTPMethod.POST);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse, "Testing 123");
@@ -368,7 +368,7 @@ public class RESTClientTest {
 
     ByteArrayInputStream bais = new ByteArrayInputStream("Testing 123".getBytes());
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
-        .url("http://localhost:7000/test")
+        .url("http://localhost:7042/test")
         .bodyHandler(new InputStreamBodyHandler("application/octet-stream", bais))
         .errorResponseHandler(new JSONResponseHandler<>(Map.class))
         .successResponseHandler(new JSONResponseHandler<>(Map.class))
@@ -377,7 +377,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertSame(response.request, bais);
-    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.url, new URL("http://localhost:7042/test"));
     assertEquals(response.method, HTTPMethod.POST);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
@@ -393,7 +393,7 @@ public class RESTClientTest {
     parameters.put("test2", "value2");
 
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
-        .url("http://localhost:7000/test")
+        .url("http://localhost:7042/test")
         .bodyHandler(new JSONBodyHandler(parameters))
         .errorResponseHandler(new JSONResponseHandler<>(Map.class))
         .successResponseHandler(new JSONResponseHandler<>(Map.class))
@@ -402,7 +402,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertSame(response.request, parameters);
-    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.url, new URL("http://localhost:7042/test"));
     assertEquals(response.method, HTTPMethod.POST);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
@@ -442,7 +442,7 @@ public class RESTClientTest {
     parameters.put("test2", "value2");
 
     ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
-        .url("http://localhost:7000/test")
+        .url("http://localhost:7042/test")
         .bodyHandler(new FormDataBodyHandler(parameters))
         .errorResponseHandler(new TextResponseHandler())
         .successResponseHandler(new TextResponseHandler())
@@ -451,7 +451,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertSame(response.request, parameters);
-    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.url, new URL("http://localhost:7042/test"));
     assertEquals(response.method, HTTPMethod.PUT);
     assertEquals(response.status, 500);
     assertEquals(response.errorResponse, "Testing 123");
@@ -467,7 +467,7 @@ public class RESTClientTest {
     parameters.put("test2", "value2");
 
     ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
-        .url("http://localhost:7000/test")
+        .url("http://localhost:7042/test")
         .bodyHandler(new FormDataBodyHandler(parameters))
         .errorResponseHandler(new TextResponseHandler())
         .successResponseHandler(new TextResponseHandler())
@@ -476,7 +476,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertSame(response.request, parameters);
-    assertEquals(response.url, new URL("http://localhost:7000/test"));
+    assertEquals(response.url, new URL("http://localhost:7042/test"));
     assertEquals(response.method, HTTPMethod.PUT);
     assertEquals(response.status, 200);
     assertEquals(response.successResponse, "Testing 123");
@@ -494,7 +494,7 @@ public class RESTClientTest {
   }
 
   private void startServer(TestHandler testHandler) throws Exception {
-    InetSocketAddress addr = new InetSocketAddress(7000);
+    InetSocketAddress addr = new InetSocketAddress(7042);
     server = HttpServer.create(addr, 0);
     server.createContext("/", testHandler);
     server.start();
