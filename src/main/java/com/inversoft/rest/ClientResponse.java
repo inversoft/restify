@@ -17,9 +17,14 @@ package com.inversoft.rest;
 
 import java.net.URL;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
+import com.inversoft.http.Cookie;
+import com.inversoft.http.HTTPStrings;
 
 /**
  * Response information from a call to a REST API.
@@ -27,6 +32,8 @@ import java.util.Map;
  * @author Brian Pontarelli
  */
 public class ClientResponse<T, U> {
+  public final List<Cookie> cookies = new ArrayList<>();
+
   public final Map<String, List<String>> headers = new HashMap<>();
 
   public ZonedDateTime date;
@@ -50,8 +57,17 @@ public class ClientResponse<T, U> {
   public void setHeaders(Map<String, List<String>> headers) {
     headers.forEach((key, values) -> this.headers.put(key != null ? key.toLowerCase() : null, values));
 
-    date = parseDateHeader("date");
-    lastModified = parseDateHeader("last-modified");
+    date = parseDateHeader(HTTPStrings.Headers.Date.toLowerCase());
+    lastModified = parseDateHeader(HTTPStrings.Headers.LastModified.toLowerCase());
+
+    // Parse the cookie headers
+    List<String> cookies = this.headers.get(HTTPStrings.Headers.SetCookie.toLowerCase());
+    if (cookies != null && cookies.size() > 0) {
+      cookies.stream()
+             .map(Cookie::fromResponseHeader)
+             .filter(Objects::nonNull)
+             .forEach(this.cookies::add);
+    }
   }
 
   public boolean wasSuccessful() {
@@ -61,11 +77,7 @@ public class ClientResponse<T, U> {
   private ZonedDateTime parseDateHeader(String name) {
     List<String> values = headers.get(name);
     if (values != null && values.size() > 0) {
-      try {
-        return ZonedDateTime.parse(values.get(0), DateTools.RFC_5322_DATE_TIME);
-      } catch (Exception e) {
-        // Ignore this exception so that we aren't depending on a valid web server
-      }
+      return DateTools.parse(values.get(0));
     }
 
     return null;

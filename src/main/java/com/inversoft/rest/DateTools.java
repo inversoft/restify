@@ -15,6 +15,7 @@
  */
 package com.inversoft.rest;
 
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.SignStyle;
@@ -83,5 +84,13 @@ public final class DateTools {
         .appendLiteral(' ')
         .appendOffset("+HHMM", "GMT")  // should handle UT/Z/EST/EDT/CST/CDT/MST/MDT/PST/MDT
         .toFormatter();
+  }
+
+  public static ZonedDateTime parse(String value) {
+    try {
+      return ZonedDateTime.parse(value, DateTools.RFC_5322_DATE_TIME);
+    } catch (Exception e) {
+      return null;
+    }
   }
 }

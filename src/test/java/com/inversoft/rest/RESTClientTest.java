@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -22,6 +23,8 @@ import java.util.function.Supplier;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
+import com.inversoft.http.Cookie;
+import com.inversoft.http.HTTPStrings;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -52,7 +55,7 @@ public class RESTClientTest {
 
   @Test
   public void delete_json() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "DELETE", 200, "{\"code\": 200}");
+    TestHandler handler = new TestHandler(null, null, null, "DELETE", 200, "{\"code\": 200}", null);
     startServer(handler);
 
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
@@ -73,7 +76,7 @@ public class RESTClientTest {
 
   @Test
   public void get_JSONParseException() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "GET", 403, "<html><body>Hello!</body></html>");
+    TestHandler handler = new TestHandler(null, null, null, "GET", 403, "<html><body>Hello!</body></html>", null);
     startServer(handler);
 
     // Expecting JSON, but get HTML
@@ -98,7 +101,7 @@ public class RESTClientTest {
 
   @Test
   public void get_JSONParseExceptionTruncatedResponse() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "GET", 403, "<html><body>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</body></html>");
+    TestHandler handler = new TestHandler(null, null, null, "GET", 403, "<html><body>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</body></html>", null);
     startServer(handler);
 
     // Expecting JSON, but get HTML
@@ -124,8 +127,39 @@ public class RESTClientTest {
   }
 
   @Test
+  public void get_cookies() throws Exception {
+    TestHandler handler = new TestHandler(null, null, null, "GET", 200, null, null);
+    startServer(handler);
+
+    Cookie cookie = new Cookie("foo", "bar").with(c -> c.domain = "fusionauth.io")
+                                            .with(c -> c.httpOnly = true)
+                                            .with(c -> c.maxAge = 1L)
+                                            .with(c -> c.sameSite = Cookie.SameSite.Lax)
+                                            .with(c -> c.secure = true);
+    ClientResponse<Void, Void> response = new RESTClient<>(Void.TYPE, Void.TYPE)
+        .cookie(cookie)
+        .url("http://localhost:7042/test")
+        .get()
+        .go();
+
+    assertEquals(handler.count, 1);
+    assertEquals(response.cookies.size(), 1);
+
+    cookie = response.cookies.get(0);
+    assertEquals(cookie.domain, "fusionauth.io");
+    assertNull(cookie.expires);
+    assertTrue(cookie.httpOnly);
+    assertEquals((long) cookie.maxAge, 1L);
+    assertEquals(cookie.name, "foo");
+    assertEquals(cookie.path, "/foo/bar");
+    assertEquals(cookie.sameSite, Cookie.SameSite.Lax);
+    assertTrue(cookie.secure);
+    assertEquals(cookie.value, "bar");
+  }
+
+  @Test
   public void get_emptyJSON() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "GET", 200, "");
+    TestHandler handler = new TestHandler(null, null, null, "GET", 200, "", null);
     startServer(handler);
 
     ClientResponse<Map, Map> response = expectException(() -> new RESTClient<>(Map.class, Map.class)
@@ -147,7 +181,7 @@ public class RESTClientTest {
 
   @Test
   public void get_emptyJSON_error_404() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "GET", 404, "");
+    TestHandler handler = new TestHandler(null, null, null, "GET", 404, "", null);
     startServer(handler);
 
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
@@ -169,7 +203,7 @@ public class RESTClientTest {
 
   @Test
   public void get_forgotErrorResponseHandler() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "GET", 200, "");
+    TestHandler handler = new TestHandler(null, null, null, "GET", 200, "", null);
     startServer(handler);
 
     expectException(() ->
@@ -193,7 +227,7 @@ public class RESTClientTest {
     headers.put("Authorization", "key");
     headers.put("header1", "value1");
 
-    TestHandler handler = new TestHandler(null, null, headers, "GET", 200, null);
+    TestHandler handler = new TestHandler(null, null, headers, "GET", 200, null, null);
     startServer(handler);
 
     ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
@@ -214,7 +248,7 @@ public class RESTClientTest {
 
   @Test
   public void get_json() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "GET", 200, "{\"code\": 200}");
+    TestHandler handler = new TestHandler(null, null, null, "GET", 200, "{\"code\": 200}", null);
     startServer(handler);
 
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
@@ -293,7 +327,7 @@ public class RESTClientTest {
 
   @Test
   public void head() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "HEAD", 200, "{\"code\": 200}");
+    TestHandler handler = new TestHandler(null, null, null, "HEAD", 200, "{\"code\": 200}", null);
     startServer(handler);
 
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
@@ -312,7 +346,7 @@ public class RESTClientTest {
 
   @Test
   public void patch_json_json() throws Exception {
-    TestHandler handler = new TestHandler("{\"test1\":\"value1\",\"test2\":\"value2\"}", "application/json", null, "PATCH", 200, "{\"code\": 200}");
+    TestHandler handler = new TestHandler("{\"test1\":\"value1\",\"test2\":\"value2\"}", "application/json", null, "PATCH", 200, "{\"code\": 200}", null);
     startServer(handler);
 
     Map<String, String> parameters = new LinkedHashMap<>();
@@ -338,7 +372,7 @@ public class RESTClientTest {
 
   @Test
   public void post_formData_string() throws Exception {
-    TestHandler handler = new TestHandler("test1=value1&test2=value2", "application/x-www-form-urlencoded", null, "POST", 200, "Testing 123");
+    TestHandler handler = new TestHandler("test1=value1&test2=value2", "application/x-www-form-urlencoded", null, "POST", 200, "Testing 123", null);
     startServer(handler);
 
     Map<String, String> parameters = new LinkedHashMap<>();
@@ -363,7 +397,7 @@ public class RESTClientTest {
 
   @Test
   public void post_inputStream_json() throws Exception {
-    TestHandler handler = new TestHandler("Testing 123", "application/octet-stream", null, "POST", 200, "{\"code\": 200}");
+    TestHandler handler = new TestHandler("Testing 123", "application/octet-stream", null, "POST", 200, "{\"code\": 200}", null);
     startServer(handler);
 
     ByteArrayInputStream bais = new ByteArrayInputStream("Testing 123".getBytes());
@@ -385,7 +419,7 @@ public class RESTClientTest {
 
   @Test
   public void post_json_json() throws Exception {
-    TestHandler handler = new TestHandler("{\"test1\":\"value1\",\"test2\":\"value2\"}", "application/json", null, "POST", 200, "{\"code\": 200}");
+    TestHandler handler = new TestHandler("{\"test1\":\"value1\",\"test2\":\"value2\"}", "application/json", null, "POST", 200, "{\"code\": 200}", null);
     startServer(handler);
 
     Map<String, String> parameters = new LinkedHashMap<>();
@@ -434,7 +468,7 @@ public class RESTClientTest {
 
   @Test
   public void put_formData_errorString() throws Exception {
-    TestHandler handler = new TestHandler("test1=value1&test2=value2", "application/x-www-form-urlencoded", null, "PUT", 500, "Testing 123");
+    TestHandler handler = new TestHandler("test1=value1&test2=value2", "application/x-www-form-urlencoded", null, "PUT", 500, "Testing 123", null);
     startServer(handler);
 
     Map<String, String> parameters = new LinkedHashMap<>();
@@ -459,7 +493,7 @@ public class RESTClientTest {
 
   @Test
   public void put_formData_string() throws Exception {
-    TestHandler handler = new TestHandler("test1=value1&test2=value2", "application/x-www-form-urlencoded", null, "PUT", 200, "Testing 123");
+    TestHandler handler = new TestHandler("test1=value1&test2=value2", "application/x-www-form-urlencoded", null, "PUT", 200, "Testing 123", null);
     startServer(handler);
 
     Map<String, String> parameters = new LinkedHashMap<>();
@@ -503,6 +537,8 @@ public class RESTClientTest {
   private static class TestHandler implements HttpHandler {
     private final String contentType;
 
+    private final Cookie cookie;
+
     private final String method;
 
     private final String request;
@@ -515,21 +551,28 @@ public class RESTClientTest {
 
     public int count;
 
-    public TestHandler(String request, String contentType, Map<String, String> requestHeaders, String method, int responseCode, String response) {
+    public TestHandler(String request, String contentType, Map<String, String> requestHeaders, String method, int responseCode, String response, Cookie cookie) {
       this.request = request;
       this.contentType = contentType;
       this.requestHeaders = requestHeaders;
       this.method = method;
       this.responseCode = responseCode;
       this.response = response;
+      this.cookie = cookie;
     }
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
       if (contentType != null) {
-        assertEquals(httpExchange.getRequestHeaders().get("Content-Type").get(0), contentType);
+        assertEquals(httpExchange.getRequestHeaders().get(HTTPStrings.Headers.ContentType).get(0), contentType);
       } else {
-        assertNull(httpExchange.getRequestHeaders().get("Content-Type"));
+        assertNull(httpExchange.getRequestHeaders().get(HTTPStrings.Headers.ContentType));
+      }
+
+      if (cookie != null) {
+        List<Cookie> actuals = Cookie.fromRequestHeader(httpExchange.getRequestHeaders().get(HTTPStrings.Headers.Cookie).get(0));
+        assertEquals(actuals.size(), 1);
+        assertEquals(actuals.get(0), cookie);
       }
 
       if (requestHeaders != null) {
@@ -560,6 +603,7 @@ public class RESTClientTest {
         assertTrue(body.toString().isEmpty(), "Body is [" + body.toString() + "]");
       }
 
+      httpExchange.getResponseHeaders().set(HTTPStrings.Headers.SetCookie, "foo=bar; Path=/foo/bar; Domain=fusionauth.io; Max-Age=1; Secure; HttpOnly; SameSite=Lax");
       httpExchange.sendResponseHeaders(responseCode, response != null ? response.length() : 0);
 
       if (!method.equals("HEAD")) {

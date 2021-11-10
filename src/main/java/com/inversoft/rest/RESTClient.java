@@ -15,6 +15,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,10 +25,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.inversoft.http.Cookie;
+import com.inversoft.http.HTTPStrings;
 import com.inversoft.net.ssl.SSLTools;
 
 /**
@@ -38,6 +42,8 @@ import com.inversoft.net.ssl.SSLTools;
  */
 public class RESTClient<RS, ERS> {
   private static final Logger logger = LoggerFactory.getLogger(RESTClient.class);
+
+  public final List<Cookie> cookies = new ArrayList<>();
 
   public final Map<String, String> headers = new HashMap<>();
 
@@ -110,6 +116,21 @@ public class RESTClient<RS, ERS> {
 
   public RESTClient<RS, ERS> connectTimeout(int connectTimeout) {
     this.connectTimeout = connectTimeout;
+    return this;
+  }
+
+  public RESTClient<RS, ERS> cookie(Cookie cookie) {
+    this.cookies.add(cookie);
+    return this;
+  }
+
+  public RESTClient<RS, ERS> cookies(Cookie... cookies) {
+    this.cookies.addAll(Arrays.asList(cookies));
+    return this;
+  }
+
+  public RESTClient<RS, ERS> cookies(List<Cookie> cookies) {
+    this.cookies.addAll(cookies);
     return this;
   }
 
@@ -220,12 +241,19 @@ public class RESTClient<RS, ERS> {
       huc.setReadTimeout(readTimeout);
       huc.setRequestMethod(method.toString());
 
-      if (headers.keySet().stream().noneMatch(name -> name.equalsIgnoreCase("User-Agent"))) {
-        headers.put("User-Agent", userAgent);
+      if (headers.keySet().stream().noneMatch(name -> name.equalsIgnoreCase(HTTPStrings.Headers.UserAgent))) {
+        headers.put(HTTPStrings.Headers.UserAgent, userAgent);
       }
 
       if (headers.size() > 0) {
         headers.forEach(huc::addRequestProperty);
+      }
+
+      if (headers.keySet().stream().noneMatch(name -> name.equalsIgnoreCase(HTTPStrings.Headers.Cookie)) && cookies.size() > 0) {
+        String header = cookies.stream()
+                               .map(Cookie::toRequestHeader)
+                               .collect(Collectors.joining("; "));
+        huc.addRequestProperty(HTTPStrings.Headers.Cookie, header);
       }
 
       if (bodyHandler != null) {
