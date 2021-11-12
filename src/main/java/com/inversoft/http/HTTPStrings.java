@@ -66,6 +66,8 @@ public final class HTTPStrings {
 
     public static final String LastModified = "Last-Modified";
 
+    public static final String Location = "Location";
+
     public static final String SetCookie = "Set-Cookie";
 
     public static final String UserAgent = "User-Agent";

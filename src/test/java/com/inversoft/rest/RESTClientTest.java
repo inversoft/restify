@@ -67,7 +67,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.DELETE);
+    assertEquals(response.method, HTTPMethod.DELETE.name());
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
 
@@ -89,7 +89,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.GET);
+    assertEquals(response.method, HTTPMethod.GET.name());
     assertEquals(response.status, 403);
     assertFalse(response.wasSuccessful());
     assertNull(response.errorResponse);
@@ -114,7 +114,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.GET);
+    assertEquals(response.method, HTTPMethod.GET.name());
     assertEquals(response.status, 403);
     assertFalse(response.wasSuccessful());
     assertNull(response.errorResponse);
@@ -172,7 +172,7 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertNotNull(response);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.GET);
+    assertEquals(response.method, HTTPMethod.GET.name());
     assertEquals(response.status, 200);
     assertNull(response.exception);
     assertTrue(response.wasSuccessful());
@@ -193,7 +193,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.GET);
+    assertEquals(response.method, HTTPMethod.GET.name());
     assertEquals(response.status, 404);
     assertFalse(response.wasSuccessful());
     assertNull(response.exception);
@@ -241,7 +241,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.GET);
+    assertEquals(response.method, HTTPMethod.GET.name());
     assertEquals(response.status, 200);
     assertEquals(response.successResponse, "");
   }
@@ -260,7 +260,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.GET);
+    assertEquals(response.method, HTTPMethod.GET.name());
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
   }
@@ -339,7 +339,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.HEAD);
+    assertEquals(response.method, HTTPMethod.HEAD.name());
     assertEquals(response.status, 200);
     assertNull(response.successResponse);
   }
@@ -365,7 +365,7 @@ public class RESTClientTest {
     assertSame(response.request, parameters);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
     // We're using POST with X-HTTP-Method-Override for PATCH
-    assertEquals(response.method, HTTPMethod.POST);
+    assertEquals(response.method, HTTPMethod.POST.name());
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
   }
@@ -390,7 +390,7 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertSame(response.request, parameters);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.POST);
+    assertEquals(response.method, HTTPMethod.POST.name());
     assertEquals(response.status, 200);
     assertEquals(response.successResponse, "Testing 123");
   }
@@ -412,7 +412,7 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertSame(response.request, bais);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.POST);
+    assertEquals(response.method, HTTPMethod.POST.name());
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
   }
@@ -437,7 +437,7 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertSame(response.request, parameters);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.POST);
+    assertEquals(response.method, HTTPMethod.POST.name());
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
   }
@@ -486,7 +486,7 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertSame(response.request, parameters);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.PUT);
+    assertEquals(response.method, HTTPMethod.PUT.name());
     assertEquals(response.status, 500);
     assertEquals(response.errorResponse, "Testing 123");
   }
@@ -511,7 +511,7 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertSame(response.request, parameters);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.PUT);
+    assertEquals(response.method, HTTPMethod.PUT.name());
     assertEquals(response.status, 200);
     assertEquals(response.successResponse, "Testing 123");
   }

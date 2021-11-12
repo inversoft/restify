@@ -86,6 +86,13 @@ public final class DateTools {
         .toFormatter();
   }
 
+  private DateTools() {
+  }
+
+  public static String format(ZonedDateTime value) {
+    return value.format(DateTools.RFC_5322_DATE_TIME);
+  }
+
   public static ZonedDateTime parse(String value) {
     try {
       return ZonedDateTime.parse(value, DateTools.RFC_5322_DATE_TIME);

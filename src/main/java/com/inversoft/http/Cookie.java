@@ -227,17 +227,28 @@ public class Cookie implements Buildable<Cookie> {
         Objects.equals(maxAge, cookie.maxAge) &&
         Objects.equals(name, cookie.name) &&
         Objects.equals(path, cookie.path) &&
-        Objects.equals(secure, cookie.secure) &&
+        Objects.equals(sameSite, cookie.sameSite) &&
         Objects.equals(value, cookie.value);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(domain, expires, httpOnly, maxAge, name, path, secure, value);
+    return Objects.hash(domain, expires, httpOnly, maxAge, name, path, sameSite, secure, value);
   }
 
   public String toRequestHeader() {
     return name + "=" + value;
+  }
+
+  public String toResponseHeader() {
+    return name + "=" + value
+        + (domain != null ? ("; " + HTTPStrings.CookieAttributes.Domain + "=" + domain) : "")
+        + (expires != null ? ("; " + HTTPStrings.CookieAttributes.Expires + "=" + DateTools.format(expires)) : "")
+        + (httpOnly ? ("; " + HTTPStrings.CookieAttributes.HttpOnly) : "")
+        + (maxAge != null ? ("; " + HTTPStrings.CookieAttributes.MaxAge + "=" + maxAge) : "")
+        + (path != null ? ("; " + HTTPStrings.CookieAttributes.Path + "=" + path) : "")
+        + (sameSite != null ? ("; " + HTTPStrings.CookieAttributes.SameSite + "=" + sameSite.name()) : "")
+        + (secure ? ("; " + HTTPStrings.CookieAttributes.Secure) : "");
   }
 
   public enum SameSite {

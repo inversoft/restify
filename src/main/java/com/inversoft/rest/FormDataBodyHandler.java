@@ -48,6 +48,7 @@ public class FormDataBodyHandler implements RESTClient.BodyHandler {
     if (request != null) {
       serializeRequest();
       huc.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+      huc.addRequestProperty("Content-Length", "" + body.length);
     }
   }
 
