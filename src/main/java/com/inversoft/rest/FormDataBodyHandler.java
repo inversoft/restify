@@ -9,17 +9,18 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
 /**
  * @author Brian Pontarelli
  */
 public class FormDataBodyHandler implements RESTClient.BodyHandler {
-  public Map<String, String> request;
+  private final Map<String, List<String>> request;
 
   private byte[] body;
 
-  public FormDataBodyHandler(Map<String, String> request) {
+  public FormDataBodyHandler(Map<String, List<String>> request) {
     this.request = request;
   }
 
@@ -55,15 +56,17 @@ public class FormDataBodyHandler implements RESTClient.BodyHandler {
   private void serializeRequest() {
     if (body == null) {
       StringBuilder build = new StringBuilder();
-      request.forEach((key, value) -> {
-        if (build.length() > 0) {
-          build.append("&");
-        }
+      request.forEach((key, values) -> {
+        for (String value : values) {
+          if (build.length() > 0) {
+            build.append("&");
+          }
 
-        try {
-          build.append(URLEncoder.encode(key, "UTF-8")).append("=").append(URLEncoder.encode(value, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-          throw new IllegalStateException(e);
+          try {
+            build.append(URLEncoder.encode(key, "UTF-8")).append("=").append(URLEncoder.encode(value, "UTF-8"));
+          } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+          }
         }
       });
 
