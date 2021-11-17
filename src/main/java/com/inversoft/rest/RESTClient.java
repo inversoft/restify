@@ -322,11 +322,24 @@ public class RESTClient<RS, ERS> {
   }
 
   public RESTClient<RS, ERS> header(String name, String value) {
-    this.headers.computeIfAbsent(name, key -> new ArrayList<>()).add(value);
+    if (name == null) {
+      return this;
+    }
+
+    if (value == null) {
+      this.headers.remove(name);
+    } else {
+      this.headers.computeIfAbsent(name, key -> new ArrayList<>()).add(value);
+    }
+
     return this;
   }
 
   public RESTClient<RS, ERS> headers(Map<String, String> headers) {
+    if (headers == null) {
+      return this;
+    }
+
     headers.forEach(this::header);
     return this;
   }
@@ -342,7 +355,19 @@ public class RESTClient<RS, ERS> {
   }
 
   public RESTClient<RS, ERS> method(String method) {
-    this.method = method;
+    try {
+      // Set the override for PATCH
+      if (method.equals(HTTPMethod.PATCH.name())) {
+        this.method = HTTPMethod.POST.name();
+        this.headers.put("X-HTTP-Method-Override", Collections.singletonList(method));
+      } else {
+        this.method = HTTPMethod.valueOf(method).name();
+      }
+    } catch (Exception e) {
+      this.method = HTTPMethod.POST.name();
+      this.headers.put("X-HTTP-Method-Override", Collections.singletonList(method));
+    }
+
     return this;
   }
 

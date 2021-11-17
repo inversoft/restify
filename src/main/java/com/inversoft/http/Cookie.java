@@ -111,7 +111,7 @@ public class Cookie implements Buildable<Cookie> {
         continue;
       }
 
-      if (c == '=') {
+      if (c == '=' && inName) {
         name = header.substring(start, i);
         if (!inAttributes && name.trim().length() == 0) {
           return null;
@@ -131,9 +131,6 @@ public class Cookie implements Buildable<Cookie> {
           value = null;
         } else {
           value = header.substring(start, i);
-          if (!inAttributes && value.trim().length() == 0) {
-            return null;
-          }
         }
 
         if (inAttributes) {
@@ -168,7 +165,7 @@ public class Cookie implements Buildable<Cookie> {
     if (inAttributes) {
       cookie.addAttribute(name, value);
     } else {
-      if (name == null || value == null || name.trim().length() == 0 || value.trim().length() == 0) {
+      if (name == null || value == null || name.trim().length() == 0) {
         return null;
       }
 

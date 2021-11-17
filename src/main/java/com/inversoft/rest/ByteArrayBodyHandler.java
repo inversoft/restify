@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 
+import com.inversoft.http.HTTPStrings;
+
 /**
  * @author Brian Pontarelli
  */
@@ -32,7 +34,7 @@ public class ByteArrayBodyHandler implements RESTClient.BodyHandler {
   @Override
   public void setHeaders(HttpURLConnection huc) {
     if (body != null) {
-      huc.addRequestProperty("Content-Length", "" + body.length);
+      huc.addRequestProperty(HTTPStrings.Headers.ContentLength, "" + body.length);
     }
   }
 }

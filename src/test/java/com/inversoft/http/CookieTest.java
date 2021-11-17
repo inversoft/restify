@@ -48,6 +48,18 @@ public class CookieTest {
     assertFalse(cookie.secure);
     assertEquals(cookie.value, "bar");
 
+    // Base 64 encoded with padding
+    cookie = Cookie.fromResponseHeader("foo=slkjsdoiuewljklk==");
+    assertNull(cookie.domain);
+    assertNull(cookie.expires);
+    assertFalse(cookie.httpOnly);
+    assertNull(cookie.maxAge);
+    assertEquals(cookie.name, "foo");
+    assertNull(cookie.path);
+    assertNull(cookie.sameSite);
+    assertFalse(cookie.secure);
+    assertEquals(cookie.value, "slkjsdoiuewljklk==");
+
     // Broken but parseable
     cookie = Cookie.fromResponseHeader("foo=bar;Domain=fusionauth.io;Expires=Wed, 21 Oct 2015 07:28:00 GMT;SameSite=None");
     assertEquals(cookie.domain, "fusionauth.io");
@@ -84,9 +96,41 @@ public class CookieTest {
     assertFalse(cookie.secure);
     assertEquals(cookie.value, "bar");
 
+    // Empty value cookie
+    cookie = Cookie.fromResponseHeader("a=");
+    assertNull(cookie.domain);
+    assertNull(cookie.expires);
+    assertFalse(cookie.httpOnly);
+    assertNull(cookie.maxAge);
+    assertEquals(cookie.name, "a");
+    assertNull(cookie.path);
+    assertNull(cookie.sameSite);
+    assertFalse(cookie.secure);
+    assertEquals(cookie.value, "");
+
+    // Empty value cookie
+    cookie = Cookie.fromResponseHeader("a=; Max-Age=1");
+    assertNull(cookie.domain);
+    assertNull(cookie.expires);
+    assertFalse(cookie.httpOnly);
+    assertEquals((long) cookie.maxAge, 1L);
+    assertEquals(cookie.name, "a");
+    assertNull(cookie.path);
+    assertNull(cookie.sameSite);
+    assertFalse(cookie.secure);
+    assertEquals(cookie.value, "");
+
     // Empty values
     cookie = Cookie.fromResponseHeader("foo=;Domain=;Expires=;Max-Age=;SameSite=");
-    assertNull(cookie);
+    assertEquals(cookie.domain, "");
+    assertNull(cookie.expires);
+    assertFalse(cookie.httpOnly);
+    assertNull(cookie.maxAge);
+    assertEquals(cookie.name, "foo");
+    assertNull(cookie.path);
+    assertNull(cookie.sameSite);
+    assertFalse(cookie.secure);
+    assertEquals(cookie.value, "");
 
     // Null values
     cookie = Cookie.fromResponseHeader("foo;Domain;Expires;Max-Age;SameSite");
@@ -118,10 +162,6 @@ public class CookieTest {
 
     // Borked cookie
     cookie = Cookie.fromResponseHeader("=");
-    assertNull(cookie);
-
-    // Borked cookie
-    cookie = Cookie.fromResponseHeader("a=");
     assertNull(cookie);
 
     // Borked cookie
