@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.inversoft.http.FileUpload;
+import com.inversoft.net.EncodingTools;
 
 /**
  * Handles multi-part form data (including files).
@@ -71,8 +72,9 @@ public class MultipartBodyHandler implements RESTClient.BodyHandler {
         if (request.files != null) {
           for (FileUpload file : request.files) {
             writer.append("--").append(boundary).append("\r\n");
-            writer.append("Content-Disposition: form-data; name=\"").append(URLEncoder.encode(file.name, "UTF-8")).append("\"");
-            writer.append("; filename=\"").append(URLEncoder.encode(file.fileName, "UTF-8")).append("\"");
+            writer.append("Content-Disposition: form-data; name=\"").append(URLEncoder.encode(file.name, "UTF-8")).append("\"")
+                  .append("; filename=\"").append(EncodingTools.escapedQuotedString(file.fileName))
+                  .append("\"; filename*=UTF-8''").append(EncodingTools.rfc5987_encode(file.fileName));
             if (file.contentType != null) {
               writer.append("\r\nContent-Type: ").append(file.contentType);
             }

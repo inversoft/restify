@@ -387,7 +387,7 @@ public class RESTClientTest {
 
     // Build the expected request
     String body = "--" + bodyHandler.boundary + "\r\n" +
-        "Content-Disposition: form-data; name=\"formField\"; filename=\"foo.bar.txt\"\r\n" +
+        "Content-Disposition: form-data; name=\"formField\"; filename=\"foo.bar.txt\"; filename*=UTF-8''foo.bar.txt\r\n" +
         "Content-Type: text/plain\r\n\r\n" +
         "Hello World\r\n" +
         "--" + bodyHandler.boundary + "\r\n" +
