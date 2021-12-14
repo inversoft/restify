@@ -114,6 +114,10 @@ public class ClientResponse<T, U> {
         return;
       }
 
+      // TODO : Code Review : Any reason not to preserve case the provided case?
+      //        We have to look up case insensitive anyway.
+      //        Looks like we are using .toLowerCase() in a few spots, is this just
+      //        to normalize our own request, or for spec reasons?
       this.headers.put(key.toLowerCase(), values);
     });
 

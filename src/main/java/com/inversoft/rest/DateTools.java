@@ -31,7 +31,9 @@ import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
 import static java.time.temporal.ChronoField.YEAR;
 
 /**
- * Tools for dates.
+ * Tools for dates, all dates are parsed and formatted using an RFC 5322 compatible format.
+ *
+ * https://datatracker.ietf.org/doc/html/rfc5322
  *
  * @author Brian Pontarelli
  */
