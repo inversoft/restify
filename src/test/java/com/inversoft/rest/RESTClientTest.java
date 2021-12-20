@@ -3,16 +3,18 @@
  */
 package com.inversoft.rest;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,6 +26,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 import com.inversoft.http.Cookie;
+import com.inversoft.http.FileUpload;
 import com.inversoft.http.HTTPStrings;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -67,7 +70,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.DELETE);
+    assertEquals(response.method, HTTPMethod.DELETE.name());
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
 
@@ -89,7 +92,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.GET);
+    assertEquals(response.method, HTTPMethod.GET.name());
     assertEquals(response.status, 403);
     assertFalse(response.wasSuccessful());
     assertNull(response.errorResponse);
@@ -114,7 +117,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.GET);
+    assertEquals(response.method, HTTPMethod.GET.name());
     assertEquals(response.status, 403);
     assertFalse(response.wasSuccessful());
     assertNull(response.errorResponse);
@@ -172,7 +175,7 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertNotNull(response);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.GET);
+    assertEquals(response.method, HTTPMethod.GET.name());
     assertEquals(response.status, 200);
     assertNull(response.exception);
     assertTrue(response.wasSuccessful());
@@ -193,7 +196,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.GET);
+    assertEquals(response.method, HTTPMethod.GET.name());
     assertEquals(response.status, 404);
     assertFalse(response.wasSuccessful());
     assertNull(response.exception);
@@ -241,7 +244,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.GET);
+    assertEquals(response.method, HTTPMethod.GET.name());
     assertEquals(response.status, 200);
     assertEquals(response.successResponse, "");
   }
@@ -260,7 +263,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.GET);
+    assertEquals(response.method, HTTPMethod.GET.name());
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
   }
@@ -292,7 +295,7 @@ public class RESTClientTest {
 
     client.go(); // finish building the final URL
     assertEquals(client.url.toString(), "https://www.inversoft.com/latest-clean-speak-version?time="
-        + now.toInstant().toEpochMilli() + "&foo=bar&ids=" + new UUID(1, 0).toString() + "&ids=" + new UUID(2, 0).toString());
+        + now.toInstant().toEpochMilli() + "&foo=bar&ids=" + new UUID(1, 0) + "&ids=" + new UUID(2, 0));
   }
 
   @Test
@@ -322,7 +325,7 @@ public class RESTClientTest {
 
     client.go(); // finish building the final URL
     assertEquals(client.url.toString(), "https://www.inversoft.com?time="
-        + now.toInstant().toEpochMilli() + "&string=value&list=" + new UUID(1, 0).toString() + "&list=" + new UUID(2, 0).toString());
+        + now.toInstant().toEpochMilli() + "&string=value&list=" + new UUID(1, 0) + "&list=" + new UUID(2, 0));
   }
 
   @Test
@@ -339,7 +342,7 @@ public class RESTClientTest {
 
     assertEquals(handler.count, 1);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.HEAD);
+    assertEquals(response.method, HTTPMethod.HEAD.name());
     assertEquals(response.status, 200);
     assertNull(response.successResponse);
   }
@@ -365,9 +368,52 @@ public class RESTClientTest {
     assertSame(response.request, parameters);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
     // We're using POST with X-HTTP-Method-Override for PATCH
-    assertEquals(response.method, HTTPMethod.POST);
+    assertEquals(response.method, HTTPMethod.POST.name());
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
+  }
+
+  @Test
+  public void post_formData_multiPart() throws Exception {
+    Map<String, List<String>> parameters = new LinkedHashMap<>();
+    parameters.put("test1", Collections.singletonList("value1"));
+    parameters.put("test2", Collections.singletonList("value2"));
+
+    List<FileUpload> files = new ArrayList<>();
+    files.add(new FileUpload("text/plain", Paths.get("src/test/resources/plain.txt"), "foo.bar.txt", "formField"));
+
+    MultipartBodyHandler.Multiparts request = new MultipartBodyHandler.Multiparts(files, parameters);
+    MultipartBodyHandler bodyHandler = new MultipartBodyHandler(request);
+
+    // Build the expected request
+    String body = "--" + bodyHandler.boundary + "\r\n" +
+        "Content-Disposition: form-data; name=\"formField\"; filename=\"foo.bar.txt\"; filename*=UTF-8''foo.bar.txt\r\n" +
+        "Content-Type: text/plain\r\n\r\n" +
+        "Hello World\r\n" +
+        "--" + bodyHandler.boundary + "\r\n" +
+        "Content-Disposition: form-data; name=\"test1\"\r\n\r\n" +
+        "value1\r\n" +
+        "--" + bodyHandler.boundary + "\r\n" +
+        "Content-Disposition: form-data; name=\"test2\"\r\n\r\n" +
+        "value2\r\n" +
+        "--" + bodyHandler.boundary + "--";
+    TestHandler handler = new TestHandler(body, "multipart/form-data; boundary=" + bodyHandler.boundary, null, "POST", 200, "Testing 123", null);
+    startServer(handler);
+
+    ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
+        .url("http://localhost:7042/test")
+        .bodyHandler(bodyHandler)
+        .errorResponseHandler(new TextResponseHandler())
+        .successResponseHandler(new TextResponseHandler())
+        .post()
+        .go();
+
+    assertEquals(handler.count, 1);
+    assertSame(response.request, request);
+    assertEquals(response.url, new URL("http://localhost:7042/test"));
+    assertEquals(response.method, HTTPMethod.POST.name());
+    assertEquals(response.status, 200);
+    assertEquals(response.successResponse, "Testing 123");
   }
 
   @Test
@@ -375,9 +421,9 @@ public class RESTClientTest {
     TestHandler handler = new TestHandler("test1=value1&test2=value2", "application/x-www-form-urlencoded", null, "POST", 200, "Testing 123", null);
     startServer(handler);
 
-    Map<String, String> parameters = new LinkedHashMap<>();
-    parameters.put("test1", "value1");
-    parameters.put("test2", "value2");
+    Map<String, List<String>> parameters = new LinkedHashMap<>();
+    parameters.put("test1", Collections.singletonList("value1"));
+    parameters.put("test2", Collections.singletonList("value2"));
 
     ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
         .url("http://localhost:7042/test")
@@ -390,7 +436,7 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertSame(response.request, parameters);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.POST);
+    assertEquals(response.method, HTTPMethod.POST.name());
     assertEquals(response.status, 200);
     assertEquals(response.successResponse, "Testing 123");
   }
@@ -412,7 +458,7 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertSame(response.request, bais);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.POST);
+    assertEquals(response.method, HTTPMethod.POST.name());
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
   }
@@ -437,7 +483,7 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertSame(response.request, parameters);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.POST);
+    assertEquals(response.method, HTTPMethod.POST.name());
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
   }
@@ -471,9 +517,9 @@ public class RESTClientTest {
     TestHandler handler = new TestHandler("test1=value1&test2=value2", "application/x-www-form-urlencoded", null, "PUT", 500, "Testing 123", null);
     startServer(handler);
 
-    Map<String, String> parameters = new LinkedHashMap<>();
-    parameters.put("test1", "value1");
-    parameters.put("test2", "value2");
+    Map<String, List<String>> parameters = new LinkedHashMap<>();
+    parameters.put("test1", Collections.singletonList("value1"));
+    parameters.put("test2", Collections.singletonList("value2"));
 
     ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
         .url("http://localhost:7042/test")
@@ -486,7 +532,7 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertSame(response.request, parameters);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.PUT);
+    assertEquals(response.method, HTTPMethod.PUT.name());
     assertEquals(response.status, 500);
     assertEquals(response.errorResponse, "Testing 123");
   }
@@ -496,9 +542,9 @@ public class RESTClientTest {
     TestHandler handler = new TestHandler("test1=value1&test2=value2", "application/x-www-form-urlencoded", null, "PUT", 200, "Testing 123", null);
     startServer(handler);
 
-    Map<String, String> parameters = new LinkedHashMap<>();
-    parameters.put("test1", "value1");
-    parameters.put("test2", "value2");
+    Map<String, List<String>> parameters = new LinkedHashMap<>();
+    parameters.put("test1", Collections.singletonList("value1"));
+    parameters.put("test2", Collections.singletonList("value2"));
 
     ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
         .url("http://localhost:7042/test")
@@ -511,7 +557,7 @@ public class RESTClientTest {
     assertEquals(handler.count, 1);
     assertSame(response.request, parameters);
     assertEquals(response.url, new URL("http://localhost:7042/test"));
-    assertEquals(response.method, HTTPMethod.PUT);
+    assertEquals(response.method, HTTPMethod.PUT.name());
     assertEquals(response.status, 200);
     assertEquals(response.successResponse, "Testing 123");
   }
@@ -590,17 +636,20 @@ public class RESTClientTest {
 
       // Read the request and save it
       StringBuilder body = new StringBuilder();
-      try (BufferedReader reader = new BufferedReader(new InputStreamReader(httpExchange.getRequestBody(), StandardCharsets.UTF_8))) {
-        String line;
-        while ((line = reader.readLine()) != null) {
-          body.append(line);
+      char[] buf = new char[1024];
+      try (Reader reader = new InputStreamReader(httpExchange.getRequestBody(), StandardCharsets.UTF_8)) {
+        int read;
+        while ((read = reader.read(buf)) != -1) {
+          if (read > 0) {
+            body.append(buf, 0, read);
+          }
         }
       }
 
       if (request != null) {
         assertEquals(body.toString(), request);
       } else {
-        assertTrue(body.toString().isEmpty(), "Body is [" + body.toString() + "]");
+        assertTrue(body.toString().isEmpty(), "Body is [" + body + "]");
       }
 
       httpExchange.getResponseHeaders().set(HTTPStrings.Headers.SetCookie, "foo=bar; Path=/foo/bar; Domain=fusionauth.io; Max-Age=1; Secure; HttpOnly; SameSite=Lax");

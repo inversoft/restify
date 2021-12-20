@@ -3,6 +3,11 @@
  */
 package com.inversoft.http;
 
+/**
+ * Various HTTP strings to make life simple and less error prone.
+ *
+ * @author Brian Pontarelli
+ */
 public final class HTTPStrings {
   private HTTPStrings() {
   }
@@ -65,6 +70,8 @@ public final class HTTPStrings {
     public static final String Date = "Date";
 
     public static final String LastModified = "Last-Modified";
+
+    public static final String Location = "Location";
 
     public static final String SetCookie = "Set-Cookie";
 

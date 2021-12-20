@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -45,7 +46,7 @@ public class RESTClient<RS, ERS> {
 
   public final List<Cookie> cookies = new ArrayList<>();
 
-  public final Map<String, String> headers = new HashMap<>();
+  public final Map<String, List<String>> headers = new HashMap<>();
 
   public final Map<String, List<Object>> parameters = new LinkedHashMap<>();
 
@@ -65,7 +66,7 @@ public class RESTClient<RS, ERS> {
 
   public String key;
 
-  public HTTPMethod method;
+  public String method;
 
   public ProxyInfo proxyInfo;
 
@@ -90,7 +91,7 @@ public class RESTClient<RS, ERS> {
 
   public RESTClient<RS, ERS> authorization(String key) {
     if (key != null && !key.isEmpty()) {
-      this.headers.put("Authorization", key);
+      this.headers.put("Authorization", Collections.singletonList(key));
     } else {
       this.headers.remove("Authorization");
     }
@@ -99,7 +100,7 @@ public class RESTClient<RS, ERS> {
 
   public RESTClient<RS, ERS> basicAuthorization(String username, String password) {
     if (username != null && password != null) {
-      this.headers.put("Authorization", base64Basic(username, password));
+      this.headers.put("Authorization", Collections.singletonList(base64Basic(username, password)));
     }
     return this;
   }
@@ -135,7 +136,7 @@ public class RESTClient<RS, ERS> {
   }
 
   public RESTClient<RS, ERS> delete() {
-    this.method = HTTPMethod.DELETE;
+    this.method = HTTPMethod.DELETE.name();
     return this;
   }
 
@@ -155,7 +156,7 @@ public class RESTClient<RS, ERS> {
   }
 
   public RESTClient<RS, ERS> get() {
-    this.method = HTTPMethod.GET;
+    this.method = HTTPMethod.GET.name();
     return this;
   }
 
@@ -215,7 +216,7 @@ public class RESTClient<RS, ERS> {
         }
 
         if (proxyInfo.username != null && proxyInfo.password != null) {
-          headers.put("Proxy-Authorization", base64Basic(proxyInfo.username, proxyInfo.password));
+          headers.put("Proxy-Authorization", Collections.singletonList(base64Basic(proxyInfo.username, proxyInfo.password)));
         }
       }
 
@@ -239,15 +240,13 @@ public class RESTClient<RS, ERS> {
       huc.setDoOutput(bodyHandler != null);
       huc.setConnectTimeout(connectTimeout);
       huc.setReadTimeout(readTimeout);
-      huc.setRequestMethod(method.toString());
+      huc.setRequestMethod(method);
 
       if (headers.keySet().stream().noneMatch(name -> name.equalsIgnoreCase(HTTPStrings.Headers.UserAgent))) {
-        headers.put(HTTPStrings.Headers.UserAgent, userAgent);
+        headers.put(HTTPStrings.Headers.UserAgent, Collections.singletonList(userAgent));
       }
 
-      if (headers.size() > 0) {
-        headers.forEach(huc::addRequestProperty);
-      }
+      headers.forEach((name, values) -> values.forEach(value -> huc.addRequestProperty(name, value)));
 
       if (headers.keySet().stream().noneMatch(name -> name.equalsIgnoreCase(HTTPStrings.Headers.Cookie)) && cookies.size() > 0) {
         String header = cookies.stream()
@@ -301,7 +300,7 @@ public class RESTClient<RS, ERS> {
         return response;
       }
     } else {
-      if (successResponseHandler == null || method == HTTPMethod.HEAD) {
+      if (successResponseHandler == null || method.equalsIgnoreCase(HTTPMethod.HEAD.name())) {
         return response;
       }
 
@@ -318,16 +317,34 @@ public class RESTClient<RS, ERS> {
   }
 
   public RESTClient<RS, ERS> head() {
-    this.method = HTTPMethod.HEAD;
+    this.method = HTTPMethod.HEAD.name();
     return this;
   }
 
   public RESTClient<RS, ERS> header(String name, String value) {
-    this.headers.put(name, value);
+    if (name == null) {
+      return this;
+    }
+
+    if (value == null) {
+      this.headers.remove(name);
+    } else {
+      this.headers.computeIfAbsent(name, key -> new ArrayList<>()).add(value);
+    }
+
     return this;
   }
 
   public RESTClient<RS, ERS> headers(Map<String, String> headers) {
+    if (headers == null) {
+      return this;
+    }
+
+    headers.forEach(this::header);
+    return this;
+  }
+
+  public RESTClient<RS, ERS> headersMap(Map<String, List<String>> headers) {
     this.headers.putAll(headers);
     return this;
   }
@@ -337,19 +354,36 @@ public class RESTClient<RS, ERS> {
     return this;
   }
 
+  public RESTClient<RS, ERS> method(String method) {
+    try {
+      // Set the override for PATCH
+      if (method.equals(HTTPMethod.PATCH.name())) {
+        this.method = HTTPMethod.POST.name();
+        this.headers.put("X-HTTP-Method-Override", Collections.singletonList(method));
+      } else {
+        this.method = HTTPMethod.valueOf(method).name();
+      }
+    } catch (Exception e) {
+      this.method = HTTPMethod.POST.name();
+      this.headers.put("X-HTTP-Method-Override", Collections.singletonList(method));
+    }
+
+    return this;
+  }
+
   public RESTClient<RS, ERS> method(HTTPMethod method) {
-    this.method = method;
+    this.method = method.name();
     return this;
   }
 
   public RESTClient<RS, ERS> patch() {
-    this.method = HTTPMethod.POST;
-    this.headers.put("X-HTTP-Method-Override", "PATCH");
+    this.method = HTTPMethod.POST.name();
+    this.headers.put("X-HTTP-Method-Override", Collections.singletonList("PATCH"));
     return this;
   }
 
   public RESTClient<RS, ERS> post() {
-    this.method = HTTPMethod.POST;
+    this.method = HTTPMethod.POST.name();
     return this;
   }
 
@@ -359,7 +393,7 @@ public class RESTClient<RS, ERS> {
   }
 
   public RESTClient<RS, ERS> put() {
-    this.method = HTTPMethod.PUT;
+    this.method = HTTPMethod.PUT.name();
     return this;
   }
 
@@ -454,7 +488,7 @@ public class RESTClient<RS, ERS> {
       if (url.charAt(url.length() - 1) != '/') {
         url.append('/');
       }
-      url.append(value.toString());
+      url.append(value);
     }
     return this;
   }
@@ -466,15 +500,18 @@ public class RESTClient<RS, ERS> {
   }
 
   /**
-   * Standard HTTP methods. This doesn't have CONNECT, TRACE or OPTIONS.
+   * Standard HTTP methods.
    */
   public enum HTTPMethod {
+    CONNECT,
+    DELETE,
     GET,
+    HEAD,
+    OPTIONS,
+    PATCH,
     POST,
     PUT,
-    DELETE,
-    HEAD,
-    PATCH
+    TRACE
   }
 
   /**

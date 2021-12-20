@@ -44,7 +44,7 @@ public class ClientResponse<T, U> {
 
   public ZonedDateTime lastModified;
 
-  public RESTClient.HTTPMethod method;
+  public String method;
 
   public Object request;
 
@@ -54,8 +54,68 @@ public class ClientResponse<T, U> {
 
   public URL url;
 
+  public List<Cookie> getCookies() {
+    return cookies;
+  }
+
+  public ZonedDateTime getDate() {
+    return date;
+  }
+
+  public U getErrorResponse() {
+    return errorResponse;
+  }
+
+  public Exception getException() {
+    return exception;
+  }
+
+  public String getHeader(String name) {
+    List<String> values = headers.get(name.toLowerCase());
+    if (values == null || values.isEmpty()) {
+      return null;
+    }
+
+    return values.get(0);
+  }
+
+  public List<String> getHeaders(String name) {
+    return headers.get(name.toLowerCase());
+  }
+
+  public ZonedDateTime getLastModified() {
+    return lastModified;
+  }
+
+  public String getMethod() {
+    return method;
+  }
+
+  public Object getRequest() {
+    return request;
+  }
+
+  public int getStatus() {
+    return status;
+  }
+
+  public T getSuccessResponse() {
+    return successResponse;
+  }
+
+  public URL getUrl() {
+    return url;
+  }
+
   public void setHeaders(Map<String, List<String>> headers) {
-    headers.forEach((key, values) -> this.headers.put(key != null ? key.toLowerCase() : null, values));
+    headers.forEach((key, values) -> {
+      // Skip the Status line
+      if (key == null) {
+        return;
+      }
+
+      this.headers.put(key.toLowerCase(), values);
+    });
 
     date = parseDateHeader(HTTPStrings.Headers.Date.toLowerCase());
     lastModified = parseDateHeader(HTTPStrings.Headers.LastModified.toLowerCase());

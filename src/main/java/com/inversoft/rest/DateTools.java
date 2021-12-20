@@ -31,7 +31,9 @@ import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
 import static java.time.temporal.ChronoField.YEAR;
 
 /**
- * Tools for dates.
+ * Tools for dates, all dates are parsed and formatted using an RFC 5322 compatible format.
+ *
+ * https://datatracker.ietf.org/doc/html/rfc5322
  *
  * @author Brian Pontarelli
  */
@@ -84,6 +86,13 @@ public final class DateTools {
         .appendLiteral(' ')
         .appendOffset("+HHMM", "GMT")  // should handle UT/Z/EST/EDT/CST/CDT/MST/MDT/PST/MDT
         .toFormatter();
+  }
+
+  private DateTools() {
+  }
+
+  public static String format(ZonedDateTime value) {
+    return value.format(DateTools.RFC_5322_DATE_TIME);
   }
 
   public static ZonedDateTime parse(String value) {
