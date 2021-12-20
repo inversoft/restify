@@ -90,9 +90,6 @@ public class RESTClient<RS, ERS> {
   }
 
   public RESTClient<RS, ERS> authorization(String key) {
-    // TODO : Code Review : Could we just use 'header()' here? Or add a setHeader()' which always overwrites instead of adds?
-    //        key is actually the value here, and do we want to check for empty, if so, if we were to use a setHeader() method, it would need
-    //        to also have this behavior.
     if (key != null && !key.isEmpty()) {
       this.headers.put("Authorization", Collections.singletonList(key));
     } else {

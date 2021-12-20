@@ -3,6 +3,11 @@
  */
 package com.inversoft.http;
 
+/**
+ * Various HTTP strings to make life simple and less error prone.
+ *
+ * @author Brian Pontarelli
+ */
 public final class HTTPStrings {
   private HTTPStrings() {
   }
