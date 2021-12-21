@@ -236,7 +236,7 @@ public class RESTClientTest {
     ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
         .url("http://localhost:7042/test")
         .authorization("key")
-        .header("header1", "value1")
+        .addHeader("header1", "value1")
         .errorResponseHandler(new TextResponseHandler())
         .successResponseHandler(new TextResponseHandler())
         .get()
@@ -277,24 +277,24 @@ public class RESTClientTest {
         .url("https://www.inversoft.com")
         .urlSegment(null)
         .urlSegment("latest-clean-speak-version")
-        .urlParameter("time", now)
-        .urlParameter("foo", "bar")
-        .urlParameter("baz", null)
-        .urlParameter("ids", new ArrayList<>(Arrays.asList(new UUID(1, 0), new UUID(2, 0))))
+        .addURLParameter("time", now)
+        .addURLParameter("foo", "bar")
+        .addURLParameter("baz", null)
+        .addURLParameter("ids", new ArrayList<>(Arrays.asList(new UUID(1, 0), new UUID(2, 0))))
         .get();
 
-    assertEquals(client.url.toString(), "https://www.inversoft.com/latest-clean-speak-version");
+    assertEquals(client.url(), "https://www.inversoft.com/latest-clean-speak-version");
 
-    assertEquals(client.parameters.get("time").size(), 1);
-    assertEquals(client.parameters.get("time").get(0), now.toInstant().toEpochMilli());
+    assertEquals(client.parameters().get("time").size(), 1);
+    assertEquals(client.parameters().get("time").get(0), Long.toString(now.toInstant().toEpochMilli()));
 
-    assertEquals(client.parameters.get("foo").size(), 1);
-    assertEquals(client.parameters.get("foo").get(0), "bar");
+    assertEquals(client.parameters().get("foo").size(), 1);
+    assertEquals(client.parameters().get("foo").get(0), "bar");
 
-    assertNull(client.parameters.get("baz"));
+    assertNull(client.parameters().get("baz"));
 
     client.go(); // finish building the final URL
-    assertEquals(client.url.toString(), "https://www.inversoft.com/latest-clean-speak-version?time="
+    assertEquals(client.url(), "https://www.inversoft.com/latest-clean-speak-version?time="
         + now.toInstant().toEpochMilli() + "&foo=bar&ids=" + new UUID(1, 0) + "&ids=" + new UUID(2, 0));
   }
 
@@ -311,20 +311,20 @@ public class RESTClientTest {
     // Test null parameter, ZoneDateTime parameter, and a collection parameter as added from a Map
     RESTClient<Void, Void> client = new RESTClient<>(Void.TYPE, Void.TYPE)
         .url("https://www.inversoft.com")
-        .urlParameters(null)
-        .urlParameters(parameters)
+        .addURLParameters(null)
+        .addURLParameterObjects(parameters)
         .get();
 
-    assertEquals(client.parameters.get("time").size(), 1);
-    assertEquals(client.parameters.get("time").get(0), now.toInstant().toEpochMilli());
+    assertEquals(client.parameters().get("time").size(), 1);
+    assertEquals(client.parameters().get("time").get(0), Long.toString(now.toInstant().toEpochMilli()));
 
-    assertEquals(client.parameters.get("string").size(), 1);
-    assertEquals(client.parameters.get("string").get(0), "value");
+    assertEquals(client.parameters().get("string").size(), 1);
+    assertEquals(client.parameters().get("string").get(0), "value");
 
-    assertNull(client.parameters.get("null"));
+    assertNull(client.parameters().get("null"));
 
     client.go(); // finish building the final URL
-    assertEquals(client.url.toString(), "https://www.inversoft.com?time="
+    assertEquals(client.url(), "https://www.inversoft.com?time="
         + now.toInstant().toEpochMilli() + "&string=value&list=" + new UUID(1, 0) + "&list=" + new UUID(2, 0));
   }
 

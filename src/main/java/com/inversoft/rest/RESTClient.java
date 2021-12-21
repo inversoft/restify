@@ -44,41 +44,41 @@ import com.inversoft.net.ssl.SSLTools;
 public class RESTClient<RS, ERS> {
   private static final Logger logger = LoggerFactory.getLogger(RESTClient.class);
 
-  public final List<Cookie> cookies = new ArrayList<>();
+  private final List<Cookie> cookies = new ArrayList<>();
 
-  public final Map<String, List<String>> headers = new HashMap<>();
+  private final Class<ERS> errorType;
 
-  public final Map<String, List<Object>> parameters = new LinkedHashMap<>();
+  private final Map<String, List<String>> headers = new HashMap<>();
 
-  public final StringBuilder url = new StringBuilder();
+  private final Map<String, List<String>> parameters = new LinkedHashMap<>();
 
-  public BodyHandler bodyHandler;
+  private final Class<RS> successType;
 
-  public String certificate;
+  private final StringBuilder url = new StringBuilder();
 
-  public int connectTimeout = 2000;
+  private BodyHandler bodyHandler;
 
-  public ResponseHandler<ERS> errorResponseHandler;
+  private String certificate;
 
-  public Class<ERS> errorType;
+  private int connectTimeout = 2000;
 
-  public boolean followRedirects = true;
+  private ResponseHandler<ERS> errorResponseHandler;
 
-  public String key;
+  private boolean followRedirects = true;
 
-  public String method;
+  private String key;
 
-  public ProxyInfo proxyInfo;
+  private String method;
 
-  public int readTimeout = 2000;
+  private ProxyInfo proxyInfo;
 
-  public boolean sniVerificationDisabled;
+  private int readTimeout = 2000;
 
-  public ResponseHandler<RS> successResponseHandler;
+  private boolean sniVerificationDisabled;
 
-  public Class<RS> successType;
+  private ResponseHandler<RS> successResponseHandler;
 
-  public String userAgent = "Restify (https://github.com/inversoft/restify)";
+  private String userAgent = "Restify (https://github.com/inversoft/restify)";
 
   public RESTClient(Class<RS> successType, Class<ERS> errorType) {
     if (successType == Void.class || errorType == Void.class) {
@@ -87,6 +87,122 @@ public class RESTClient<RS, ERS> {
 
     this.successType = successType;
     this.errorType = errorType;
+  }
+
+  /**
+   * Adds the given header to the list of headers. If another header with the same name already exists, this adds an additional value for
+   * that header.
+   *
+   * @param name  The name of the header.
+   * @param value The value of the header.
+   * @return This.
+   */
+  public RESTClient<RS, ERS> addHeader(String name, String value) {
+    if (name == null) {
+      return this;
+    }
+
+    if (value == null) {
+      this.headers.remove(name);
+    } else {
+      this.headers.computeIfAbsent(name, key -> new ArrayList<>()).add(value);
+    }
+
+    return this;
+  }
+
+  /**
+   * Adds the given headers to the list of headers. If the given Map contains any headers that already have been added, this adds the
+   * additional values in the given Map.
+   *
+   * @param headers The map of headers.
+   * @return This.
+   */
+
+  public RESTClient<RS, ERS> addHeaders(Map<String, List<String>> headers) {
+    if (headers == null) {
+      return this;
+    }
+
+    headers.forEach((key, values) -> values.forEach(value -> addHeader(key, value)));
+    return this;
+  }
+
+  /**
+   * Add a URL parameter as a key value pair. If another URL parameter with the same name already exists, this adds an additional values for
+   * that URL parameter. The handling depends on the type of the value. See the comment for the value parameter for more information.
+   *
+   * @param name  The URL parameter name.
+   * @param value The URL parameter value. The <code>.toString()</code> method will be used to get the <code>String</code> used in the URL
+   *              parameter. If the object type is a {@link Collection} a key value pair will be added for each value in the collection.
+   *              {@link ZonedDateTime} will also be handled uniquely in that the <code>long</code> will be used to set in the request using
+   *              <code>ZonedDateTime.toInstant().toEpochMilli()</code>
+   * @return This.
+   */
+  public RESTClient<RS, ERS> addURLParameter(String name, Object value) {
+    if (value instanceof ZonedDateTime) {
+      addURLParameter(name, Long.toString(((ZonedDateTime) value).toInstant().toEpochMilli()));
+    } else if (value instanceof Collection) {
+      //noinspection rawtypes
+      for (Object o : (Collection) value) {
+        if (o != null) {
+          addURLParameter(name, o.toString());
+        }
+      }
+    } else if (value != null) {
+      addURLParameter(name, value.toString());
+    }
+
+    return this;
+  }
+
+  /**
+   * Add a URL parameter as a key value pair. If another URL parameter with the same name already exists, this adds an additional values for
+   * * that URL parameter.
+   *
+   * @param name  The URL parameter name.
+   * @param value The URL parameter value.
+   * @return This.
+   */
+  public RESTClient<RS, ERS> addURLParameter(String name, String value) {
+    if (value == null) {
+      return this;
+    }
+
+    this.parameters.computeIfAbsent(name, k -> new ArrayList<>()).add(value);
+
+    return this;
+  }
+
+  /**
+   * Add URL parameters in the given map. If any URL parameters already exist, the values in the given map are appended to the existing
+   * list.
+   *
+   * @param urlParameters The URL parameters <code>Map</code> to add.  For each item in the <code>Map</code> this will call
+   *                      <code>addURLParameter(String, Object)</code>
+   * @return This.
+   */
+  public RESTClient<RS, ERS> addURLParameterObjects(Map<String, Object> urlParameters) {
+    if (urlParameters != null) {
+      urlParameters.forEach(this::addURLParameter);
+    }
+    return this;
+  }
+
+  /**
+   * Add URL parameters from map. If any URL parameters already exist, the values in the given map are appended to the existing
+   * list.
+   *
+   * @param urlParameters The URL parameters <code>Map</code> to add.  For each item in the <code>Map</code>
+   *                      this will call <code>urlParameter(String, Object)</code>
+   * @return This.
+   */
+  public RESTClient<RS, ERS> addURLParameters(Map<String, List<String>> urlParameters) {
+    if (urlParameters != null) {
+      urlParameters.forEach(this::addURLParameter);
+    }
+
+    return this;
   }
 
   public RESTClient<RS, ERS> authorization(String key) {
@@ -190,12 +306,12 @@ public class RESTClient<RS, ERS> {
           url.append("?");
         }
 
-        for (Iterator<Entry<String, List<Object>>> i = parameters.entrySet().iterator(); i.hasNext(); ) {
-          Entry<String, List<Object>> entry = i.next();
+        for (Iterator<Entry<String, List<String>>> i = parameters.entrySet().iterator(); i.hasNext(); ) {
+          Entry<String, List<String>> entry = i.next();
 
-          for (Iterator<Object> j = entry.getValue().iterator(); j.hasNext(); ) {
-            Object value = j.next();
-            url.append(URLEncoder.encode(entry.getKey(), "UTF-8")).append("=").append(URLEncoder.encode(value.toString(), "UTF-8"));
+          for (Iterator<String> j = entry.getValue().iterator(); j.hasNext(); ) {
+            String value = j.next();
+            url.append(URLEncoder.encode(entry.getKey(), "UTF-8")).append("=").append(URLEncoder.encode(value, "UTF-8"));
             if (j.hasNext()) {
               url.append("&");
             }
@@ -321,34 +437,6 @@ public class RESTClient<RS, ERS> {
     return this;
   }
 
-  public RESTClient<RS, ERS> header(String name, String value) {
-    if (name == null) {
-      return this;
-    }
-
-    if (value == null) {
-      this.headers.remove(name);
-    } else {
-      this.headers.computeIfAbsent(name, key -> new ArrayList<>()).add(value);
-    }
-
-    return this;
-  }
-
-  public RESTClient<RS, ERS> headers(Map<String, String> headers) {
-    if (headers == null) {
-      return this;
-    }
-
-    headers.forEach(this::header);
-    return this;
-  }
-
-  public RESTClient<RS, ERS> headersMap(Map<String, List<String>> headers) {
-    this.headers.putAll(headers);
-    return this;
-  }
-
   public RESTClient<RS, ERS> key(String key) {
     this.key = key;
     return this;
@@ -374,6 +462,10 @@ public class RESTClient<RS, ERS> {
   public RESTClient<RS, ERS> method(HTTPMethod method) {
     this.method = method.name();
     return this;
+  }
+
+  public Map<String, List<String>> parameters() {
+    return parameters;
   }
 
   public RESTClient<RS, ERS> patch() {
@@ -402,6 +494,123 @@ public class RESTClient<RS, ERS> {
     return this;
   }
 
+  /**
+   * Replaces the given header. If another header with the same name already exists, it is replaced with the single value given.
+   *
+   * @param name  The name of the header.
+   * @param value The value of the header.
+   * @return This.
+   */
+  public RESTClient<RS, ERS> setHeader(String name, String value) {
+    List<String> list = new ArrayList<>();
+    list.add(value);
+    this.headers.put(name, list);
+    return this;
+  }
+
+  /**
+   * Replaces the given header with the list of values. If another header with the same name already exists, all of the existing values are
+   * replaced with the values given.
+   *
+   * @param name   The name of the header.
+   * @param values The list of new values of the header.
+   * @return This.
+   */
+  public RESTClient<RS, ERS> setHeaders(String name, List<String> values) {
+    this.headers.put(name, new ArrayList<>(values));
+    return this;
+  }
+
+  /**
+   * Replaces all of the existing headers with the given headers.
+   *
+   * @param headers The new headers map.
+   * @return This.
+   */
+  public RESTClient<RS, ERS> setHeaders(Map<String, List<String>> headers) {
+    this.headers.clear();
+    this.headers.putAll(headers);
+    return this;
+  }
+
+  /**
+   * Replaces a URL parameter as a key value pair. If a URL parameter with the same name exists, it is replaced.
+   *
+   * @param name  The URL parameter name.
+   * @param value The url parameter value.
+   * @return This.
+   */
+  public RESTClient<RS, ERS> setURLParameter(String name, String value) {
+    if (value == null) {
+      return this;
+    }
+
+    List<String> list = new ArrayList<>();
+    list.add(value);
+    parameters.put(name, list);
+
+    return this;
+  }
+
+  /**
+   * Replaces a URL parameter as a key value pair. If another URL parameter with the same name already exists, this replaces all the
+   * existing values for that URL parameter. The handling depends on the type of the value. See the comment for the value parameter for more
+   * information.
+   *
+   * @param name  The URL parameter name.
+   * @param value The URL parameter value. The <code>.toString()</code> method will be used to get the <code>String</code> used in the URL
+   *              parameter. If the object type is a {@link Collection} a key value pair will be added for each value in the collection.
+   *              {@link ZonedDateTime} will also be handled uniquely in that the <code>long</code> will be used to set in the request using
+   *              <code>ZonedDateTime.toInstant().toEpochMilli()</code>
+   * @return This.
+   */
+  public RESTClient<RS, ERS> setURLParameter(String name, Object value) {
+    if (value instanceof ZonedDateTime) {
+      setURLParameter(name, Long.toString(((ZonedDateTime) value).toInstant().toEpochMilli()));
+    } else if (value instanceof Collection) {
+      //noinspection rawtypes
+      for (Object o : (Collection) value) {
+        if (o != null) {
+          setURLParameter(name, o.toString());
+        }
+      }
+    } else if (value != null) {
+      setURLParameter(name, value.toString());
+    }
+
+    return this;
+  }
+
+  /**
+   * Replaces URL parameters from a {@code Map<String, Object>}. If any URL parameters exist with the same name as those in the Map, they
+   * are replaced with the values in the Map.
+   *
+   * @param urlParameters The url parameters <code>Map</code> to add.
+   * @return This.
+   */
+  public RESTClient<RS, ERS> setURLParameterObjects(Map<String, Object> urlParameters) {
+    if (urlParameters != null) {
+      urlParameters.forEach(this::setURLParameter);
+    }
+    return this;
+  }
+
+  /**
+   * Replaces the URL parameters from the Map. If any URL parameters exist with the same name as those in the Map, their values are replaced
+   * completely.
+   *
+   * @param urlParameters The url parameters <code>Map</code> to add.
+   * @return This.
+   */
+  public RESTClient<RS, ERS> setURLParameters(Map<String, List<String>> urlParameters) {
+    if (urlParameters != null) {
+      this.parameters.putAll(urlParameters);
+      urlParameters.forEach(this::addURLParameter);
+    }
+
+    return this;
+  }
+
   public RESTClient<RS, ERS> successResponseHandler(ResponseHandler<RS> successResponseHandler) {
     this.successResponseHandler = successResponseHandler;
     return this;
@@ -423,52 +632,13 @@ public class RESTClient<RS, ERS> {
     return this;
   }
 
+  public String url() {
+    return url.toString();
+  }
+
   public RESTClient<RS, ERS> url(String url) {
     this.url.delete(0, this.url.length());
     this.url.append(url);
-    return this;
-  }
-
-  /**
-   * Add a URL parameter as a key value pair.
-   *
-   * @param name  The URL parameter name.
-   * @param value The url parameter value. The <code>.toString()</code> method will be used to
-   *              get the <code>String</code> used in the URL parameter. If the object type is a
-   *              {@link Collection} a key value pair will be added for each value in the collection.
-   *              {@link ZonedDateTime} will also be handled uniquely in that the <code>long</code> will
-   *              be used to set in the request using <code>ZonedDateTime.toInstant().toEpochMilli()</code>
-   * @return This.
-   */
-  public RESTClient<RS, ERS> urlParameter(String name, Object value) {
-    if (value == null) {
-      return this;
-    }
-
-    List<Object> values = this.parameters.computeIfAbsent(name, k -> new ArrayList<>());
-
-    if (value instanceof ZonedDateTime) {
-      values.add(((ZonedDateTime) value).toInstant().toEpochMilli());
-    } else if (value instanceof Collection) {
-      //noinspection rawtypes
-      values.addAll((Collection) value);
-    } else {
-      values.add(value);
-    }
-    return this;
-  }
-
-  /**
-   * Add URL parameters from a {@code Map<String, Object>}.
-   *
-   * @param urlParameters The url parameters <code>Map</code> to add.  For each item in the <code>Map</code>
-   *                      this will call <code>urlParameter(String, Object)</code>
-   * @return This.
-   */
-  public RESTClient<RS, ERS> urlParameters(Map<String, Object> urlParameters) {
-    if (urlParameters != null) {
-      urlParameters.forEach(this::urlParameter);
-    }
     return this;
   }
 
@@ -490,6 +660,11 @@ public class RESTClient<RS, ERS> {
       }
       url.append(value);
     }
+    return this;
+  }
+
+  public RESTClient<RS, ERS> userAgent(String userAgent) {
+    this.userAgent = userAgent;
     return this;
   }
 
