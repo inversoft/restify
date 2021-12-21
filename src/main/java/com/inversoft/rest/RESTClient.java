@@ -492,6 +492,32 @@ public class RESTClient<RS, ERS> {
   }
 
   /**
+   * Replaces all the headers with the given Map.
+   *
+   * @param headers The new headers map.
+   * @return This.
+   */
+  public RESTClient<RS, ERS> replaceHeaders(Map<String, List<String>> headers) {
+    this.headers.clear();
+    setHeaders(headers);
+
+    return this;
+  }
+
+  /**
+   * Replaces all the URL parameters with the given Map.
+   *
+   * @param urlParameters The url parameters <code>Map</code> to add.
+   * @return This.
+   */
+  public RESTClient<RS, ERS> replaceURLParameters(Map<String, List<String>> urlParameters) {
+    this.parameters.clear();
+    setURLParameters(urlParameters);
+
+    return this;
+  }
+
+  /**
    * Replaces the given header. If another header with the same name already exists, it is replaced with the single value given.
    *
    * @param name  The name of the header.
@@ -515,7 +541,7 @@ public class RESTClient<RS, ERS> {
   }
 
   /**
-   * Replaces the given header with the list of values. If another header with the same name already exists, all of the existing values are
+   * Replaces the given header with the list of values. If another header with the same name already exists, all the existing values are
    * replaced with the values given.
    *
    * @param name   The name of the header.
@@ -533,7 +559,8 @@ public class RESTClient<RS, ERS> {
   }
 
   /**
-   * Replaces all of the existing headers with the given headers.
+   * Replaces the given header with Map of values. If another header with the same name as a key in the Map already exists, all the
+   * existing values for that key are replaced with the values given.
    *
    * @param headers The new headers map.
    * @return This.
@@ -663,7 +690,8 @@ public class RESTClient<RS, ERS> {
   }
 
   /**
-   * Append a url path segment. <p>
+   * Append a url path segment.
+   * <p>
    * For Example: <pre>
    *     .url("http://www.foo.com")
    *     .urlSegment("bar")
