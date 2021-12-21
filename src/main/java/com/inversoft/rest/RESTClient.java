@@ -98,15 +98,11 @@ public class RESTClient<RS, ERS> {
    * @return This.
    */
   public RESTClient<RS, ERS> addHeader(String name, String value) {
-    if (name == null) {
+    if (name == null || value == null) {
       return this;
     }
 
-    if (value == null) {
-      this.headers.remove(name);
-    } else {
-      this.headers.computeIfAbsent(name, key -> new ArrayList<>()).add(value);
-    }
+    this.headers.computeIfAbsent(name, key -> new ArrayList<>()).add(value);
 
     return this;
   }
@@ -165,7 +161,7 @@ public class RESTClient<RS, ERS> {
    * @return This.
    */
   public RESTClient<RS, ERS> addURLParameter(String name, String value) {
-    if (value == null) {
+    if (name == null || value == null) {
       return this;
     }
 
@@ -186,6 +182,7 @@ public class RESTClient<RS, ERS> {
     if (urlParameters != null) {
       urlParameters.forEach(this::addURLParameter);
     }
+
     return this;
   }
 
@@ -502,9 +499,18 @@ public class RESTClient<RS, ERS> {
    * @return This.
    */
   public RESTClient<RS, ERS> setHeader(String name, String value) {
-    List<String> list = new ArrayList<>();
-    list.add(value);
-    this.headers.put(name, list);
+    if (name == null) {
+      return this;
+    }
+
+    if (value == null) {
+      headers.remove(name);
+    } else {
+      List<String> list = new ArrayList<>();
+      list.add(value);
+      this.headers.put(name, list);
+    }
+
     return this;
   }
 
@@ -517,7 +523,12 @@ public class RESTClient<RS, ERS> {
    * @return This.
    */
   public RESTClient<RS, ERS> setHeaders(String name, List<String> values) {
-    this.headers.put(name, new ArrayList<>(values));
+    if (values == null) {
+      headers.remove(name);
+    } else {
+      this.headers.put(name, new ArrayList<>(values.stream().filter(Objects::nonNull).collect(Collectors.toList())));
+    }
+
     return this;
   }
 
@@ -528,8 +539,14 @@ public class RESTClient<RS, ERS> {
    * @return This.
    */
   public RESTClient<RS, ERS> setHeaders(Map<String, List<String>> headers) {
-    this.headers.clear();
-    this.headers.putAll(headers);
+    if (headers != null) {
+      for (Entry<String, List<String>> e : headers.entrySet()) {
+        if (e.getKey() != null && e.getValue() != null && e.getValue().stream().anyMatch(Objects::nonNull)) {
+          this.headers.put(e.getKey(), e.getValue().stream().filter(Objects::nonNull).collect(Collectors.toList()));
+        }
+      }
+    }
+
     return this;
   }
 
@@ -541,7 +558,7 @@ public class RESTClient<RS, ERS> {
    * @return This.
    */
   public RESTClient<RS, ERS> setURLParameter(String name, String value) {
-    if (value == null) {
+    if (name == null || value == null) {
       return this;
     }
 
@@ -604,8 +621,11 @@ public class RESTClient<RS, ERS> {
    */
   public RESTClient<RS, ERS> setURLParameters(Map<String, List<String>> urlParameters) {
     if (urlParameters != null) {
-      this.parameters.putAll(urlParameters);
-      urlParameters.forEach(this::addURLParameter);
+      for (Entry<String, List<String>> e : urlParameters.entrySet()) {
+        if (e.getKey() != null && e.getValue() != null && e.getValue().stream().anyMatch(Objects::nonNull)) {
+          this.parameters.put(e.getKey(), e.getValue().stream().filter(Objects::nonNull).collect(Collectors.toList()));
+        }
+      }
     }
 
     return this;
