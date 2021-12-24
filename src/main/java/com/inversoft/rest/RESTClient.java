@@ -28,9 +28,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.inversoft.http.Cookie;
 import com.inversoft.http.HTTPStrings;
 import com.inversoft.net.ssl.SSLTools;
@@ -42,8 +39,6 @@ import com.inversoft.net.ssl.SSLTools;
  * @author Brian Pontarelli
  */
 public class RESTClient<RS, ERS> {
-  private static final Logger logger = LoggerFactory.getLogger(RESTClient.class);
-
   private final List<Cookie> cookies = new ArrayList<>();
 
   private final Class<ERS> errorType;
@@ -114,7 +109,6 @@ public class RESTClient<RS, ERS> {
    * @param headers The map of headers.
    * @return This.
    */
-
   public RESTClient<RS, ERS> addHeaders(Map<String, List<String>> headers) {
     if (headers == null) {
       return this;
@@ -381,7 +375,6 @@ public class RESTClient<RS, ERS> {
         }
       }
     } catch (Exception e) {
-      logger.debug("Error calling REST WebService at [" + url + "]", e);
       response.status = -1;
       response.exception = e;
       return response;
@@ -391,7 +384,6 @@ public class RESTClient<RS, ERS> {
     try {
       status = huc.getResponseCode();
     } catch (Exception e) {
-      logger.debug("Error calling REST WebService at [" + url + "]", e);
       response.status = -1;
       response.exception = e;
       return response;
@@ -408,7 +400,6 @@ public class RESTClient<RS, ERS> {
       try (InputStream is = huc.getErrorStream()) {
         response.errorResponse = errorResponseHandler.apply(is);
       } catch (Exception e) {
-        logger.debug("Error calling REST WebService at [" + url + "]", e);
         response.exception = e;
         return response;
       }
@@ -420,7 +411,6 @@ public class RESTClient<RS, ERS> {
       try (InputStream is = huc.getInputStream()) {
         response.successResponse = successResponseHandler.apply(is);
       } catch (Exception e) {
-        logger.debug("Error calling REST WebService at [" + url + "]", e);
         response.exception = e;
         return response;
       }
@@ -432,6 +422,20 @@ public class RESTClient<RS, ERS> {
   public RESTClient<RS, ERS> head() {
     this.method = HTTPMethod.HEAD.name();
     return this;
+  }
+
+  /**
+   * Synonym for {@link #addHeader(String, String)}.
+   */
+  public RESTClient<RS, ERS> header(String name, String value) {
+    return addHeader(name, value);
+  }
+
+  /**
+   * Synonym for {@link #addHeaders(Map)}.
+   */
+  public RESTClient<RS, ERS> headers(Map<String, List<String>> headers) {
+    return addHeaders(headers);
   }
 
   public RESTClient<RS, ERS> key(String key) {
@@ -585,13 +589,17 @@ public class RESTClient<RS, ERS> {
    * @return This.
    */
   public RESTClient<RS, ERS> setURLParameter(String name, String value) {
-    if (name == null || value == null) {
+    if (name == null) {
       return this;
     }
 
-    List<String> list = new ArrayList<>();
-    list.add(value);
-    parameters.put(name, list);
+    if (value == null) {
+      parameters.remove(name);
+    } else {
+      List<String> list = new ArrayList<>();
+      list.add(value);
+      parameters.put(name, list);
+    }
 
     return this;
   }
@@ -687,6 +695,34 @@ public class RESTClient<RS, ERS> {
     this.url.delete(0, this.url.length());
     this.url.append(url);
     return this;
+  }
+
+  /**
+   * Synonym for {@link #addURLParameter(String, Object)}.
+   */
+  public RESTClient<RS, ERS> urlParameter(String name, Object value) {
+    return addURLParameter(name, value);
+  }
+
+  /**
+   * Synonym for {@link #addURLParameter(String, String)}.
+   */
+  public RESTClient<RS, ERS> urlParameter(String name, String value) {
+    return addURLParameter(name, value);
+  }
+
+  /**
+   * Synonym for {@link #addURLParameterObjects(Map)}.
+   */
+  public RESTClient<RS, ERS> urlParameterObjects(Map<String, Object> urlParameters) {
+    return addURLParameterObjects(urlParameters);
+  }
+
+  /**
+   * Synonym for {@link #addURLParameters(Map)}.
+   */
+  public RESTClient<RS, ERS> urlParameters(Map<String, List<String>> urlParameters) {
+    return addURLParameters(urlParameters);
   }
 
   /**

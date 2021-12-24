@@ -4,7 +4,6 @@
 savantVersion = "1.0.0"
 jackson5Version = "3.0.0-{integration}"
 jacksonVersion = "2.13.0"
-slf4jVersion = "2.0.0-alpha5"
 testngVersion = "7.3.0"
 
 project(group: "com.inversoft", name: "restify", version: "4.0.0", licenses: ["ApacheV2_0"]) {
@@ -28,7 +27,6 @@ project(group: "com.inversoft", name: "restify", version: "4.0.0", licenses: ["A
       dependency(id: "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
       dependency(id: "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
       dependency(id: "com.inversoft:jackson5:${jackson5Version}")
-      dependency(id: "org.slf4j:slf4j-api:${slf4jVersion}")
     }
     group(name: "test-compile", export: false) {
       dependency(id: "org.testng:testng:${testngVersion}")
