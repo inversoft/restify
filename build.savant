@@ -2,7 +2,7 @@
  * Copyright (c) 2015-2019, Inversoft Inc., All Rights Reserved
  */
 savantVersion = "1.0.0"
-jackson5Version = "3.0.0-{integration}"
+jackson5Version = "3.0.0"
 jacksonVersion = "2.13.0"
 testngVersion = "7.3.0"
 
