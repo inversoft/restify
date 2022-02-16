@@ -430,12 +430,15 @@ public class RESTClientTest {
 
   @Test
   public void post_formData_string() throws Exception {
-    TestHandler handler = new TestHandler("test1=value1&test2=value2", "application/x-www-form-urlencoded", null, "POST", 200, "Testing 123", null);
+    TestHandler handler = new TestHandler("test1=value1&test2=value2&test3=value3", "application/x-www-form-urlencoded", null, "POST", 200, "Testing 123", null);
     startServer(handler);
 
     Map<String, List<String>> parameters = new LinkedHashMap<>();
     parameters.put("test1", Collections.singletonList("value1"));
     parameters.put("test2", Collections.singletonList("value2"));
+    // Handle null values
+    parameters.put("test3", new ArrayList<>(Arrays.asList("value3", null)));
+    parameters.put("test4", null);
 
     ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
         .url("http://localhost:7042/test")

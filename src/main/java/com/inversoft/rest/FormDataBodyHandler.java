@@ -69,15 +69,21 @@ public class FormDataBodyHandler implements RESTClient.BodyHandler {
     if (body == null) {
       StringBuilder build = new StringBuilder();
       request.forEach((key, values) -> {
-        for (String value : values) {
-          if (build.length() > 0) {
-            build.append("&");
-          }
+        if (values != null) {
+          for (String value : values) {
+            if (value == null) {
+              continue;
+            }
 
-          try {
-            build.append(URLEncoder.encode(key, "UTF-8")).append("=").append(URLEncoder.encode(value, "UTF-8"));
-          } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException(e);
+            if (build.length() > 0) {
+              build.append("&");
+            }
+
+            try {
+              build.append(URLEncoder.encode(key, "UTF-8")).append("=").append(URLEncoder.encode(value, "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+              throw new IllegalStateException(e);
+            }
           }
         }
       });
