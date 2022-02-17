@@ -32,6 +32,13 @@ public class FormDataBodyHandler implements RESTClient.BodyHandler {
 
   private byte[] body;
 
+  private boolean excludeNullValues;
+
+  public FormDataBodyHandler(Map<String, List<String>> request, boolean excludeNullValues) {
+    this.request = request;
+    this.excludeNullValues = excludeNullValues;
+  }
+
   public FormDataBodyHandler(Map<String, List<String>> request) {
     this.request = request;
   }
@@ -56,6 +63,10 @@ public class FormDataBodyHandler implements RESTClient.BodyHandler {
     return request;
   }
 
+  public void setExcludeNullValues(boolean value) {
+    excludeNullValues = value;
+  }
+
   @Override
   public void setHeaders(HttpURLConnection huc) {
     if (request != null) {
@@ -65,21 +76,41 @@ public class FormDataBodyHandler implements RESTClient.BodyHandler {
     }
   }
 
+  private void append(StringBuilder build, String key, String value) {
+    if (build.length() > 0) {
+      build.append("&");
+    }
+
+    build.append(encode(key)).append("=");
+    if (value != null) {
+      build.append(encode(value));
+    }
+  }
+
+  private String encode(String s) {
+    try {
+      return URLEncoder.encode(s, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
   private void serializeRequest() {
     if (body == null) {
       StringBuilder build = new StringBuilder();
       request.forEach((key, values) -> {
-        for (String value : values) {
-          if (build.length() > 0) {
-            build.append("&");
+        if (values == null) {
+          if (!excludeNullValues) {
+            append(build, key, null);
           }
 
-          try {
-            build.append(URLEncoder.encode(key, "UTF-8")).append("=").append(URLEncoder.encode(value, "UTF-8"));
-          } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException(e);
-          }
+          return;
         }
+
+        // Values is non-null
+        values.stream()
+              .filter(v -> v != null || !excludeNullValues)
+              .forEach(v -> append(build, key, v));
       });
 
       body = build.toString().getBytes(StandardCharsets.UTF_8);

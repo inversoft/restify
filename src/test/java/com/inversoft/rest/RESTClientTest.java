@@ -430,16 +430,47 @@ public class RESTClientTest {
 
   @Test
   public void post_formData_string() throws Exception {
-    TestHandler handler = new TestHandler("test1=value1&test2=value2", "application/x-www-form-urlencoded", null, "POST", 200, "Testing 123", null);
+    TestHandler handler = new TestHandler("test1=value1&test2=value2&test3=value3&test3=&test4=", "application/x-www-form-urlencoded", null, "POST", 200, "Testing 123", null);
     startServer(handler);
 
     Map<String, List<String>> parameters = new LinkedHashMap<>();
     parameters.put("test1", Collections.singletonList("value1"));
     parameters.put("test2", Collections.singletonList("value2"));
+    // Handle null values
+    parameters.put("test3", new ArrayList<>(Arrays.asList("value3", null)));
+    parameters.put("test4", null);
 
     ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
         .url("http://localhost:7042/test")
         .bodyHandler(new FormDataBodyHandler(parameters))
+        .errorResponseHandler(new TextResponseHandler())
+        .successResponseHandler(new TextResponseHandler())
+        .post()
+        .go();
+
+    assertEquals(handler.count, 1);
+    assertSame(response.request, parameters);
+    assertEquals(response.url, new URL("http://localhost:7042/test"));
+    assertEquals(response.method, HTTPMethod.POST.name());
+    assertEquals(response.status, 200);
+    assertEquals(response.successResponse, "Testing 123");
+  }
+
+  @Test
+  public void post_formData_string_excludeNullValues() throws Exception {
+    TestHandler handler = new TestHandler("test1=value1&test2=value2&test3=value3", "application/x-www-form-urlencoded", null, "POST", 200, "Testing 123", null);
+    startServer(handler);
+
+    Map<String, List<String>> parameters = new LinkedHashMap<>();
+    parameters.put("test1", Collections.singletonList("value1"));
+    parameters.put("test2", Collections.singletonList("value2"));
+    // Handle null values
+    parameters.put("test3", new ArrayList<>(Arrays.asList("value3", null)));
+    parameters.put("test4", null);
+
+    ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
+        .url("http://localhost:7042/test")
+        .bodyHandler(new FormDataBodyHandler(parameters, true))
         .errorResponseHandler(new TextResponseHandler())
         .successResponseHandler(new TextResponseHandler())
         .post()
