@@ -10,11 +10,17 @@ testngVersion = "7.3.0"
 
 project(group: "com.inversoft", name: "restify", version: "3.9.1", licenses: ["ApacheV2_0"]) {
   workflow {
-    standard()
+    fetch {
+      cache()
+      url(url: "https://repository.savantbuild.org")
+    }
+    publish {
+      cache()
+    }
   }
 
   publishWorkflow {
-    subversion(repository: "http://svn.inversoft.org/savant")
+    subversion(repository: "https://svn.savantbuild.org")
   }
 
   dependencies {
