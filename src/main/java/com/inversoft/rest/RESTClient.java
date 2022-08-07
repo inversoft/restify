@@ -87,6 +87,12 @@ public class RESTClient<RS, ERS> {
 
   private String userAgent = "Restify (https://github.com/inversoft/restify)";
 
+  // Under no circumstances should a POST request be retried due to an exception.
+  // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=6382788
+  static {
+    System.setProperty("sun.net.http.retryPost", "false");
+  }
+
   public RESTClient(Class<RS> successType, Class<ERS> errorType) {
     if (successType == Void.class || errorType == Void.class) {
       throw new IllegalArgumentException("Void.class isn't valid. Use Void.TYPE instead.");
