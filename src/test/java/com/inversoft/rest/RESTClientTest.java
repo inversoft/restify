@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2016-2022, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,7 +33,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.inversoft.http.Cookie;
@@ -45,6 +46,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import static com.inversoft.rest.RESTClient.HTTPMethod;
+import static java.util.Collections.singletonList;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -58,20 +60,37 @@ import static org.testng.Assert.fail;
  */
 @SuppressWarnings("rawtypes")
 public class RESTClientTest {
+  private TestHandler handler;
+
   private HttpServer server;
 
-  @AfterMethod
-  public void afterMethod() {
+  @AfterTest
+  public void afterTest() {
     if (server != null) {
       server.stop(0);
       server = null;
     }
   }
 
+  @BeforeMethod
+  public void beforeMethod() {
+    if (handler != null) {
+      handler.reset();
+    }
+  }
+
+  @BeforeTest
+  public void beforeTest() throws Exception {
+    InetSocketAddress addr = new InetSocketAddress(7042);
+    server = HttpServer.create(addr, 0);
+    handler = new TestHandler();
+    server.createContext("/", handler);
+    server.start();
+  }
+
   @Test
   public void delete_json() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "DELETE", 200, "{\"code\": 200}", null);
-    startServer(handler);
+    handler.handle(null, null, null, "DELETE", 200, "{\"code\": 200}", "application/json", null);
 
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
         .url("http://localhost:7042/test")
@@ -91,8 +110,7 @@ public class RESTClientTest {
 
   @Test
   public void get_JSONParseException() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "GET", 403, "<html><body>Hello!</body></html>", null);
-    startServer(handler);
+    handler.handle(null, null, null, "GET", 403, "<html><body>Hello!</body></html>", "text/html", null);
 
     // Expecting JSON, but get HTML
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
@@ -116,8 +134,7 @@ public class RESTClientTest {
 
   @Test
   public void get_JSONParseExceptionTruncatedResponse() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "GET", 403, "<html><body>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</body></html>", null);
-    startServer(handler);
+    handler.handle(null, null, null, "GET", 403, "<html><body>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</body></html>", "text/html", null);
 
     // Expecting JSON, but get HTML
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
@@ -143,8 +160,7 @@ public class RESTClientTest {
 
   @Test
   public void get_cookies() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "GET", 200, null, null);
-    startServer(handler);
+    handler.handle(null, null, null, "GET", 200, null, null, null);
 
     Cookie cookie = new Cookie("foo", "bar").with(c -> c.domain = "fusionauth.io")
                                             .with(c -> c.httpOnly = true)
@@ -174,8 +190,7 @@ public class RESTClientTest {
 
   @Test
   public void get_emptyJSON() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "GET", 200, "", null);
-    startServer(handler);
+    handler.handle(null, null, null, "GET", 200, "", "application/json", null);
 
     ClientResponse<Map, Map> response = expectException(() -> new RESTClient<>(Map.class, Map.class)
         .url("http://localhost:7042/test")
@@ -196,8 +211,7 @@ public class RESTClientTest {
 
   @Test
   public void get_emptyJSON_error_404() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "GET", 404, "", null);
-    startServer(handler);
+    handler.handle(null, null, null, "GET", 404, "", "application/json", null);
 
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
         .url("http://localhost:7042/test")
@@ -218,8 +232,7 @@ public class RESTClientTest {
 
   @Test
   public void get_forgotErrorResponseHandler() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "GET", 200, "", null);
-    startServer(handler);
+    handler.handle(null, null, null, "GET", 200, "", "application/json", null);
 
     expectException(() ->
         new RESTClient<>(Map.class, Map.class)
@@ -242,8 +255,7 @@ public class RESTClientTest {
     headers.put("Authorization", "key");
     headers.put("header1", "value1");
 
-    TestHandler handler = new TestHandler(null, null, headers, "GET", 200, null, null);
-    startServer(handler);
+    handler.handle(null, null, headers, "GET", 200, null, null, null);
 
     ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
         .url("http://localhost:7042/test")
@@ -263,8 +275,7 @@ public class RESTClientTest {
 
   @Test
   public void get_json() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "GET", 200, "{\"code\": 200}", null);
-    startServer(handler);
+    handler.handle(null, null, null, "GET", 200, "{\"code\": 200}", "application/json", null);
 
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
         .url("http://localhost:7042/test")
@@ -342,9 +353,7 @@ public class RESTClientTest {
 
   @Test
   public void head() throws Exception {
-    TestHandler handler = new TestHandler(null, null, null, "HEAD", 200, "{\"code\": 200}", null);
-    startServer(handler);
-
+    handler.handle(null, null, null, "HEAD", 200, "{\"code\": 200}", "application/json", null);
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
         .url("http://localhost:7042/test")
         .errorResponseHandler(new JSONResponseHandler<>(Map.class))
@@ -356,13 +365,13 @@ public class RESTClientTest {
     assertEquals(response.url, new URL("http://localhost:7042/test"));
     assertEquals(response.method, HTTPMethod.HEAD.name());
     assertEquals(response.status, 200);
+    assertEquals(response.getHeader("Content-Length"), "13");
     assertNull(response.successResponse);
   }
 
   @Test
   public void patch_json_json() throws Exception {
-    TestHandler handler = new TestHandler("{\"test1\":\"value1\",\"test2\":\"value2\"}", "application/json", null, "PATCH", 200, "{\"code\": 200}", null);
-    startServer(handler);
+    handler.handle("{\"test1\":\"value1\",\"test2\":\"value2\"}", "application/json", null, "PATCH", 200, "{\"code\": 200}", "application/json", null);
 
     Map<String, String> parameters = new LinkedHashMap<>();
     parameters.put("test1", "value1");
@@ -388,8 +397,8 @@ public class RESTClientTest {
   @Test
   public void post_formData_multiPart() throws Exception {
     Map<String, List<String>> parameters = new LinkedHashMap<>();
-    parameters.put("test1", Collections.singletonList("value1"));
-    parameters.put("test2", Collections.singletonList("value2"));
+    parameters.put("test1", singletonList("value1"));
+    parameters.put("test2", singletonList("value2"));
 
     List<FileUpload> files = new ArrayList<>();
     files.add(new FileUpload("text/plain", Paths.get("src/test/resources/plain.txt"), "foo.bar.txt", "formField"));
@@ -409,8 +418,8 @@ public class RESTClientTest {
         "Content-Disposition: form-data; name=\"test2\"\r\n\r\n" +
         "value2\r\n" +
         "--" + bodyHandler.boundary + "--";
-    TestHandler handler = new TestHandler(body, "multipart/form-data; boundary=" + bodyHandler.boundary, null, "POST", 200, "Testing 123", null);
-    startServer(handler);
+
+    handler.handle(body, "multipart/form-data; boundary=" + bodyHandler.boundary, null, "POST", 200, "Testing 123", "text/html", null);
 
     ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
         .url("http://localhost:7042/test")
@@ -430,12 +439,11 @@ public class RESTClientTest {
 
   @Test
   public void post_formData_string() throws Exception {
-    TestHandler handler = new TestHandler("test1=value1&test2=value2&test3=value3&test3=&test4=", "application/x-www-form-urlencoded", null, "POST", 200, "Testing 123", null);
-    startServer(handler);
+    handler.handle("test1=value1&test2=value2&test3=value3&test3=&test4=", "application/x-www-form-urlencoded", null, "POST", 200, "Testing 123", "text/html", null);
 
     Map<String, List<String>> parameters = new LinkedHashMap<>();
-    parameters.put("test1", Collections.singletonList("value1"));
-    parameters.put("test2", Collections.singletonList("value2"));
+    parameters.put("test1", singletonList("value1"));
+    parameters.put("test2", singletonList("value2"));
     // Handle null values
     parameters.put("test3", new ArrayList<>(Arrays.asList("value3", null)));
     parameters.put("test4", null);
@@ -458,12 +466,11 @@ public class RESTClientTest {
 
   @Test
   public void post_formData_string_excludeNullValues() throws Exception {
-    TestHandler handler = new TestHandler("test1=value1&test2=value2&test3=value3", "application/x-www-form-urlencoded", null, "POST", 200, "Testing 123", null);
-    startServer(handler);
+    handler.handle("test1=value1&test2=value2&test3=value3", "application/x-www-form-urlencoded", null, "POST", 200, "Testing 123", "text/html", null);
 
     Map<String, List<String>> parameters = new LinkedHashMap<>();
-    parameters.put("test1", Collections.singletonList("value1"));
-    parameters.put("test2", Collections.singletonList("value2"));
+    parameters.put("test1", singletonList("value1"));
+    parameters.put("test2", singletonList("value2"));
     // Handle null values
     parameters.put("test3", new ArrayList<>(Arrays.asList("value3", null)));
     parameters.put("test4", null);
@@ -486,8 +493,7 @@ public class RESTClientTest {
 
   @Test
   public void post_inputStream_json() throws Exception {
-    TestHandler handler = new TestHandler("Testing 123", "application/octet-stream", null, "POST", 200, "{\"code\": 200}", null);
-    startServer(handler);
+    handler.handle("Testing 123", "application/octet-stream", null, "POST", 200, "{\"code\": 200}", "application/json", null);
 
     ByteArrayInputStream bais = new ByteArrayInputStream("Testing 123".getBytes());
     ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
@@ -508,8 +514,7 @@ public class RESTClientTest {
 
   @Test
   public void post_json_json() throws Exception {
-    TestHandler handler = new TestHandler("{\"test1\":\"value1\",\"test2\":\"value2\"}", "application/json", null, "POST", 200, "{\"code\": 200}", null);
-    startServer(handler);
+    handler.handle("{\"test1\":\"value1\",\"test2\":\"value2\"}", "application/json", null, "POST", 200, "{\"code\": 200}", "application/json", null);
 
     Map<String, String> parameters = new LinkedHashMap<>();
     parameters.put("test1", "value1");
@@ -557,12 +562,11 @@ public class RESTClientTest {
 
   @Test
   public void put_formData_errorString() throws Exception {
-    TestHandler handler = new TestHandler("test1=value1&test2=value2", "application/x-www-form-urlencoded", null, "PUT", 500, "Testing 123", null);
-    startServer(handler);
+    handler.handle("test1=value1&test2=value2", "application/x-www-form-urlencoded", null, "PUT", 500, "Testing 123", "text/html", null);
 
     Map<String, List<String>> parameters = new LinkedHashMap<>();
-    parameters.put("test1", Collections.singletonList("value1"));
-    parameters.put("test2", Collections.singletonList("value2"));
+    parameters.put("test1", singletonList("value1"));
+    parameters.put("test2", singletonList("value2"));
 
     ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
         .url("http://localhost:7042/test")
@@ -582,12 +586,11 @@ public class RESTClientTest {
 
   @Test
   public void put_formData_string() throws Exception {
-    TestHandler handler = new TestHandler("test1=value1&test2=value2", "application/x-www-form-urlencoded", null, "PUT", 200, "Testing 123", null);
-    startServer(handler);
+    handler.handle("test1=value1&test2=value2", "application/x-www-form-urlencoded", null, "PUT", 200, "Testing 123", "text/html", null);
 
     Map<String, List<String>> parameters = new LinkedHashMap<>();
-    parameters.put("test1", Collections.singletonList("value1"));
-    parameters.put("test2", Collections.singletonList("value2"));
+    parameters.put("test1", singletonList("value1"));
+    parameters.put("test2", singletonList("value2"));
 
     ClientResponse<String, String> response = new RESTClient<>(String.class, String.class)
         .url("http://localhost:7042/test")
@@ -616,37 +619,36 @@ public class RESTClientTest {
     }
   }
 
-  private void startServer(TestHandler testHandler) throws Exception {
-    InetSocketAddress addr = new InetSocketAddress(7042);
-    server = HttpServer.create(addr, 0);
-    server.createContext("/", testHandler);
-    server.start();
-  }
-
   private static class TestHandler implements HttpHandler {
-    private final String contentType;
-
-    private final Cookie cookie;
-
-    private final String method;
-
-    private final String request;
-
-    private final Map<String, String> requestHeaders;
-
-    private final String response;
-
-    private final int responseCode;
-
     public int count;
 
-    public TestHandler(String request, String contentType, Map<String, String> requestHeaders, String method, int responseCode, String response, Cookie cookie) {
+    private String contentType;
+
+    private Cookie cookie;
+
+    private String method;
+
+    private String request;
+
+    private Map<String, String> requestHeaders;
+
+    private String response;
+
+    private int responseCode;
+
+    private String responseContentType;
+
+    public TestHandler() {
+    }
+
+    public void handle(String request, String contentType, Map<String, String> requestHeaders, String method, int responseCode, String response, String responseContentType, Cookie cookie) {
       this.request = request;
       this.contentType = contentType;
       this.requestHeaders = requestHeaders;
       this.method = method;
       this.responseCode = responseCode;
       this.response = response;
+      this.responseContentType = responseContentType;
       this.cookie = cookie;
     }
 
@@ -659,9 +661,9 @@ public class RESTClientTest {
       }
 
       if (cookie != null) {
-        List<Cookie> actuals = Cookie.fromRequestHeader(httpExchange.getRequestHeaders().get(HTTPStrings.Headers.Cookie).get(0));
-        assertEquals(actuals.size(), 1);
-        assertEquals(actuals.get(0), cookie);
+        List<Cookie> actual = Cookie.fromRequestHeader(httpExchange.getRequestHeaders().get(HTTPStrings.Headers.Cookie).get(0));
+        assertEquals(actual.size(), 1);
+        assertEquals(actual.get(0), cookie);
       }
 
       if (requestHeaders != null) {
@@ -695,17 +697,44 @@ public class RESTClientTest {
         assertTrue(body.toString().isEmpty(), "Body is [" + body + "]");
       }
 
+      // Handle response
+
+      byte[] bytes = response != null ? response.getBytes(StandardCharsets.UTF_8) : null;
+      int contentLength = bytes != null ? bytes.length : 0;
+      if (method.equals("HEAD")) {
+        // Setting to -1 will remove a warning when calling sendResponseHeaders for a HEAD request.
+        // - We have to set this manually since calling sendResponseHeaders omits the Content-Length on HEAD
+        httpExchange.getResponseHeaders().set("Content-Length", "" + contentLength);
+        contentLength = -1;
+      }
+
+      if (responseContentType != null && contentLength > 0) {
+        httpExchange.getResponseHeaders().set("Content-Type", responseContentType);
+      }
+
       httpExchange.getResponseHeaders().set(HTTPStrings.Headers.SetCookie, "foo=bar; Path=/foo/bar; Domain=fusionauth.io; Max-Age=1; Secure; HttpOnly; SameSite=Lax");
-      httpExchange.sendResponseHeaders(responseCode, response != null ? response.length() : 0);
+      httpExchange.sendResponseHeaders(responseCode, contentLength);
 
       if (!method.equals("HEAD")) {
-        if (response != null) {
-          httpExchange.getResponseBody().write(response.getBytes());
+        if (bytes != null) {
+          httpExchange.getResponseBody().write(bytes);
           httpExchange.getResponseBody().flush();
         }
         httpExchange.getResponseBody().close();
       }
+
       count++;
+    }
+
+    public void reset() {
+      contentType = null;
+      cookie = null;
+      method = null;
+      request = null;
+      response = null;
+      responseCode = 0;
+      responseContentType = null;
+      count = 0;
     }
   }
 }

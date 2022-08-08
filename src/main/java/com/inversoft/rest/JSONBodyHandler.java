@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2016-2022, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,6 @@ public class JSONBodyHandler implements RESTClient.BodyHandler {
                                                                            .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
                                                                            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
                                                                            .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
-                                                                           .configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS, false)
                                                                            .configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false)
                                                                            .registerModule(new JacksonModule());
 
