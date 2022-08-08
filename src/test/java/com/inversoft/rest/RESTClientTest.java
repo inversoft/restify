@@ -713,6 +713,7 @@ public class RESTClientTest {
       }
 
       httpExchange.getResponseHeaders().set(HTTPStrings.Headers.SetCookie, "foo=bar; Path=/foo/bar; Domain=fusionauth.io; Max-Age=1; Secure; HttpOnly; SameSite=Lax");
+      httpExchange.getResponseHeaders().set("Connection", "close");
       httpExchange.sendResponseHeaders(responseCode, contentLength);
 
       if (!method.equals("HEAD")) {
