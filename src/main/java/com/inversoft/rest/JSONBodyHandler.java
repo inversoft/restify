@@ -52,19 +52,35 @@ public class JSONBodyHandler implements RESTClient.BodyHandler {
                                                                            .configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false)
                                                                            .registerModule(new JacksonModule());
 
+  private final String contentType;
+
   private final ObjectMapper instanceObjectMapper;
 
   public Object request;
 
   private byte[] body;
 
+  public JSONBodyHandler(Object request, String contentType) {
+    this.request = request;
+    this.contentType = contentType;
+    this.instanceObjectMapper = defaultObjectMapper;
+  }
+
   public JSONBodyHandler(Object request) {
     this.request = request;
+    this.contentType = "application/json";
     this.instanceObjectMapper = defaultObjectMapper;
+  }
+
+  public JSONBodyHandler(Object request, String contentType, ObjectMapper objectMapper) {
+    this.request = request;
+    this.contentType = contentType;
+    this.instanceObjectMapper = objectMapper;
   }
 
   public JSONBodyHandler(Object request, ObjectMapper objectMapper) {
     this.request = request;
+    this.contentType = "application/json";
     this.instanceObjectMapper = objectMapper;
   }
 
@@ -90,7 +106,7 @@ public class JSONBodyHandler implements RESTClient.BodyHandler {
   public void setHeaders(HttpURLConnection huc) {
     if (request != null) {
       serializeRequest();
-      huc.addRequestProperty("Content-Type", "application/json");
+      huc.addRequestProperty("Content-Type", contentType);
       huc.addRequestProperty("Content-Length", "" + body.length);
     }
   }
