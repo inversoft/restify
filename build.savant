@@ -2,7 +2,7 @@
  * Copyright (c) 2015-2022, Inversoft Inc., All Rights Reserved
  */
 jackson5Version = "3.0.1"
-jacksonVersion = "2.13.4"
+jacksonVersion = "2.14.0"
 testngVersion = "7.3.0"
 
 project(group: "com.inversoft", name: "restify", version: "4.2.0", licenses: ["ApacheV2_0"]) {
