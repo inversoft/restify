@@ -9,3 +9,4 @@ src/main/csharp/lib
 *.csproj.user
 *.userprefs
 target
+.savant/cache
