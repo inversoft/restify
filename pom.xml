@@ -100,7 +100,8 @@
               <goal>sign</goal>
             </goals>
             <configuration>
-              <keyname>Inversoft</keyname>
+              <keyname>${gpg.keyname}</keyname>
+              <skip>false</skip>
             </configuration>
           </execution>
         </executions>
