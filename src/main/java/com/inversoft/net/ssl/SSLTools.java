@@ -75,11 +75,6 @@ public class SSLTools {
    */
   public static final String PKCS_1_KEY_START = "BEGIN RSA PRIVATE KEY-----";
 
-  // Disable SNI so that it doesn't mess up our use of JSSE with some certificates
-  static {
-    System.setProperty("jsse.enableSNIExtension", "false");
-  }
-
   /**
    * Disabling SSL validation is strongly discouraged. This is generally only intended for use during testing or perhaps
    * when used in a private network with a self signed certificate.

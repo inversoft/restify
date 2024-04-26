@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2015-2023, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2015-2024, Inversoft Inc., All Rights Reserved
  */
 jackson5Version = "3.0.1"
-jacksonVersion = "2.15.2"
+jacksonVersion = "2.15.4"
 testngVersion = "7.3.0"
 
-project(group: "com.inversoft", name: "restify", version: "4.2.0", licenses: ["ApacheV2_0"]) {
+project(group: "com.inversoft", name: "restify", version: "4.2.1", licenses: ["ApacheV2_0"]) {
   workflow {
     fetch {
       cache()
