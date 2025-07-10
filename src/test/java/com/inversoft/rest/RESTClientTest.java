@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2016-2025, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -392,6 +393,43 @@ public class RESTClientTest {
     assertEquals(response.method, HTTPMethod.POST.name());
     assertEquals(response.status, 200);
     assertEquals(response.successResponse.get("code"), 200);
+  }
+
+  @Test
+  public void patch_method() throws Exception {
+    // Ensure we handle PATCH correctly when calling method with an enum or a String
+    for (Object method : Arrays.asList(HTTPMethod.PATCH, "PATCH")) {
+      RESTClient<Map, Map> client = new RESTClient<>(Map.class, Map.class)
+          .url("http://localhost:7042/test")
+          .bodyHandler(new JSONBodyHandler( new LinkedHashMap<>()))
+          .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+          .successResponseHandler(new JSONResponseHandler<>(Map.class));
+
+      Field methodField = client.getClass().getDeclaredField("method");
+      methodField.setAccessible(true);
+
+      Field headersField = client.getClass().getDeclaredField("headers");
+      headersField.setAccessible(true);
+
+      // Set the method in one of two ways
+      if (method instanceof String) {
+        client.method((String) method);
+      } else {
+        client.method((HTTPMethod) method);
+      }
+
+      // Expect the result to be the same, we should have a method of POST with a X-HTTP-Method-Override
+      String actualMethod = (String) methodField.get(client);
+      assertEquals(actualMethod, "POST");
+
+      @SuppressWarnings("unchecked")
+      Map<String, List<String>> actualHeaders = (Map<String, List<String>>) headersField.get(client);
+
+      Map<String, List<String>> expectedHeaders = new HashMap<>();
+      expectedHeaders.put("X-HTTP-Method-Override", new ArrayList<>(singletonList("PATCH")));
+
+      assertEquals(actualHeaders, expectedHeaders);
+    }
   }
 
   @Test

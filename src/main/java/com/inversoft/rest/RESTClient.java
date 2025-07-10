@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2016-2025, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -479,8 +479,7 @@ public class RESTClient<RS, ERS> {
   }
 
   public RESTClient<RS, ERS> method(HTTPMethod method) {
-    this.method = method.name();
-    return this;
+    return method(method.name());
   }
 
   public Map<String, List<String>> parameters() {
