@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2021-2025, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,9 @@ package com.inversoft.http;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import com.inversoft.rest.DateTools;
@@ -28,6 +30,8 @@ import com.inversoft.rest.DateTools;
  * @author Brian Pontarelli
  */
 public class Cookie implements Buildable<Cookie> {
+  public Map<String, String> attributes = new HashMap<>(0);
+
   public String domain;
 
   public ZonedDateTime expires;
@@ -61,35 +65,32 @@ public class Cookie implements Buildable<Cookie> {
     int start = 0;
     String name = null;
     String value = null;
-    for (int i = 0; i < header.length(); i++) {
+    for (int i = 0; i < chars.length; i++) {
       char c = chars[i];
       if (!inName && !inValue && (Character.isWhitespace(c) || c == ';')) {
         start++;
         continue;
       }
 
-      if (c == '=') {
-        name = header.substring(start, i);
+      if (c == '=' && inName) {
+        name = new String(chars, start, i - start);
         value = "";
         inValue = true;
         inName = false;
         start = i + 1;
-      } else if (c == ';') {
-        value = header.substring(start, i);
-        if (name != null && name.trim().length() > 0 && value.trim().length() > 0) {
+      } else if (c == ';' && inValue) {
+        value = new String(chars, start, i - start);
+        if (!name.trim().isEmpty() && !value.trim().isEmpty()) {
           cookies.add(new Cookie(name, value));
         }
 
-        inName = false;
         inValue = false;
         name = null;
         value = null;
         start = 0;
-      } else {
-        if (!inName && !inValue) {
-          inName = true;
-          start = i;
-        }
+      } else if (!inName && !inValue) {
+        inName = true;
+        start = i;
       }
     }
 
@@ -102,7 +103,7 @@ public class Cookie implements Buildable<Cookie> {
       value = header.substring(start);
     }
 
-    if (name != null && value != null && name.trim().length() > 0 && value.trim().length() > 0) {
+    if (name != null && value != null && !name.trim().isEmpty() && !value.trim().isEmpty()) {
       cookies.add(new Cookie(name, value));
     }
 
@@ -125,14 +126,19 @@ public class Cookie implements Buildable<Cookie> {
 
       if (c == '=' && inName) {
         name = header.substring(start, i);
-        if (!inAttributes && name.trim().length() == 0) {
+        if (!inAttributes && name.trim().isEmpty()) {
           return null;
         }
 
         value = "";
         inValue = true;
         inName = false;
-        start = i + 1;
+        // Values may be double-quoted
+        // https://www.rfc-editor.org/rfc/rfc6265#section-4.1.1
+        // cookie-value = *cookie-octet / ( DQUOTE *cookie-octet DQUOTE )
+        start = (i < (header.length() - 1)) && chars[i + 1] == '"'
+            ? i + 2
+            : i + 1;
       } else if (c == ';') {
         if (inName) {
           if (!inAttributes) {
@@ -142,7 +148,11 @@ public class Cookie implements Buildable<Cookie> {
           name = header.substring(start, i);
           value = null;
         } else {
-          value = header.substring(start, i);
+          // Values may be double-quoted
+          int end = chars[i - 1] == '"'
+              ? i - 1
+              : i;
+          value = header.substring(start, end);
         }
 
         if (inAttributes) {
@@ -177,7 +187,7 @@ public class Cookie implements Buildable<Cookie> {
     if (inAttributes) {
       cookie.addAttribute(name, value);
     } else {
-      if (name == null || value == null || name.trim().length() == 0) {
+      if (name == null || value == null || name.trim().isEmpty()) {
         return null;
       }
 
@@ -189,6 +199,10 @@ public class Cookie implements Buildable<Cookie> {
   }
 
   public void addAttribute(String name, String value) {
+    if (name == null) {
+      return;
+    }
+
     switch (name.toLowerCase()) {
       case HTTPStrings.CookieAttributes.DomainLower:
         domain = value;
@@ -218,6 +232,9 @@ public class Cookie implements Buildable<Cookie> {
         break;
       case HTTPStrings.CookieAttributes.SecureLower:
         secure = true;
+      default:
+        // Attributes should be not be required to have a value
+        attributes.put(name, value == null ? "" : value);
     }
   }
 
@@ -230,19 +247,38 @@ public class Cookie implements Buildable<Cookie> {
       return false;
     }
     Cookie cookie = (Cookie) o;
-    return Objects.equals(domain, cookie.domain) &&
-        Objects.equals(expires, cookie.expires) &&
-        Objects.equals(httpOnly, cookie.httpOnly) &&
-        Objects.equals(maxAge, cookie.maxAge) &&
-        Objects.equals(name, cookie.name) &&
-        Objects.equals(path, cookie.path) &&
-        Objects.equals(sameSite, cookie.sameSite) &&
-        Objects.equals(value, cookie.value);
+    return httpOnly == cookie.httpOnly &&
+           secure == cookie.secure &&
+           Objects.equals(attributes, cookie.attributes) &&
+           Objects.equals(domain, cookie.domain) &&
+           Objects.equals(expires, cookie.expires) &&
+           Objects.equals(maxAge, cookie.maxAge) &&
+           Objects.equals(name, cookie.name) &&
+           Objects.equals(path, cookie.path) &&
+           sameSite == cookie.sameSite &&
+           Objects.equals(value, cookie.value);
+  }
+
+  public String getAttribute(String name) {
+    return attributes.get(name);
+  }
+
+  public boolean hasAttribute(String name) {
+    return attributes.containsKey(name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(domain, expires, httpOnly, maxAge, name, path, sameSite, secure, value);
+    return Objects.hash(attributes,
+        domain,
+        expires,
+        httpOnly,
+        maxAge,
+        name,
+        path,
+        sameSite,
+        secure,
+        value);
   }
 
   public String toRequestHeader() {
@@ -250,14 +286,34 @@ public class Cookie implements Buildable<Cookie> {
   }
 
   public String toResponseHeader() {
-    return name + "=" + value
-        + (domain != null ? ("; " + HTTPStrings.CookieAttributes.Domain + "=" + domain) : "")
-        + (expires != null ? ("; " + HTTPStrings.CookieAttributes.Expires + "=" + DateTools.format(expires)) : "")
-        + (httpOnly ? ("; " + HTTPStrings.CookieAttributes.HttpOnly) : "")
-        + (maxAge != null ? ("; " + HTTPStrings.CookieAttributes.MaxAge + "=" + maxAge) : "")
-        + (path != null ? ("; " + HTTPStrings.CookieAttributes.Path + "=" + path) : "")
-        + (sameSite != null ? ("; " + HTTPStrings.CookieAttributes.SameSite + "=" + sameSite.name()) : "")
-        + (secure ? ("; " + HTTPStrings.CookieAttributes.Secure) : "");
+    StringBuilder build = new StringBuilder();
+    build.append(name).append("=");
+    if (value != null) {
+      build.append(value);
+    }
+    if (domain != null) {
+      build.append(HTTPStrings.CookieAttributes.Domain).append(domain);
+    }
+    if (expires != null) {
+      build.append(HTTPStrings.CookieAttributes.Expires).append(DateTools.format(expires));
+    }
+    if (httpOnly) {
+      build.append(HTTPStrings.CookieAttributes.HttpOnly);
+    }
+    if (maxAge != null) {
+      build.append(HTTPStrings.CookieAttributes.MaxAge).append(maxAge);
+    }
+    if (path != null) {
+      build.append(HTTPStrings.CookieAttributes.Path).append(path);
+    }
+    if (sameSite != null) {
+      build.append(HTTPStrings.CookieAttributes.SameSite).append(sameSite.name());
+    }
+    if (secure) {
+      build.append(HTTPStrings.CookieAttributes.Secure);
+    }
+
+    return build.toString();
   }
 
   public enum SameSite {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2021-2025, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,6 +96,58 @@ public class CookieTest {
     assertFalse(cookie.secure);
     assertEquals(cookie.value, "bar");
 
+    // Quoted value, no other attributes
+    // https://www.rfc-editor.org/rfc/rfc6265#section-4.1.1
+    // cookie-value = *cookie-octet / ( DQUOTE *cookie-octet DQUOTE )
+    cookie = Cookie.fromResponseHeader("foo=\"bar\";");
+    assertNull(cookie.domain);
+    assertNull(cookie.expires);
+    assertFalse(cookie.httpOnly);
+    assertNull(cookie.maxAge);
+    assertEquals(cookie.name, "foo");
+    assertNull(cookie.path);
+    assertNull(cookie.sameSite);
+    assertFalse(cookie.secure);
+    assertEquals(cookie.value, "bar");
+
+    // Quoted value, additional attribute
+    cookie = Cookie.fromResponseHeader("foo=\"bar\"; SameSite=");
+    assertNull(cookie.domain);
+    assertNull(cookie.expires);
+    assertFalse(cookie.httpOnly);
+    assertNull(cookie.maxAge);
+    assertEquals(cookie.name, "foo");
+    assertNull(cookie.path);
+    assertNull(cookie.sameSite);
+    assertFalse(cookie.secure);
+    assertEquals(cookie.value, "bar");
+
+    // Missing closing quote
+    // - This is not a valid value, but we are handling it anyway.
+    cookie = Cookie.fromResponseHeader("foo=\"bar; SameSite=");
+    assertNull(cookie.domain);
+    assertNull(cookie.expires);
+    assertFalse(cookie.httpOnly);
+    assertNull(cookie.maxAge);
+    assertEquals(cookie.name, "foo");
+    assertNull(cookie.path);
+    assertNull(cookie.sameSite);
+    assertFalse(cookie.secure);
+    assertEquals(cookie.value, "bar");
+
+    // Missing opening quote
+    // - This is not a valid value, but we are handling it anyway.
+    cookie = Cookie.fromResponseHeader("foo=bar\"; SameSite=");
+    assertNull(cookie.domain);
+    assertNull(cookie.expires);
+    assertFalse(cookie.httpOnly);
+    assertNull(cookie.maxAge);
+    assertEquals(cookie.name, "foo");
+    assertNull(cookie.path);
+    assertNull(cookie.sameSite);
+    assertFalse(cookie.secure);
+    assertEquals(cookie.value, "bar");
+
     // Broken attributes
     cookie = Cookie.fromResponseHeader("foo=bar;  =fusionauth.io; =Wed, 21 Oct 2015 07:28:00 GMT; =1; =Lax");
     assertNull(cookie.domain);
@@ -133,7 +185,8 @@ public class CookieTest {
     assertEquals(cookie.value, "");
 
     // Empty values
-    cookie = Cookie.fromResponseHeader("foo=;Domain=;Expires=;Max-Age=;SameSite=");
+    // - Max-Age and Expires should never be empty
+    cookie = Cookie.fromResponseHeader("foo=;Domain=;SameSite=");
     assertEquals(cookie.domain, "");
     assertNull(cookie.expires);
     assertFalse(cookie.httpOnly);
@@ -179,6 +232,65 @@ public class CookieTest {
     // Borked cookie
     cookie = Cookie.fromResponseHeader("=a");
     assertNull(cookie);
+
+    // Borked coookie, ending with a semicolon;
+    cookie = Cookie.fromResponseHeader("foo=%2Fbar; Path=/; Secure; HTTPonly;");
+    assertNull(cookie.domain);
+    assertNull(cookie.expires);
+    assertTrue(cookie.httpOnly);
+    assertNull(cookie.maxAge);
+    assertEquals(cookie.name, "foo");
+    assertEquals(cookie.path, "/");
+    assertNull(cookie.sameSite);
+    assertTrue(cookie.secure);
+    assertEquals(cookie.value, "%2Fbar");
+
+    // additional attributes
+    // - name and value
+    cookie = Cookie.fromResponseHeader("foo=;utm=123");
+    assertEquals(cookie.name, "foo");
+    assertEquals(cookie.getAttribute("utm"), "123");
+
+    // additional attributes
+    // - name, sep but no value
+    cookie = Cookie.fromResponseHeader("foo=;utm=");
+    assertEquals(cookie.name, "foo");
+    assertEquals(cookie.getAttribute("utm"), "");
+
+    // additional attributes
+    // - name only
+    cookie = Cookie.fromResponseHeader("foo=;utm");
+    assertEquals(cookie.name, "foo");
+    assertEquals(cookie.getAttribute("utm"), "");
+
+    // additional attributes
+    // - multiple
+    cookie = Cookie.fromResponseHeader("foo=;foo=bar;bar=baz;bing=boom");
+    assertEquals(cookie.name, "foo");
+    assertEquals(cookie.getAttribute("foo"), "bar");
+    assertEquals(cookie.getAttribute("bar"), "baz");
+    assertEquals(cookie.getAttribute("bing"), "boom");
+
+    // has attribute
+    cookie = Cookie.fromResponseHeader("foo=;foo=bar;bar=baz;bing=boom");
+    assertTrue(cookie.hasAttribute("foo"));
+    assertTrue(cookie.hasAttribute("bar"));
+    assertTrue(cookie.hasAttribute("bing"));
+    assertFalse(cookie.hasAttribute("booya"));
+    assertFalse(cookie.hasAttribute("baz"));
+    assertFalse(cookie.hasAttribute("boom"));
+
+    // Cookie end with semicolon
+    cookie = Cookie.fromResponseHeader("foo=%2Fbar; Path=/; Secure; HTTPonly;");
+    assertNull(cookie.domain);
+    assertNull(cookie.expires);
+    assertTrue(cookie.httpOnly);
+    assertNull(cookie.maxAge);
+    assertEquals(cookie.name, "foo");
+    assertEquals(cookie.path, "/");
+    assertNull(cookie.sameSite);
+    assertTrue(cookie.secure);
+    assertEquals(cookie.value, "%2Fbar");
   }
 
   @Test
