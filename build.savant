@@ -5,7 +5,7 @@ jackson5Version = "3.0.1"
 jacksonVersion = "2.15.4"
 testngVersion = "7.5.1"
 
-project(group: "com.inversoft", name: "restify", version: "4.2.2", licenses: ["ApacheV2_0"]) {
+project(group: "com.inversoft", name: "restify", version: "4.3.0", licenses: ["ApacheV2_0"]) {
   workflow {
     fetch {
       cache()
