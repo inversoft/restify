@@ -81,6 +81,8 @@ public class RESTClient<RS, ERS> {
 
   private int readTimeout = 2000;
 
+  private RetryConfiguration retryConfiguration;
+
   private boolean sniVerificationDisabled;
 
   private ResponseHandler<RS> successResponseHandler;
@@ -304,136 +306,60 @@ public class RESTClient<RS, ERS> {
       throw new IllegalStateException("You specified an error response type, you must then provide an error response handler.");
     }
 
-    ClientResponse<RS, ERS> response = new ClientResponse<>();
-    response.request = (bodyHandler != null) ? bodyHandler.getBodyObject() : null;
-    response.method = method;
+    // Build the final URL with parameters (done once, before any retry loop)
+    if (parameters.size() > 0) {
+      if (url.indexOf("?") == -1) {
+        url.append("?");
+      }
 
-    HttpURLConnection huc;
-    try {
-      if (parameters.size() > 0) {
-        if (url.indexOf("?") == -1) {
-          url.append("?");
-        }
+      for (Iterator<Entry<String, List<String>>> i = parameters.entrySet().iterator(); i.hasNext(); ) {
+        Entry<String, List<String>> entry = i.next();
 
-        for (Iterator<Entry<String, List<String>>> i = parameters.entrySet().iterator(); i.hasNext(); ) {
-          Entry<String, List<String>> entry = i.next();
-
-          for (Iterator<String> j = entry.getValue().iterator(); j.hasNext(); ) {
-            String value = j.next();
+        for (Iterator<String> j = entry.getValue().iterator(); j.hasNext(); ) {
+          String value = j.next();
+          try {
             url.append(URLEncoder.encode(entry.getKey(), "UTF-8")).append("=").append(URLEncoder.encode(value, "UTF-8"));
-            if (j.hasNext()) {
-              url.append("&");
-            }
+          } catch (Exception e) {
+            // This won't happen with UTF-8
+            throw new IllegalStateException(e);
           }
-
-          if (i.hasNext()) {
+          if (j.hasNext()) {
             url.append("&");
           }
         }
-      }
 
-      response.url = new URL(url.toString());
-
-      Proxy proxy = Proxy.NO_PROXY;
-      if (proxyInfo != null) {
-        if (proxyInfo.host != null && proxyInfo.port != -1) {
-          proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyInfo.host, proxyInfo.port));
-        }
-
-        if (proxyInfo.username != null && proxyInfo.password != null) {
-          headers.put("Proxy-Authorization", Collections.singletonList(base64Basic(proxyInfo.username, proxyInfo.password)));
+        if (i.hasNext()) {
+          url.append("&");
         }
       }
-
-      huc = (HttpURLConnection) response.url.openConnection(proxy);
-      if (response.url.getProtocol().equalsIgnoreCase("https")) {
-        HttpsURLConnection hsuc = (HttpsURLConnection) huc;
-        if (certificate != null) {
-          if (key != null) {
-            hsuc.setSSLSocketFactory(SSLTools.getSSLServerContext(certificate, key).getSocketFactory());
-          } else {
-            hsuc.setSSLSocketFactory(SSLTools.getSSLSocketFactory(certificate));
-          }
-        }
-
-        if (sniVerificationDisabled) {
-          hsuc.setHostnameVerifier((hostname, session) -> true);
-        }
-      }
-
-      huc.setInstanceFollowRedirects(followRedirects);
-      huc.setDoOutput(bodyHandler != null);
-      huc.setConnectTimeout(connectTimeout);
-      huc.setReadTimeout(readTimeout);
-      huc.setRequestMethod(method);
-
-      if (headers.keySet().stream().noneMatch(name -> name.equalsIgnoreCase(HTTPStrings.Headers.UserAgent))) {
-        headers.put(HTTPStrings.Headers.UserAgent, Collections.singletonList(userAgent));
-      }
-
-      headers.forEach((name, values) -> values.forEach(value -> huc.addRequestProperty(name, value)));
-
-      if (headers.keySet().stream().noneMatch(name -> name.equalsIgnoreCase(HTTPStrings.Headers.Cookie)) && cookies.size() > 0) {
-        String header = cookies.stream()
-                               .map(Cookie::toRequestHeader)
-                               .collect(Collectors.joining("; "));
-        huc.addRequestProperty(HTTPStrings.Headers.Cookie, header);
-      }
-
-      if (bodyHandler != null) {
-        bodyHandler.setHeaders(huc);
-      }
-
-      huc.connect();
-
-      if (bodyHandler != null) {
-        try (OutputStream os = huc.getOutputStream()) {
-          bodyHandler.accept(os);
-          os.flush();
-        }
-      }
-    } catch (Exception e) {
-      response.status = -1;
-      response.exception = e;
-      return response;
     }
 
-    int status;
+    URL requestURL;
     try {
-      status = huc.getResponseCode();
+      requestURL = new URL(url.toString());
     } catch (Exception e) {
-      response.status = -1;
-      response.exception = e;
-      return response;
+      throw new IllegalStateException("Invalid URL [" + url + "]", e);
     }
 
-    response.setHeaders(huc.getHeaderFields());
-    response.status = status;
-
-    if (status < 200 || status > 299) {
-      if (errorResponseHandler == null) {
-        return response;
+    Proxy proxy = Proxy.NO_PROXY;
+    if (proxyInfo != null) {
+      if (proxyInfo.host != null && proxyInfo.port != -1) {
+        proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyInfo.host, proxyInfo.port));
       }
 
-      try (InputStream is = huc.getErrorStream()) {
-        response.errorResponse = errorResponseHandler.apply(is);
-      } catch (Exception e) {
-        response.exception = e;
-        return response;
-      }
-    } else {
-      if (successResponseHandler == null || method.equalsIgnoreCase(HTTPMethod.HEAD.name())) {
-        return response;
-      }
-
-      try (InputStream is = huc.getInputStream()) {
-        response.successResponse = successResponseHandler.apply(is);
-      } catch (Exception e) {
-        response.exception = e;
-        return response;
+      if (proxyInfo.username != null && proxyInfo.password != null) {
+        headers.put("Proxy-Authorization", Collections.singletonList(base64Basic(proxyInfo.username, proxyInfo.password)));
       }
     }
 
+    if (retryConfiguration != null && isRetryable()) {
+      return goWithRetry(requestURL, proxy);
+    }
+
+    ClientResponse<RS, ERS> response = new ClientResponse<>();
+    response.request = (bodyHandler != null) ? bodyHandler.getBodyObject() : null;
+    response.method = method;
+    executeOnce(response, requestURL, proxy);
     return response;
   }
 
@@ -509,6 +435,11 @@ public class RESTClient<RS, ERS> {
 
   public RESTClient<RS, ERS> readTimeout(int readTimeout) {
     this.readTimeout = readTimeout;
+    return this;
+  }
+
+  public RESTClient<RS, ERS> retry(RetryConfiguration retryConfiguration) {
+    this.retryConfiguration = retryConfiguration;
     return this;
   }
 
@@ -773,6 +704,187 @@ public class RESTClient<RS, ERS> {
     String credentials = username + ":" + password;
     Base64.Encoder encoder = Base64.getEncoder();
     return "Basic " + encoder.encodeToString(credentials.getBytes());
+  }
+
+  private long calculateDelay(int attempt) {
+    long delay = (long) (retryConfiguration.initialDelay * Math.pow(retryConfiguration.backoffMultiplier, attempt - 1));
+    return Math.min(delay, retryConfiguration.maxDelay);
+  }
+
+  private void executeOnce(ClientResponse<RS, ERS> response, URL requestURL, Proxy proxy) {
+    HttpURLConnection huc;
+    try {
+      response.url = requestURL;
+      huc = (HttpURLConnection) requestURL.openConnection(proxy);
+      if (requestURL.getProtocol().equalsIgnoreCase("https")) {
+        HttpsURLConnection hsuc = (HttpsURLConnection) huc;
+        if (certificate != null) {
+          if (key != null) {
+            hsuc.setSSLSocketFactory(SSLTools.getSSLServerContext(certificate, key).getSocketFactory());
+          } else {
+            hsuc.setSSLSocketFactory(SSLTools.getSSLSocketFactory(certificate));
+          }
+        }
+
+        if (sniVerificationDisabled) {
+          hsuc.setHostnameVerifier((hostname, session) -> true);
+        }
+      }
+
+      huc.setInstanceFollowRedirects(followRedirects);
+      huc.setDoOutput(bodyHandler != null);
+      huc.setConnectTimeout(connectTimeout);
+      huc.setReadTimeout(readTimeout);
+      huc.setRequestMethod(method);
+
+      if (headers.keySet().stream().noneMatch(name -> name.equalsIgnoreCase(HTTPStrings.Headers.UserAgent))) {
+        headers.put(HTTPStrings.Headers.UserAgent, Collections.singletonList(userAgent));
+      }
+
+      headers.forEach((name, values) -> values.forEach(value -> huc.addRequestProperty(name, value)));
+
+      if (headers.keySet().stream().noneMatch(name -> name.equalsIgnoreCase(HTTPStrings.Headers.Cookie)) && cookies.size() > 0) {
+        String header = cookies.stream()
+                               .map(Cookie::toRequestHeader)
+                               .collect(Collectors.joining("; "));
+        huc.addRequestProperty(HTTPStrings.Headers.Cookie, header);
+      }
+
+      if (bodyHandler != null) {
+        bodyHandler.setHeaders(huc);
+      }
+
+      huc.connect();
+
+      if (bodyHandler != null) {
+        try (OutputStream os = huc.getOutputStream()) {
+          bodyHandler.accept(os);
+          os.flush();
+        }
+      }
+    } catch (Exception e) {
+      response.status = -1;
+      response.exception = e;
+      return;
+    }
+
+    int status;
+    try {
+      status = huc.getResponseCode();
+    } catch (Exception e) {
+      response.status = -1;
+      response.exception = e;
+      return;
+    }
+
+    response.setHeaders(huc.getHeaderFields());
+    response.status = status;
+
+    if (status < 200 || status > 299) {
+      if (errorResponseHandler == null) {
+        return;
+      }
+
+      try (InputStream is = huc.getErrorStream()) {
+        response.errorResponse = errorResponseHandler.apply(is);
+      } catch (Exception e) {
+        response.exception = e;
+        return;
+      }
+    } else {
+      if (successResponseHandler == null || method.equalsIgnoreCase(HTTPMethod.HEAD.name())) {
+        return;
+      }
+
+      try (InputStream is = huc.getInputStream()) {
+        response.successResponse = successResponseHandler.apply(is);
+      } catch (Exception e) {
+        response.exception = e;
+        return;
+      }
+    }
+  }
+
+  private long getRetryAfterDelay(ClientResponse<RS, ERS> response) {
+    String retryAfter = response.getHeader("retry-after");
+    if (retryAfter != null) {
+      try {
+        return Long.parseLong(retryAfter) * 1000;
+      } catch (NumberFormatException ignored) {
+      }
+    }
+
+    return 0;
+  }
+
+  private ClientResponse<RS, ERS> goWithRetry(URL requestURL, Proxy proxy) {
+    ClientResponse<RS, ERS> response = new ClientResponse<>();
+    response.request = (bodyHandler != null) ? bodyHandler.getBodyObject() : null;
+    response.method = method;
+
+    for (int attempt = 0; attempt < retryConfiguration.maxAttempts; attempt++) {
+      if (attempt > 0) {
+        long delay = Math.max(calculateDelay(attempt), getRetryAfterDelay(response));
+        try {
+          Thread.sleep(delay);
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          return response;
+        }
+
+        // Reset response for next attempt
+        response = new ClientResponse<>();
+        response.request = (bodyHandler != null) ? bodyHandler.getBodyObject() : null;
+        response.method = method;
+      }
+
+      executeOnce(response, requestURL, proxy);
+
+      if (!shouldRetry(response)) {
+        return response;
+      }
+    }
+
+    return response;
+  }
+
+  private boolean isRetryable() {
+    if (retryConfiguration.allowNonIdempotentRetries) {
+      return true;
+    }
+
+    // GET, PUT, DELETE, HEAD are idempotent
+    if ("GET".equals(method) || "PUT".equals(method) || "DELETE".equals(method) || "HEAD".equals(method)) {
+      return true;
+    }
+
+    // PATCH is sent as POST with X-HTTP-Method-Override header
+    if ("POST".equals(method)) {
+      List<String> override = headers.get("X-HTTP-Method-Override");
+      return override != null && override.contains("PATCH");
+    }
+
+    return false;
+  }
+
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  private boolean shouldRetry(ClientResponse<RS, ERS> response) {
+    // Network/IO error
+    if (response.exception != null && retryConfiguration.retryOnNetworkError) {
+      return true;
+    }
+
+    // Retryable status code (429, 5xx by default)
+    if (retryConfiguration.retryableStatusCodes.contains(response.status)) {
+      return true;
+    }
+
+    // Custom retry function (e.g., 409 + retryableConflict)
+    if (retryConfiguration.retryFunction != null) {
+      return retryConfiguration.retryFunction.apply((ClientResponse) response);
+    }
+
+    return false;
   }
 
   /**

@@ -646,6 +646,267 @@ public class RESTClientTest {
     assertEquals(response.successResponse, "Testing 123");
   }
 
+  @Test
+  public void retry_get_succeeds_after_500() {
+    handler.handleSequence("GET", new int[]{500, 500, 200}, new String[]{"{\"error\": true}", "{\"error\": true}", "{\"code\": 200}"}, "application/json");
+
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.initialDelay = 10;
+
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
+        .url("http://localhost:7042/test")
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .retry(retryConfig)
+        .get()
+        .go();
+
+    assertEquals(handler.count, 3);
+    assertEquals(response.status, 200);
+    assertTrue(response.wasSuccessful());
+    assertEquals(response.successResponse.get("code"), 200);
+  }
+
+  @Test
+  public void retry_get_exhausts_max_attempts() {
+    handler.handleSequence("GET", new int[]{500, 500, 500, 500, 500}, new String[]{null, null, null, null, null}, null);
+
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.initialDelay = 10;
+    retryConfig.maxAttempts = 3;
+
+    ClientResponse<Void, Void> response = new RESTClient<>(Void.TYPE, Void.TYPE)
+        .url("http://localhost:7042/test")
+        .retry(retryConfig)
+        .get()
+        .go();
+
+    assertEquals(handler.count, 3);
+    assertEquals(response.status, 500);
+    assertFalse(response.wasSuccessful());
+  }
+
+  @Test
+  public void retry_post_not_retried() {
+    handler.handleSequence("POST", new int[]{500, 200}, new String[]{null, null}, null);
+
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.initialDelay = 10;
+
+    ClientResponse<Void, Void> response = new RESTClient<>(Void.TYPE, Void.TYPE)
+        .url("http://localhost:7042/test")
+        .retry(retryConfig)
+        .post()
+        .go();
+
+    assertEquals(handler.count, 1);
+    assertEquals(response.status, 500);
+  }
+
+  @Test
+  public void retry_post_retried_when_allowed() {
+    handler.handleSequence("POST", new int[]{500, 200}, new String[]{null, null}, null);
+
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.initialDelay = 10;
+    retryConfig.allowNonIdempotentRetries = true;
+
+    ClientResponse<Void, Void> response = new RESTClient<>(Void.TYPE, Void.TYPE)
+        .url("http://localhost:7042/test")
+        .retry(retryConfig)
+        .post()
+        .go();
+
+    assertEquals(handler.count, 2);
+    assertEquals(response.status, 200);
+  }
+
+  @Test
+  public void retry_patch_is_retried() {
+    handler.handleSequence("POST", new int[]{500, 200}, new String[]{null, "{\"code\": 200}"}, "application/json");
+
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.initialDelay = 10;
+
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
+        .url("http://localhost:7042/test")
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .retry(retryConfig)
+        .patch()
+        .go();
+
+    assertEquals(handler.count, 2);
+    assertEquals(response.status, 200);
+    assertTrue(response.wasSuccessful());
+  }
+
+  @Test
+  public void retry_put_succeeds_after_429() {
+    handler.handleSequence("PUT", new int[]{429, 200}, new String[]{null, "{\"code\": 200}"}, "application/json");
+
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.initialDelay = 10;
+
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
+        .url("http://localhost:7042/test")
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .retry(retryConfig)
+        .put()
+        .go();
+
+    assertEquals(handler.count, 2);
+    assertEquals(response.status, 200);
+    assertTrue(response.wasSuccessful());
+  }
+
+  @Test
+  public void retry_delete_succeeds_after_502() {
+    handler.handleSequence("DELETE", new int[]{502, 200}, new String[]{null, "{\"code\": 200}"}, "application/json");
+
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.initialDelay = 10;
+
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
+        .url("http://localhost:7042/test")
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .retry(retryConfig)
+        .delete()
+        .go();
+
+    assertEquals(handler.count, 2);
+    assertEquals(response.status, 200);
+    assertTrue(response.wasSuccessful());
+  }
+
+  @Test
+  public void retry_not_triggered_on_400() {
+    handler.handleSequence("GET", new int[]{400, 200}, new String[]{"{\"error\": true}", "{\"code\": 200}"}, "application/json");
+
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.initialDelay = 10;
+
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
+        .url("http://localhost:7042/test")
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .retry(retryConfig)
+        .get()
+        .go();
+
+    assertEquals(handler.count, 1);
+    assertEquals(response.status, 400);
+    assertFalse(response.wasSuccessful());
+  }
+
+  @Test
+  public void retry_custom_retry_function() {
+    handler.handleSequence("GET", new int[]{409, 200}, new String[]{"{\"retryable\": true}", "{\"code\": 200}"}, "application/json");
+
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.initialDelay = 10;
+    retryConfig.retryFunction = response -> response.status == 409;
+
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
+        .url("http://localhost:7042/test")
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .retry(retryConfig)
+        .get()
+        .go();
+
+    assertEquals(handler.count, 2);
+    assertEquals(response.status, 200);
+    assertTrue(response.wasSuccessful());
+  }
+
+  @Test
+  public void retry_no_retry_without_configuration() {
+    handler.handleSequence("GET", new int[]{500, 200}, new String[]{null, null}, null);
+
+    ClientResponse<Void, Void> response = new RESTClient<>(Void.TYPE, Void.TYPE)
+        .url("http://localhost:7042/test")
+        .get()
+        .go();
+
+    assertEquals(handler.count, 1);
+    assertEquals(response.status, 500);
+  }
+
+  @Test
+  public void retry_exponential_backoff() {
+    handler.handleSequence("GET", new int[]{500, 500, 200}, new String[]{null, null, "{\"code\": 200}"}, "application/json");
+
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.initialDelay = 50;
+    retryConfig.backoffMultiplier = 2.0;
+
+    long start = System.currentTimeMillis();
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
+        .url("http://localhost:7042/test")
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .retry(retryConfig)
+        .get()
+        .go();
+    long elapsed = System.currentTimeMillis() - start;
+
+    assertEquals(handler.count, 3);
+    assertEquals(response.status, 200);
+    // First retry delay: 50ms, second retry delay: 100ms = 150ms minimum
+    assertTrue(elapsed >= 140, "Expected at least ~150ms delay, but was " + elapsed + "ms");
+  }
+
+  @Test
+  public void retry_with_url_parameters() {
+    handler.handleSequence("GET", new int[]{500, 200}, new String[]{null, "{\"code\": 200}"}, "application/json");
+
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.initialDelay = 10;
+
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
+        .url("http://localhost:7042/test")
+        .urlParameter("foo", "bar")
+        .urlParameter("baz", "qux")
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .retry(retryConfig)
+        .get()
+        .go();
+
+    assertEquals(handler.count, 2);
+    assertEquals(response.status, 200);
+    assertTrue(response.wasSuccessful());
+    // Verify URL parameters are not duplicated on retry
+    assertTrue(response.url.toString().contains("foo=bar"));
+    assertTrue(response.url.toString().contains("baz=qux"));
+  }
+
+  @Test
+  public void retry_respects_retry_after_header() {
+    handler.handleRetryAfter("GET", 429, 200, "{\"code\": 200}", "application/json", "1");
+
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.initialDelay = 10;
+
+    long start = System.currentTimeMillis();
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
+        .url("http://localhost:7042/test")
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .retry(retryConfig)
+        .get()
+        .go();
+    long elapsed = System.currentTimeMillis() - start;
+
+    assertEquals(handler.count, 2);
+    assertEquals(response.status, 200);
+    // Retry-After: 1 second should cause at least ~1000ms delay
+    assertTrue(elapsed >= 900, "Expected at least ~1000ms delay for Retry-After, but was " + elapsed + "ms");
+  }
+
   private <T, U> ClientResponse<T, U> expectException(Supplier<ClientResponse<T, U>> supplier, Class<? extends Throwable> expected) {
     try {
       return supplier.get();
@@ -676,6 +937,13 @@ public class RESTClientTest {
 
     private String responseContentType;
 
+    // Sequence mode fields for retry testing
+    private int[] responseCodes;
+
+    private String[] responses;
+
+    private String retryAfterValue;
+
     public TestHandler() {
     }
 
@@ -688,13 +956,52 @@ public class RESTClientTest {
       this.response = response;
       this.responseContentType = responseContentType;
       this.cookie = cookie;
+      this.responseCodes = null;
+      this.responses = null;
+      this.retryAfterValue = null;
+    }
+
+    public void handleSequence(String method, int[] responseCodes, String[] responses, String responseContentType) {
+      this.method = method;
+      this.responseCodes = responseCodes;
+      this.responses = responses;
+      this.responseContentType = responseContentType;
+      this.request = null;
+      this.contentType = null;
+      this.requestHeaders = null;
+      this.cookie = null;
+      this.retryAfterValue = null;
+    }
+
+    public void handleRetryAfter(String method, int firstCode, int secondCode, String secondResponse, String responseContentType, String retryAfterValue) {
+      this.method = method;
+      this.responseCodes = new int[]{firstCode, secondCode};
+      this.responses = new String[]{null, secondResponse};
+      this.responseContentType = responseContentType;
+      this.retryAfterValue = retryAfterValue;
+      this.request = null;
+      this.contentType = null;
+      this.requestHeaders = null;
+      this.cookie = null;
     }
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
+      int currentResponseCode;
+      String currentResponse;
+      if (responseCodes != null) {
+        // Sequence mode for retry testing
+        int index = Math.min(count, responseCodes.length - 1);
+        currentResponseCode = responseCodes[index];
+        currentResponse = responses[index];
+      } else {
+        currentResponseCode = responseCode;
+        currentResponse = response;
+      }
+
       if (contentType != null) {
         assertEquals(httpExchange.getRequestHeaders().get(HTTPStrings.Headers.ContentType).get(0), contentType);
-      } else {
+      } else if (responseCodes == null) {
         assertNull(httpExchange.getRequestHeaders().get(HTTPStrings.Headers.ContentType));
       }
 
@@ -731,13 +1038,13 @@ public class RESTClientTest {
 
       if (request != null) {
         assertEquals(body.toString(), request);
-      } else {
+      } else if (responseCodes == null) {
         assertTrue(body.toString().isEmpty(), "Body is [" + body + "]");
       }
 
       // Handle response
 
-      byte[] bytes = response != null ? response.getBytes(StandardCharsets.UTF_8) : null;
+      byte[] bytes = currentResponse != null ? currentResponse.getBytes(StandardCharsets.UTF_8) : null;
       int contentLength = bytes != null ? bytes.length : 0;
       if (method.equals("HEAD")) {
         // Setting to -1 will remove a warning when calling sendResponseHeaders for a HEAD request.
@@ -750,9 +1057,14 @@ public class RESTClientTest {
         httpExchange.getResponseHeaders().set("Content-Type", responseContentType);
       }
 
+      // Add Retry-After header if configured and this is the first request
+      if (retryAfterValue != null && count == 0) {
+        httpExchange.getResponseHeaders().set("Retry-After", retryAfterValue);
+      }
+
       httpExchange.getResponseHeaders().set(HTTPStrings.Headers.SetCookie, "foo=bar; Path=/foo/bar; Domain=fusionauth.io; Max-Age=1; Secure; HttpOnly; SameSite=Lax");
       httpExchange.getResponseHeaders().set("Connection", "close");
-      httpExchange.sendResponseHeaders(responseCode, contentLength);
+      httpExchange.sendResponseHeaders(currentResponseCode, contentLength);
 
       if (!method.equals("HEAD")) {
         if (bytes != null) {
@@ -770,9 +1082,13 @@ public class RESTClientTest {
       cookie = null;
       method = null;
       request = null;
+      requestHeaders = null;
       response = null;
       responseCode = 0;
       responseContentType = null;
+      responseCodes = null;
+      responses = null;
+      retryAfterValue = null;
       count = 0;
     }
   }
