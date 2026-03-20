@@ -859,7 +859,7 @@ public class RESTClient<RS, ERS> {
     }
 
     // PATCH is sent as POST with X-HTTP-Method-Override header
-    if ("POST".equals(method)) {
+    if (retryConfiguration.patchIsIdempotent && "POST".equals(method)) {
       List<String> override = headers.get("X-HTTP-Method-Override");
       return override != null && override.contains("PATCH");
     }

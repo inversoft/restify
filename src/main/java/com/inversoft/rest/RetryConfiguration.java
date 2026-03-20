@@ -56,6 +56,11 @@ public class RetryConfiguration {
   public int maxAttempts = 5;
 
   /**
+   * When true, patch calls are treated as idempotent. (This is dependent on the PATCH payload.)
+   */
+  public boolean patchIsIdempotent = true;
+
+  /**
    * An optional function that is called to determine if a response should be retried. This is called in addition to
    * the built-in checks for network errors and retryable status codes. Return true to retry the request.
    */
