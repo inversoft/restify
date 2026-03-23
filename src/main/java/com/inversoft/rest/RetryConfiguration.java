@@ -46,14 +46,22 @@ public class RetryConfiguration {
   public long initialDelay = 100;
 
   /**
+   * Maximum jitter multiplier to add to every delay. Used to smooth out thundering herds.
+   * Actual jitter multiplier is randomly chosen between 0.0 and this value.
+   */
+  public double jitter = 0.20;
+
+  /**
    * The maximum delay in milliseconds between retry attempts. Defaults to 30,000ms (30 seconds).
    */
   public long maxDelay = 30_000;
 
   /**
-   * The maximum number of attempts including the initial request. Defaults to 5 (1 initial + 4 retries).
+   * The maximum number of retries to do after the initial request.
+   * Setting to 0 effectively disables retries.
+   * Defaults to 4 (1 initial + 4 retries).
    */
-  public int maxAttempts = 5;
+  public int maxRetries = 4;
 
   /**
    * When true, patch calls are treated as idempotent. (This is dependent on the PATCH payload.)

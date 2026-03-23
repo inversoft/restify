@@ -673,7 +673,7 @@ public class RESTClientTest {
 
     RetryConfiguration retryConfig = new RetryConfiguration();
     retryConfig.initialDelay = 10;
-    retryConfig.maxAttempts = 3;
+    retryConfig.maxRetries = 2;
 
     ClientResponse<Void, Void> response = new RESTClient<>(Void.TYPE, Void.TYPE)
         .url("http://localhost:7042/test")
@@ -722,7 +722,8 @@ public class RESTClientTest {
   }
 
   @Test
-  public void retry_patch_is_retried() {
+  public void retry_patch_is_retried_by_default() {
+    // Default RetryConfiguration.patchIsIdempotent is true, should be retried
     handler.handleSequence("POST", new int[]{500, 200}, new String[]{null, "{\"code\": 200}"}, "application/json");
 
     RetryConfiguration retryConfig = new RetryConfiguration();
@@ -739,6 +740,28 @@ public class RESTClientTest {
     assertEquals(handler.count, 2);
     assertEquals(response.status, 200);
     assertTrue(response.wasSuccessful());
+  }
+
+  @Test
+  public void retry_patch_is_not_retried_when_not_idempotent() {
+    // set RetryConfiguration.patchIsIdempotent to false, should not be retried
+    handler.handleSequence("POST", new int[]{500, 200}, new String[]{null, "{\"code\": 200}"}, "application/json");
+
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.patchIsIdempotent = false;
+    retryConfig.initialDelay = 10;
+
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
+        .url("http://localhost:7042/test")
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .retry(retryConfig)
+        .patch()
+        .go();
+
+    assertEquals(handler.count, 1);
+    assertEquals(response.status, 500);
+    assertFalse(response.wasSuccessful());
   }
 
   @Test
@@ -884,28 +907,6 @@ public class RESTClientTest {
     assertTrue(response.url.toString().contains("baz=qux"));
   }
 
-  @Test
-  public void retry_respects_retry_after_header() {
-    handler.handleRetryAfter("GET", 429, 200, "{\"code\": 200}", "application/json", "1");
-
-    RetryConfiguration retryConfig = new RetryConfiguration();
-    retryConfig.initialDelay = 10;
-
-    long start = System.currentTimeMillis();
-    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
-        .url("http://localhost:7042/test")
-        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
-        .successResponseHandler(new JSONResponseHandler<>(Map.class))
-        .retry(retryConfig)
-        .get()
-        .go();
-    long elapsed = System.currentTimeMillis() - start;
-
-    assertEquals(handler.count, 2);
-    assertEquals(response.status, 200);
-    // Retry-After: 1 second should cause at least ~1000ms delay
-    assertTrue(elapsed >= 900, "Expected at least ~1000ms delay for Retry-After, but was " + elapsed + "ms");
-  }
 
   private <T, U> ClientResponse<T, U> expectException(Supplier<ClientResponse<T, U>> supplier, Class<? extends Throwable> expected) {
     try {
@@ -942,8 +943,6 @@ public class RESTClientTest {
 
     private String[] responses;
 
-    private String retryAfterValue;
-
     public TestHandler() {
     }
 
@@ -958,7 +957,6 @@ public class RESTClientTest {
       this.cookie = cookie;
       this.responseCodes = null;
       this.responses = null;
-      this.retryAfterValue = null;
     }
 
     public void handleSequence(String method, int[] responseCodes, String[] responses, String responseContentType) {
@@ -966,19 +964,6 @@ public class RESTClientTest {
       this.responseCodes = responseCodes;
       this.responses = responses;
       this.responseContentType = responseContentType;
-      this.request = null;
-      this.contentType = null;
-      this.requestHeaders = null;
-      this.cookie = null;
-      this.retryAfterValue = null;
-    }
-
-    public void handleRetryAfter(String method, int firstCode, int secondCode, String secondResponse, String responseContentType, String retryAfterValue) {
-      this.method = method;
-      this.responseCodes = new int[]{firstCode, secondCode};
-      this.responses = new String[]{null, secondResponse};
-      this.responseContentType = responseContentType;
-      this.retryAfterValue = retryAfterValue;
       this.request = null;
       this.contentType = null;
       this.requestHeaders = null;
@@ -1057,11 +1042,6 @@ public class RESTClientTest {
         httpExchange.getResponseHeaders().set("Content-Type", responseContentType);
       }
 
-      // Add Retry-After header if configured and this is the first request
-      if (retryAfterValue != null && count == 0) {
-        httpExchange.getResponseHeaders().set("Retry-After", retryAfterValue);
-      }
-
       httpExchange.getResponseHeaders().set(HTTPStrings.Headers.SetCookie, "foo=bar; Path=/foo/bar; Domain=fusionauth.io; Max-Age=1; Secure; HttpOnly; SameSite=Lax");
       httpExchange.getResponseHeaders().set("Connection", "close");
       httpExchange.sendResponseHeaders(currentResponseCode, contentLength);
@@ -1088,7 +1068,6 @@ public class RESTClientTest {
       responseContentType = null;
       responseCodes = null;
       responses = null;
-      retryAfterValue = null;
       count = 0;
     }
   }

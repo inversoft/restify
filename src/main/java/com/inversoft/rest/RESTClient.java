@@ -352,7 +352,7 @@ public class RESTClient<RS, ERS> {
       }
     }
 
-    if (retryConfiguration != null && isRetryable()) {
+    if (isRetryable()) {
       return goWithRetry(requestURL, proxy);
     }
 
@@ -707,8 +707,10 @@ public class RESTClient<RS, ERS> {
   }
 
   private long calculateDelay(int attempt) {
-    long delay = (long) (retryConfiguration.initialDelay * Math.pow(retryConfiguration.backoffMultiplier, attempt - 1));
-    return Math.min(delay, retryConfiguration.maxDelay);
+    double randomJitter = Math.random() * retryConfiguration.jitter;
+    double backoffDelay = retryConfiguration.initialDelay * Math.pow(retryConfiguration.backoffMultiplier, attempt - 1);
+    double delay = Math.min(backoffDelay, retryConfiguration.maxDelay) * (1.0 + randomJitter);
+    return (long) delay;
   }
 
   private void executeOnce(ClientResponse<RS, ERS> response, URL requestURL, Proxy proxy) {
@@ -805,26 +807,14 @@ public class RESTClient<RS, ERS> {
     }
   }
 
-  private long getRetryAfterDelay(ClientResponse<RS, ERS> response) {
-    String retryAfter = response.getHeader("retry-after");
-    if (retryAfter != null) {
-      try {
-        return Long.parseLong(retryAfter) * 1000;
-      } catch (NumberFormatException ignored) {
-      }
-    }
-
-    return 0;
-  }
-
   private ClientResponse<RS, ERS> goWithRetry(URL requestURL, Proxy proxy) {
     ClientResponse<RS, ERS> response = new ClientResponse<>();
     response.request = (bodyHandler != null) ? bodyHandler.getBodyObject() : null;
     response.method = method;
 
-    for (int attempt = 0; attempt < retryConfiguration.maxAttempts; attempt++) {
+    for (int attempt = 0; attempt <= retryConfiguration.maxRetries; attempt++) {
       if (attempt > 0) {
-        long delay = Math.max(calculateDelay(attempt), getRetryAfterDelay(response));
+        long delay = calculateDelay(attempt);
         try {
           Thread.sleep(delay);
         } catch (InterruptedException e) {
@@ -840,7 +830,7 @@ public class RESTClient<RS, ERS> {
 
       executeOnce(response, requestURL, proxy);
 
-      if (!shouldRetry(response)) {
+      if (response.wasSuccessful() || !shouldRetry(response)) {
         return response;
       }
     }
@@ -849,6 +839,10 @@ public class RESTClient<RS, ERS> {
   }
 
   private boolean isRetryable() {
+    if (retryConfiguration == null || retryConfiguration.maxRetries <= 0) {
+      return false;
+    }
+
     if (retryConfiguration.allowNonIdempotentRetries) {
       return true;
     }
@@ -867,7 +861,7 @@ public class RESTClient<RS, ERS> {
     return false;
   }
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
+  //@SuppressWarnings({"unchecked", "rawtypes"})
   private boolean shouldRetry(ClientResponse<RS, ERS> response) {
     // Network/IO error
     if (response.exception != null && retryConfiguration.retryOnNetworkError) {
@@ -881,7 +875,7 @@ public class RESTClient<RS, ERS> {
 
     // Custom retry function (e.g., 409 + retryableConflict)
     if (retryConfiguration.retryFunction != null) {
-      return retryConfiguration.retryFunction.apply((ClientResponse) response);
+      return retryConfiguration.retryFunction.apply(response);
     }
 
     return false;
