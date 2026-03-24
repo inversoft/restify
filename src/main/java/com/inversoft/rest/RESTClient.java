@@ -89,7 +89,7 @@ public class RESTClient<RS, ERS> {
 
   private String userAgent = "Restify (https://github.com/inversoft/restify)";
 
-  // Under no circumstances should a POST request be retried due to an exception.
+  // Do not auto retry a POST request due to an exception.
   // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=6382788
   static {
     System.setProperty("sun.net.http.retryPost", "false");
