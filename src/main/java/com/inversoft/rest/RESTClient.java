@@ -93,6 +93,9 @@ public class RESTClient<RS, ERS> {
 
   // Do not auto retry a POST request due to an exception.
   // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=6382788
+  // Restify uses sun.net.www.http.HttpClient, which will automatically retry
+  // when 0 bytes are read or an IOException is thrown. This retry happens
+  // automatically at a lower level than the RetryConfiguration.
   static {
     System.setProperty("sun.net.http.retryPost", "false");
   }
