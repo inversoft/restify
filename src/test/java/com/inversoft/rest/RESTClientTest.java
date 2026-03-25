@@ -32,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 import org.testng.annotations.AfterTest;
@@ -843,6 +844,30 @@ public class RESTClientTest {
     assertEquals(handler.count, 2);
     assertEquals(response.status, 200);
     assertTrue(response.wasSuccessful());
+  }
+
+  @Test
+  public void retry_custom_retry_function_not_called_on_success() {
+    handler.handleSequence("GET", new int[]{200}, new String[]{"{\"code\": 200}"}, "application/json");
+
+    AtomicInteger retryFunctionInvocationCount = new AtomicInteger(0);
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.initialDelay = 10;
+    retryConfig.retryFunction = response -> { retryFunctionInvocationCount.incrementAndGet(); return false;};
+
+    ClientResponse<Map, Map> response = new RESTClient<>(Map.class, Map.class)
+        .url("http://localhost:7042/test")
+        .errorResponseHandler(new JSONResponseHandler<>(Map.class))
+        .successResponseHandler(new JSONResponseHandler<>(Map.class))
+        .retry(retryConfig)
+        .get()
+        .go();
+
+    assertEquals(handler.count, 1);
+    assertEquals(response.status, 200);
+    assertTrue(response.wasSuccessful());
+    // Retry function should not be called
+    assertEquals(retryFunctionInvocationCount.get(), 0);
   }
 
   @Test
