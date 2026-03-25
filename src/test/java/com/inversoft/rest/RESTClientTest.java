@@ -872,7 +872,7 @@ public class RESTClientTest {
   }
 
   @Test
-  public void retry_rejects_input_stream_body_handler() {
+  public void validate_retry_input_stream_body_handler() {
     RetryConfiguration retryConfig = new RetryConfiguration();
 
     IllegalStateException exception = expectRetryValidationFailure(retryConfig,
@@ -884,7 +884,7 @@ public class RESTClientTest {
   }
 
   @Test
-  public void retry_rejects_negative_initial_delay() {
+  public void validate_retry_negative_initial_delay() {
     RetryConfiguration retryConfig = new RetryConfiguration();
     retryConfig.initialDelay = -1;
 
@@ -894,7 +894,7 @@ public class RESTClientTest {
   }
 
   @Test
-  public void retry_rejects_negative_max_delay() {
+  public void validate_retry_negative_max_delay() {
     RetryConfiguration retryConfig = new RetryConfiguration();
     retryConfig.maxDelay = -1;
 
@@ -904,7 +904,7 @@ public class RESTClientTest {
   }
 
   @Test
-  public void retry_rejects_negative_jitter() {
+  public void validate_retry_negative_jitter() {
     RetryConfiguration retryConfig = new RetryConfiguration();
     retryConfig.jitter = -0.01;
 
@@ -914,7 +914,7 @@ public class RESTClientTest {
   }
 
   @Test
-  public void retry_rejects_jitter_greater_than_one() {
+  public void validate_retry_jitter_greater_than_one() {
     RetryConfiguration retryConfig = new RetryConfiguration();
     retryConfig.jitter = 1.01;
 
@@ -924,7 +924,7 @@ public class RESTClientTest {
   }
 
   @Test
-  public void retry_rejects_negative_backoff_multiplier() {
+  public void validate_retry_negative_backoff_multiplier() {
     RetryConfiguration retryConfig = new RetryConfiguration();
     retryConfig.backoffMultiplier = -1.0;
 
