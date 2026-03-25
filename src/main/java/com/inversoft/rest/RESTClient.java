@@ -882,7 +882,6 @@ public class RESTClient<RS, ERS> {
     return false;
   }
 
-  //@SuppressWarnings({"unchecked", "rawtypes"})
   private boolean shouldRetry(ClientResponse<RS, ERS> response) {
     // Network/IO error
     if (response.exception != null && retryConfiguration.retryOnNetworkError) {

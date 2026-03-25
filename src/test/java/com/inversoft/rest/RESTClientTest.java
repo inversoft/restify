@@ -990,9 +990,12 @@ public class RESTClientTest {
     assertEquals(handler.count, 2);
     assertEquals(response.status, 200);
     assertTrue(response.wasSuccessful());
-    // Verify URL parameters are not duplicated on retry
-    assertTrue(response.url.toString().contains("foo=bar"));
-    assertTrue(response.url.toString().contains("baz=qux"));
+    String url = response.url.toString();
+    // Verify URL parameters are present and not duplicated on retry
+    assertTrue(url.contains("foo=bar"));
+    assertEquals(url.indexOf("foo=bar"), url.lastIndexOf("foo=bar"));
+    assertTrue(url.contains("baz=qux"));
+    assertEquals(url.indexOf("baz=qux"), url.lastIndexOf("baz=qux"));
   }
 
 
