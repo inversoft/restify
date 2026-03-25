@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
+import com.inversoft.http.Buildable;
+
 /**
  * Configuration for automatic retry of failed HTTP requests.
  * <p>
@@ -28,7 +30,7 @@ import java.util.function.Function;
  *
  * @author FusionAuth
  */
-public class RetryConfiguration {
+public class RetryConfiguration implements Buildable<RetryConfiguration> {
   /**
    * When true, all HTTP methods including POST will be retried. Defaults to false,
    * meaning only idempotent methods (GET, PUT, DELETE, PATCH, HEAD) are retried.
