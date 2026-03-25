@@ -19,8 +19,10 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URI;
 import java.net.URL;
@@ -319,7 +321,7 @@ public class RESTClient<RS, ERS> {
           String value = j.next();
           try {
             url.append(URLEncoder.encode(entry.getKey(), "UTF-8")).append("=").append(URLEncoder.encode(value, "UTF-8"));
-          } catch (Exception e) {
+          } catch (UnsupportedEncodingException e) {
             // This won't happen with UTF-8
             throw new IllegalStateException(e);
           }
@@ -337,7 +339,7 @@ public class RESTClient<RS, ERS> {
     URL requestURL;
     try {
       requestURL = new URL(url.toString());
-    } catch (Exception e) {
+    } catch (MalformedURLException e) {
       throw new IllegalStateException("Invalid URL [" + url + "]", e);
     }
 
