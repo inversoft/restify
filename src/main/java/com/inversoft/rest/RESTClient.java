@@ -355,6 +355,7 @@ public class RESTClient<RS, ERS> {
     }
 
     if (isRetryable()) {
+      validateRetryConfig();
       return goWithRetry(requestURL, proxy);
     }
 
@@ -363,6 +364,24 @@ public class RESTClient<RS, ERS> {
     response.method = method;
     executeOnce(response, requestURL, proxy);
     return response;
+  }
+
+  private void validateRetryConfig() {
+    if (bodyHandler instanceof InputStreamBodyHandler) {
+      throw new IllegalStateException("You cannot retry a request with an InputStreamBodyHandler");
+    }
+    if (retryConfiguration.initialDelay < 0) {
+      throw new IllegalStateException("You cannot have a negative initial delay");
+    }
+    if (retryConfiguration.maxDelay < 0) {
+      throw new IllegalStateException("You cannot have a negative max delay");
+    }
+    if (retryConfiguration.jitter < 0.0 || retryConfiguration.jitter > 1.0) {
+      throw new IllegalStateException("You cannot have a jitter outside the range [0.0, 1.0]");
+    }
+    if (retryConfiguration.backoffMultiplier < 0) {
+      throw new IllegalStateException("You cannot have a negative backoff multiplier");
+    }
   }
 
   public RESTClient<RS, ERS> head() {

@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.testng.annotations.AfterTest;
@@ -871,6 +872,68 @@ public class RESTClientTest {
   }
 
   @Test
+  public void retry_rejects_input_stream_body_handler() {
+    RetryConfiguration retryConfig = new RetryConfiguration();
+
+    IllegalStateException exception = expectRetryValidationFailure(retryConfig,
+        client -> client.bodyHandler(new InputStreamBodyHandler("application/octet-stream",
+                new ByteArrayInputStream("Testing 123".getBytes(StandardCharsets.UTF_8))))
+            .put());
+
+    assertEquals(exception.getMessage(), "You cannot retry a request with an InputStreamBodyHandler");
+  }
+
+  @Test
+  public void retry_rejects_negative_initial_delay() {
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.initialDelay = -1;
+
+    IllegalStateException exception = expectRetryValidationFailure(retryConfig, RESTClient::get);
+
+    assertEquals(exception.getMessage(), "You cannot have a negative initial delay");
+  }
+
+  @Test
+  public void retry_rejects_negative_max_delay() {
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.maxDelay = -1;
+
+    IllegalStateException exception = expectRetryValidationFailure(retryConfig, RESTClient::get);
+
+    assertEquals(exception.getMessage(), "You cannot have a negative max delay");
+  }
+
+  @Test
+  public void retry_rejects_negative_jitter() {
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.jitter = -0.01;
+
+    IllegalStateException exception = expectRetryValidationFailure(retryConfig, RESTClient::get);
+
+    assertEquals(exception.getMessage(), "You cannot have a jitter outside the range [0.0, 1.0]");
+  }
+
+  @Test
+  public void retry_rejects_jitter_greater_than_one() {
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.jitter = 1.01;
+
+    IllegalStateException exception = expectRetryValidationFailure(retryConfig, RESTClient::get);
+
+    assertEquals(exception.getMessage(), "You cannot have a jitter outside the range [0.0, 1.0]");
+  }
+
+  @Test
+  public void retry_rejects_negative_backoff_multiplier() {
+    RetryConfiguration retryConfig = new RetryConfiguration();
+    retryConfig.backoffMultiplier = -1.0;
+
+    IllegalStateException exception = expectRetryValidationFailure(retryConfig, RESTClient::get);
+
+    assertEquals(exception.getMessage(), "You cannot have a negative backoff multiplier");
+  }
+
+  @Test
   public void retry_no_retry_without_configuration() {
     handler.handleSequence("GET", new int[]{500, 200}, new String[]{null, null}, null);
 
@@ -941,6 +1004,23 @@ public class RESTClientTest {
         fail("Expected exception [" + expected + "], but caught [" + e.getClass() + "].", e);
       }
       return null;
+    }
+  }
+
+  private IllegalStateException expectRetryValidationFailure(RetryConfiguration retryConfiguration, Consumer<RESTClient<Void, Void>> clientCustomizer) {
+    try {
+      RESTClient<Void, Void> client = new RESTClient<>(Void.TYPE, Void.TYPE)
+          .url("http://localhost:7042/test")
+          .retry(retryConfiguration);
+
+      clientCustomizer.accept(client);
+      client.go();
+
+      fail("Expected retry configuration validation to fail");
+      return null;
+    } catch (IllegalStateException e) {
+      assertEquals(handler.count, 0);
+      return e;
     }
   }
 
