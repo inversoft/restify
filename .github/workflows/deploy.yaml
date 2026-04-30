@@ -1,0 +1,145 @@
+---
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      command:
+        type: choice
+        options:
+          - build    # build only
+          - publish  # build & publish to maven
+          - release  # build & release to svn
+        default: build
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: /usr/bin/bash -l -e -o pipefail {0}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+
+      - name: setup java 8
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 8
+          java-package: jdk
+
+      # needed for savant itself to run
+      - name: setup java 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          java-package: jdk
+
+      - name: install savant
+        run: |
+          curl -O https://repository.savantbuild.org/org/savantbuild/savant-core/2.2.0/savant-2.2.0.tar.gz
+          tar xzvf savant-2.2.0.tar.gz
+          savant-2.2.0/bin/sb --version
+          SAVANT_PATH=$(realpath -s "./savant-2.2.0/bin")
+          echo "${SAVANT_PATH}" >> $GITHUB_PATH
+          mkdir -p ~/.savant/plugins
+          cat << EOF > ~/.savant/plugins/org.savantbuild.plugin.java.properties
+          # set by 'setup java 8' above
+          1.8=${JAVA_HOME_8_X64}
+          EOF
+          echo "Running java -version"
+          java -version
+          echo "Confirming 1.8 version savant will use"
+          ${JAVA_HOME_8_X64}/bin/java -version
+
+      - name: compile
+        run: sb compile
+
+      ### Everything below this line will only run on a workflow_dispatch
+
+      - name: set aws credentials
+        if: inputs.command == 'release' || inputs.command == 'publish'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::752443094709:role/gha-inversoft-restify
+          role-session-name: aws-auth-action
+          aws-region: us-west-2
+
+      - name: get secret
+        if: inputs.command == 'release' || inputs.command == 'publish'
+        run: |
+          while IFS=$'\t' read -r key value; do
+            echo "::add-mask::${value}"
+            echo "${key}=${value}" >> $GITHUB_ENV
+          done < <(aws secretsmanager get-secret-value \
+            --region us-west-2 \
+            --secret-id platform/maven \
+            --query SecretString \
+            --output text | \
+            jq -r 'to_entries[] | [.key, .value] | @tsv')
+
+      - name: import gpg key
+        if: inputs.command == 'release' || inputs.command == 'publish'
+        run: |
+          export GPG_TTY=$(tty)
+          echo "${{ env.PRIV_KEY_B64 }}" | base64 -d > /tmp/key.asc
+          echo "${{ env.PRIV_KEY_PASSWORD }}" | gpg --batch --yes --passphrase-fd 0 --import /tmp/key.asc
+          rm /tmp/key.asc
+
+          # We need this to prevent 'gpg: signing failed: Timeout' error during 'sb publish'
+          mkdir -p ~/.gnupg
+          echo "pinentry-mode loopback" > ~/.gnupg/gpg.conf
+
+      - name: configure maven settings.xml
+        if: inputs.command == 'release' || inputs.command == 'publish'
+        run: |
+          mkdir -p ~/.m2
+          cat << EOF > ~/.m2/settings.xml
+          <settings>
+            <servers>
+              <server>
+                <id>central</id>
+                <username>${{ env.CENTRAL_USERNAME }}</username>
+                <password>${{ env.CENTRAL_PASSWORD }}</password>
+              </server>
+            </servers>
+            <profiles>
+              <profile>
+                <id>central</id>
+                <activation>
+                  <activeByDefault>true</activeByDefault>
+                </activation>
+                <properties>
+                  <gpg.executable>/usr/bin/gpg</gpg.executable>
+                  <gpg.keyname>FusionAuth Platform Team</gpg.keyname>
+                  <gpg.passphrase>${{ env.PRIV_KEY_PASSWORD }}</gpg.passphrase>
+                </properties>
+              </profile>
+            </profiles>
+            <activeProfiles>
+              <activeProfile>central</activeProfile>
+            </activeProfiles>
+          </settings>
+          EOF
+
+      - name: release to svn
+        if: inputs.command == 'release'
+        run: sb release
+
+      - name: publish to maven
+        if: inputs.command == 'publish'
+        run: |
+          export GPG_TTY=$(tty)
+          sb publish
