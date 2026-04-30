@@ -32,14 +32,15 @@ jobs:
       - name: checkout
         uses: actions/checkout@v6
 
-      - name: setup java
+      - name: setup java 8
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 8
           java-package: jdk
 
-      - name: setup java
+      # needed for savant itself to run
+      - name: setup java 21
         uses: actions/setup-java@v5
         with:
           distribution: temurin
@@ -55,7 +56,8 @@ jobs:
           echo "${SAVANT_PATH}" >> $GITHUB_PATH
           mkdir -p ~/.savant/plugins
           cat << EOF > ~/.savant/plugins/org.savantbuild.plugin.java.properties
-          1.8=${JAVA_HOME}
+          # set by 'setup java 8' above
+          1.8=${JAVA_HOME_8_X64}
           EOF
           echo "Dumping java -version"
           java -version
