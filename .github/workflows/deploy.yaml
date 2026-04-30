@@ -57,6 +57,8 @@ jobs:
           cat << EOF > ~/.savant/plugins/org.savantbuild.plugin.java.properties
           1.8=${JAVA_HOME}
           EOF
+          echo "Dumping java -version"
+          java -version
 
       - name: compile
         run: sb compile
