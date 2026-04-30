@@ -59,8 +59,10 @@ jobs:
           # set by 'setup java 8' above
           1.8=${JAVA_HOME_8_X64}
           EOF
-          echo "Dumping java -version"
+          echo "Running java -version"
           java -version
+          echo "Confirming 1.8 version savant will use"
+          ${JAVA_HOME_8_X64}/bin/java -version
 
       - name: compile
         run: sb compile
