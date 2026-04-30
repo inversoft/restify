@@ -94,7 +94,8 @@ target(name: "pom", description: "Updates the pom.xml file") {
 }
 
 target(name: "publish", description: "Publish to MVN repo", dependsOn: ["clean", "test"]) {
-  if (new ProcessBuilder('mvn', 'clean', 'deploy', '-Prelease').inheritIO().start().waitFor() != 0) {
+  // no need to have Maven run tests because Savant just ran them
+  if (new ProcessBuilder('mvn', 'clean', 'deploy', '-Prelease', '-DskipTests').inheritIO().start().waitFor() != 0) {
     fail("deploy failed")
   }
 }
